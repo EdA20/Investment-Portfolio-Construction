@@ -1,0 +1,14 @@
+catboost
+ipython
+matplotlib
+numpy
+optuna
+pandas
+requests
+scikit-learn
+scipy
+seaborn
+sktime
+tqdm
+openpyxl
+pyarrow

@@ -1,0 +1,14 @@
+{
+    "('top3_mean_vol_return_sw_mean_63', 'price_sw_std_21_63', 'usd_return_sw_std_21', 'bonds10y_sw_mean_10_21', 'ruonia_sw_std_126', 'price_vol_adj_ew_std_21/126', 'mredc_ew_mean_10/63', 'price_vol_adj_sw_std_63/126', 'ruonia_ew_mean_5/21', 'price_vol_adj_ew_mean_21_63', 'aroon_delta_504', 'long/short_physic_ratio_ew_std_5_21', 'usd_ew_std_5', 'imoex_pe_sw_std_21_126', 'bonds10y_ew_std_21_63', 'usd_sw_std_5_21', 'price_vol_adj_return_sw_std_21/63', 'long/short_entity_ratio_sw_std_21', 'imoex_pe_ew_mean_10_63', 'ruonia_sw_mean_5/21', 'usd_ew_std_21_63', 'bonds10y_ruonia_delta_sw_std_10', 'long/short_physic_ratio_ew_std_5', 'top3_mean_vol_sw_std_5_21', 'price_sw_mean_21/126', 'bonds10y_ruonia_delta_sw_std_10_63', 'bonds10y_ew_std_63/126', 'price_ew_std_63/126')": [
+        453.6825269331314,
+        13.094495359408285,
+        6.036723221953075,
+        50.84849448305568
+    ],
+    "('mredc_sw_mean_21/63', 'brent_sw_mean_5_21', 'usd_sw_mean_21_126', 'mredc_return_ew_mean_10', 'usd_return_sw_std_5_21', 'mredc_return_sw_mean_10/63', 'mredc_ew_mean_10_63', 'gold_ew_mean_21_126', 'imoex_pe_sw_mean_21_63', 'long/short_entity_ratio_return_sw_mean_63/126', 'mredc_return_sw_std_5', 'usd_return_ew_mean_21/63', 'bonds10y_sw_std_10_21', 'bonds10y_ew_std_5_21', 'usd_return_ew_mean_63', 'gold_return_ew_mean_10_63', 'price_vol_adj_sw_std_63/126', 'long/short_physic_ratio_return_ew_mean_10_63', 'long/short_entity_ratio_sw_std_63_126', 'usd_return_ew_std_21_63', 'mredc_sw_mean_21/126', 'gold_return_ew_mean_10_21', 'long/short_entity_ratio_return_ew_std_63_126', 'imoex_pe_ew_std_10', 'bonds10y_ruonia_delta_ew_std_126', 'bonds10y_sw_std_5', 'mredc_sw_std_10')": [
+        613.2906086106711,
+        6.75244908281536,
+        13.916580523717556,
+        80.94622227368296
+    ]
+}

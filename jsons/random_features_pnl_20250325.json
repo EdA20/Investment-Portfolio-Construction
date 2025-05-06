@@ -1,0 +1,830 @@
+{
+    "('mean/close_63', 'ruonia_ew_mean_10/21', 'p/e_sw_std_63_126', 'gold_return_sw_mean_126', 'gold_return_sw_mean_5', 'gold_return_sw_std_5/21', 'bonds_ew_mean_63/126', 'top3_vol_sw_mean_10_21', 'p/e_return_sw_mean_5', 'gold_return_sw_std_21_126', 'p/e_return_sw_skew_21', 'brent_return_sw_std_10/63', 'usd_ew_std_63/126', 'bonds_sw_std_21/63', 'brent_return_sw_std_21/63', 'ruonia_sw_mean_63_126', 'usd_ew_std_21/126')": [
+        524.2294727726596,
+        0.0,
+        4.53082173567492,
+        19.555463615080708
+    ],
+    "('price_vol_adj_return_sw_std_5', 'close_ew_mean_10_63', 'brent_return_ew_std_10_63', 'bonds_return_sw_mean_10', 'ruonia_ew_mean_5_21', 'p/e_return_sw_skew_63/126', 'price_vol_adj_sw_mean_10/21', 'rates_delta_sw_mean_10/63', 'gold_return_sw_std_21_63', 'bonds_return_ew_mean_5/21', 'bonds_ew_std_126', 'gold_return_sw_mean_5', 'bonds_return_sw_mean_10_21', 'top3_vol_sw_mean_10_21', 'ruonia_sw_mean_10_63', 'price_vol_adj_return_ew_mean_10', 'price_vol_adj_sw_mean_21_126', 'price_vol_adj_return_sw_std_63/126', 'ruonia_sw_skew_10_21', 'usd_sw_skew_21/63')": [
+        620.5169243457361,
+        0.0,
+        49.46205118140762,
+        28.972419167977716
+    ],
+    "('bonds_return_sw_std_21/63', 'ruonia_ew_mean_21/126', 'close_sw_mean_21_63', 'bonds_ew_mean_10/63', 'brent_ew_std_21_63', 'usd_return_sw_mean_21/126', 'gold_sw_std_63_126', 'bonds_sw_skew_10_63', 'gold_return_ew_mean_5', 'ruonia_ew_mean_21_126', 'top3_vol_ew_mean_21/63', 'usd_return_sw_mean_5_21', 'gold_ew_mean_21_63', 'brent_return_sw_mean_63/126', 'bonds_return_ew_mean_10_63', 'price_vol_adj_return_ew_std_5', 'p/e_ew_std_10_63')": [
+        575.442447186784,
+        0.0,
+        6.0816887776354065,
+        29.164299085431573
+    ],
+    "('price_vol_adj_return_sw_skew_63/126', 'rates_delta_sw_std_10_63', 'bonds_ew_std_21/126', 'top3_vol_sw_skew_10/21', 'gold_return_ew_mean_21_63', 'price_vol_adj_ew_std_10_63', 'close_sw_mean_21_63', 'gold_return_sw_std_21/63', 'close_ew_mean_63_126', 'usd_return_sw_mean_63', 'rates_delta_ew_std_63_126', 'usd_ew_std_10_21', 'top3_vol_ew_std_21/63', 'return_sw_mean_10/63')": [
+        457.7170358901379,
+        0.0,
+        4.138860082608488,
+        16.21400702286209
+    ],
+    "('bonds_return_ew_std_21', 'brent_ew_std_21', 'brent_return_ew_std_10_63', 'usd_sw_skew_5/21', 'brent_return_sw_skew_10_63', 'usd_ew_mean_21_126', 'close_ew_std_5', 'price_vol_adj_sw_mean_5_21', 'rates_delta_sw_skew_21_126', 'bonds_sw_mean_63/126', 'p/e_return_ew_std_126', 'bonds_sw_std_5/21', 'rates_delta_sw_std_10/21', 'rates_delta_ew_mean_10_63', 'rates_delta_sw_skew_21/126', 'price_vol_adj_return_sw_std_63', 'close_sw_mean_5/21')": [
+        474.2220773253563,
+        5.684341886080802e-14,
+        9.032429707102864,
+        16.374392509869015
+    ],
+    "('gold_sw_std_5', 'bonds_return_sw_std_21', 'brent_return_sw_skew_21', 'ruonia_sw_skew_5_21', 'gold_ew_std_63', 'brent_return_ew_mean_63_126', 'bonds_return_sw_skew_21_63', 'bonds_return_sw_std_10_21', 'top3_vol_ew_std_63', 'gold_ew_std_10_63', 'close_sw_skew_126')": [
+        417.1789906377073,
+        5.684341886080802e-14,
+        5.030702219626448,
+        21.602321713414028
+    ],
+    "('return_ew_mean_126', 'price_vol_adj_return_ew_mean_63', 'usd_ew_mean_21_126', 'close_ew_mean_10/21', 'gold_return_ew_mean_10_21', 'rates_delta_sw_skew_5', 'rates_delta_sw_skew_63_126', 'usd_return_ew_std_63_126', 'ruonia_sw_skew_63_126', 'price_vol_adj_sw_skew_10_21', 'usd_sw_skew_21', 'brent_sw_std_21/63', 'bonds_sw_std_5_21', 'brent_sw_std_5/21', 'usd_ew_std_63/126', 'p/e_return_ew_mean_21/63', 'usd_return_ew_mean_5_21', 'gold_sw_std_10/63', 'top3_vol_ew_std_5_21', 'p/e_return_sw_skew_21_63')": [
+        403.7841982437696,
+        0.0,
+        2.314116990602656,
+        22.57782185461962
+    ],
+    "('gold_return_ew_mean_21/126', 'price_vol_adj_return_ew_mean_5', 'return_sw_mean_5', 'usd_return_sw_std_5/21', 'bonds_sw_std_5_21', 'brent_return_sw_skew_5/21', 'rates_delta_ew_std_63_126', 'top3_vol_sw_std_5/21', 'return_sw_mean_63/126', 'return_ew_std_5_21', 'top3_vol_sw_skew_63', 'p/e_ew_std_126', 'bonds_return_ew_std_5/21', 'price_vol_adj_sw_mean_21/126')": [
+        589.6196883260759,
+        0.0,
+        39.05194339234049,
+        45.2460816767516
+    ],
+    "('rates_delta_sw_mean_5_21', 'rates_delta_ew_std_21', 'brent_sw_skew_10/63', 'usd_return_sw_skew_21_126', 'price_vol_adj_sw_skew_10/63', 'bonds_ew_mean_21_126', 'return_sw_skew_10/63', 'ruonia_sw_mean_5/21', 'price_vol_adj_ew_std_10/21', 'price_vol_adj_sw_mean_21/126', 'bonds_sw_std_21', 'close_sw_mean_10_63')": [
+        525.2327111020921,
+        0.0,
+        9.669899855804388,
+        22.24097617992105
+    ],
+    "('brent_sw_std_63_126', 'usd_ew_mean_21_63', 'bonds_return_ew_std_10/63', 'brent_sw_std_21', 'close_sw_skew_126', 'close_ew_mean_10/63', 'usd_sw_std_5_21', 'gold_sw_std_63', 'brent_return_sw_mean_63', 'bonds_ew_std_63', 'brent_sw_skew_21/126', 'price_vol_adj_ew_std_21/126', 'usd_return_ew_std_63', 'brent_sw_std_21_126', 'top3_vol_sw_std_21/126')": [
+        523.6110948128967,
+        0.0,
+        0.8202182324308609,
+        24.882456710937845
+    ],
+    "('gold_return_sw_skew_126', 'mean/close_63', 'p/e_return_sw_mean_63_126', 'return_ew_std_63/126', 'brent_return_sw_mean_10/63', 'return_sw_std_10_21', 'close_sw_mean_5/21', 'return_ew_std_10', 'usd_sw_skew_5_21', 'price_vol_adj_return_ew_mean_21_126', 'brent_sw_std_5_21', 'brent_return_ew_std_21/63', 'brent_sw_skew_21_63')": [
+        445.2012052812687,
+        5.684341886080802e-14,
+        2.4479448309326273,
+        33.74797702861539
+    ],
+    "('gold_return_sw_mean_5', 'bonds_return_ew_mean_10/21', 'p/e_return_ew_mean_63', 'close_sw_skew_10_21', 'top3_vol_sw_mean_21_126', 'gold_return_ew_std_5_21', 'bonds_sw_std_5/21', 'price_vol_adj_ew_std_10_63', 'ruonia_ew_mean_5_21', 'rates_delta_ew_std_63_126', 'ruonia_ew_mean_63/126', 'bonds_sw_std_21', 'p/e_return_sw_mean_63/126', 'rates_delta_sw_std_63_126')": [
+        488.43027057472557,
+        5.684341886080802e-14,
+        4.49629912592556,
+        25.533639114211596
+    ],
+    "('p/e_return_ew_std_63', 'usd_return_sw_std_5', 'usd_return_ew_mean_21_126', 'bonds_return_sw_skew_10_21', 'price_vol_adj_return_ew_std_10_21', 'return_ew_mean_10/21', 'bonds_return_ew_mean_5', 'top3_vol_sw_skew_5/21', 'usd_ew_mean_5_21', 'bonds_return_sw_skew_21/126', 'brent_ew_std_21_63', 'ruonia_ew_mean_5_21', 'return_ew_std_10/63')": [
+        476.9232203195676,
+        5.684341886080802e-14,
+        11.267483460297115,
+        19.18769930586343
+    ],
+    "('usd_return_sw_skew_21', 'p/e_return_ew_mean_10_63', 'price_vol_adj_return_ew_mean_5', 'bonds_ew_std_5_21', 'p/e_sw_skew_63', 'gold_sw_skew_10_63', 'rates_delta_sw_std_10_63', 'gold_return_ew_mean_5/21', 'ruonia_ew_mean_21/63', 'ruonia_sw_mean_10_21', 'p/e_return_ew_std_5_21', 'usd_return_sw_mean_21/126')": [
+        548.3828829635363,
+        0.0,
+        14.980150575427075,
+        23.58993173939145
+    ],
+    "('rates_delta_sw_skew_10_63', 'usd_return_sw_std_10/63', 'usd_sw_std_126', 'top3_vol_sw_std_21_126', 'rates_delta_sw_std_10_63', 'gold_sw_skew_21', 'bonds_return_sw_std_10/21', 'usd_ew_mean_21/126', 'price_vol_adj_sw_mean_63/126', 'price_vol_adj_ew_mean_10/21', 'rates_delta_sw_mean_63/126')": [
+        550.9718224259117,
+        0.0,
+        18.141286886818918,
+        21.054843041185674
+    ],
+    "('brent_return_sw_mean_5', 'price_vol_adj_sw_std_10/21', 'usd_return_sw_std_126', 'p/e_sw_skew_63', 'p/e_sw_skew_21', 'top3_vol_ew_std_5/21', 'usd_sw_std_10/21', 'gold_return_sw_skew_63_126', 'p/e_ew_std_5/21', 'max/close_21', 'price_vol_adj_return_ew_std_21', 'gold_ew_mean_10/21', 'p/e_return_ew_mean_10')": [
+        606.7318789436872,
+        0.0,
+        11.01403500293273,
+        48.68149406500568
+    ],
+    "('close_sw_std_5_21', 'ruonia_ew_std_63_126', 'rates_delta_sw_std_126', 'usd_sw_mean_63/126', 'brent_return_sw_mean_10/21', 'usd_return_ew_std_10', 'p/e_sw_skew_63/126', 'gold_ew_std_21_126', 'p/e_return_sw_std_21/63', 'ruonia_ew_std_10_21', 'bonds_return_sw_mean_21_126', 'close_sw_mean_10_63', 'gold_return_ew_std_63_126', 'usd_sw_skew_126')": [
+        643.5688253814681,
+        0.0,
+        1.801900783054208,
+        47.2203798558513
+    ],
+    "('p/e_ew_mean_10/21', 'gold_sw_skew_21_63', 'top3_vol_sw_skew_21_126', 'price_vol_adj_return_ew_std_63', 'close_sw_std_10', 'gold_return_ew_std_21/126', 'price_vol_adj_ew_mean_63/126', 'close_ew_std_21_63', 'usd_return_sw_mean_63/126', 'top3_vol_sw_std_63_126', 'brent_return_ew_mean_5/21', 'gold_sw_std_21_126', 'brent_sw_std_21/126', 'p/e_ew_mean_63_126', 'top3_vol_ew_std_5_21', 'bonds_ew_mean_5/21')": [
+        467.1109390875914,
+        5.684341886080802e-14,
+        22.40836303074981,
+        13.058014541334279
+    ],
+    "('return_sw_std_21', 'price_vol_adj_return_sw_std_5', 'bonds_return_sw_mean_21_126', 'brent_return_ew_mean_10/63', 'median/close_21', 'price_vol_adj_ew_mean_21/126', 'brent_ew_std_21/63', 'bonds_return_sw_std_21_63', 'brent_return_ew_std_10_63', 'price_vol_adj_ew_std_63', 'gold_return_sw_mean_126', 'return_sw_std_10_63', 'brent_sw_mean_63_126', 'usd_sw_skew_21/63')": [
+        458.51815807277205,
+        0.0,
+        10.025393898451313,
+        17.078883017377173
+    ],
+    "('gold_sw_skew_21_126', 'price_vol_adj_return_sw_mean_126', 'gold_return_ew_std_5/21', 'gold_return_sw_skew_21_126', 'brent_sw_mean_21_126', 'bonds_return_sw_std_21_63', 'brent_ew_std_21/126', 'rates_delta_ew_std_10_21', 'close_sw_mean_5/21', 'bonds_return_ew_mean_5_21', 'price_vol_adj_return_ew_std_10_63', 'price_vol_adj_sw_mean_10_21', 'p/e_return_ew_std_10/63', 'price_vol_adj_sw_skew_21/63', 'usd_ew_std_10_21', 'p/e_sw_skew_10_21', 'p/e_return_sw_std_21/63')": [
+        489.2964523768843,
+        5.684341886080802e-14,
+        11.783412650535283,
+        12.396032655030298
+    ],
+    "('price_vol_adj_sw_mean_21/126', 'usd_return_ew_mean_21/63', 'ruonia_sw_std_126', 'usd_ew_mean_21_126', 'return_sw_std_63/126', 'top3_vol_sw_mean_21_63', 'ruonia_ew_mean_63/126', 'return_ew_mean_21_63', 'p/e_sw_mean_21/126', 'gold_sw_std_10_63')": [
+        535.9453323321692,
+        0.0,
+        6.152327359580823,
+        26.84578286255845
+    ],
+    "('top3_vol_sw_mean_21/126', 'price_vol_adj_return_sw_mean_21_63', 'usd_ew_mean_21_126', 'return_sw_skew_63', 'brent_sw_mean_21_126', 'price_vol_adj_return_sw_std_10/21', 'rates_delta_ew_std_10_21', 'usd_sw_mean_21_126', 'close_ew_std_5', 'price_vol_adj_sw_mean_63_126', 'bonds_return_ew_mean_21_126', 'gold_return_sw_mean_126', 'usd_ew_mean_63_126', 'bonds_sw_mean_5/21', 'price_vol_adj_return_ew_mean_5_21', 'brent_sw_mean_10_63', 'brent_return_sw_mean_10/63', 'gold_ew_mean_21_126', 'bonds_ew_std_10/63', 'usd_return_ew_std_10/63')": [
+        531.6195169175782,
+        0.0,
+        1.9031793027643715,
+        32.894127860262984
+    ],
+    "('rates_delta_sw_mean_21/126', 'close_ew_mean_10/63', 'bonds_sw_std_5/21', 'close_sw_std_5_21', 'p/e_return_sw_skew_5_21', 'usd_sw_mean_5/21', 'price_vol_adj_return_ew_mean_10_63', 'close_sw_mean_5_21', 'p/e_return_ew_mean_21_63', 'top3_vol_sw_skew_21/126', 'ruonia_ew_std_10/63')": [
+        688.9181767730371,
+        0.0,
+        18.090371771067936,
+        82.50663427059509
+    ],
+    "('return_ew_std_10_21', 'p/e_ew_mean_10/21', 'p/e_ew_std_10/63', 'usd_ew_mean_10_63', 'return_ew_std_21_63', 'brent_return_sw_std_10/21', 'mean/close_126', 'p/e_sw_std_21/126', 'gold_return_sw_std_5_21', 'p/e_return_sw_mean_5/21', 'brent_return_sw_mean_10_21', 'rates_delta_sw_std_10/63', 'gold_sw_std_63_126', 'brent_return_ew_mean_5/21', 'aroon_down_126', 'price_vol_adj_ew_std_10/63', 'price_vol_adj_ew_std_10_63', 'top3_vol_sw_mean_21/63', 'usd_ew_mean_21_63', 'bonds_return_sw_skew_63_126')": [
+        491.4236933833405,
+        5.684341886080802e-14,
+        0.9831670303287865,
+        13.592925175245721
+    ],
+    "('p/e_sw_mean_21_126', 'price_vol_adj_sw_mean_21_126', 'p/e_return_sw_skew_21/126', 'max/close_10', 'p/e_sw_skew_21/126', 'bonds_ew_std_10/63', 'top3_vol_sw_skew_10/21', 'brent_return_ew_mean_63/126', 'gold_return_sw_std_126', 'price_vol_adj_return_sw_skew_21_126', 'close_sw_skew_5/21', 'usd_ew_mean_63_126', 'price_vol_adj_sw_mean_5_21', 'return_sw_skew_21/126', 'brent_sw_skew_10_63', 'bonds_return_sw_std_21', 'bonds_ew_mean_5/21', 'p/e_return_ew_std_126')": [
+        523.6734086079384,
+        0.0,
+        17.278902256090532,
+        15.802375617497807
+    ],
+    "('bonds_return_ew_std_10', 'usd_return_ew_std_21/126', 'price_vol_adj_sw_skew_63', 'bonds_sw_std_5_21', 'close_sw_std_21_126', 'price_vol_adj_sw_std_21_126', 'p/e_return_sw_mean_21/63', 'usd_return_ew_mean_5', 'brent_return_sw_mean_10/63', 'gold_return_ew_std_21', 'bonds_sw_std_63_126', 'return_sw_skew_21_126', 'bonds_sw_skew_10_63', 'bonds_return_ew_std_5/21', 'return_ew_std_63_126', 'brent_sw_mean_10_63', 'price_vol_adj_sw_skew_63_126', 'bonds_return_sw_skew_63_126')": [
+        444.8474199496894,
+        5.684341886080802e-14,
+        3.780730277040874,
+        18.875009682442656
+    ],
+    "('rates_delta_sw_skew_10_63', 'price_vol_adj_return_ew_mean_126', 'usd_return_sw_skew_10', 'price_vol_adj_return_sw_std_21', 'usd_return_sw_skew_10/21', 'roc_2', 'usd_sw_skew_63/126', 'bonds_sw_std_5_21', 'gold_sw_std_63/126', 'gold_sw_skew_21', 'brent_return_ew_std_21', 'brent_sw_mean_21/63', 'return_sw_std_10/21', 'min/close_126', 'usd_sw_skew_21/63')": [
+        492.42448249141364,
+        5.684341886080802e-14,
+        9.17048644056814,
+        18.39660394623703
+    ],
+    "('price_vol_adj_return_ew_mean_126', 'gold_return_ew_std_5', 'usd_ew_std_10/63', 'brent_return_sw_std_63_126', 'p/e_return_sw_mean_126', 'bonds_sw_std_5_21', 'return_sw_skew_5/21', 'rates_delta_sw_std_21/126', 'price_vol_adj_ew_std_63', 'usd_ew_std_126', 'p/e_return_ew_std_10_21', 'brent_sw_std_10/63', 'top3_vol_sw_mean_10_63', 'return_ew_std_5/21', 'bonds_return_sw_std_63/126', 'usd_sw_mean_5/21', 'usd_return_ew_mean_63_126')": [
+        473.1226401646007,
+        0.0,
+        14.514258321828308,
+        11.137526963573412
+    ],
+    "('return_ew_std_10_21', 'p/e_sw_std_126', 'bonds_sw_std_5_21', 'gold_return_ew_mean_10_21', 'p/e_sw_std_21/63', 'bonds_return_sw_mean_5/21', 'brent_return_ew_mean_21_63', 'bonds_return_sw_std_126', 'close_sw_skew_21/126', 'brent_sw_std_21/63', 'gold_return_ew_mean_10/21')": [
+        470.1295375952667,
+        0.0,
+        18.433280460824676,
+        27.006891685830873
+    ],
+    "('gold_return_sw_std_5', 'bonds_return_ew_mean_5/21', 'gold_sw_std_63/126', 'top3_vol_sw_skew_10/63', 'gold_ew_std_5/21', 'brent_return_sw_std_10/21', 'median/close_10', 'ruonia_ew_std_10_21', 'close_ew_std_126', 'price_vol_adj_sw_mean_63/126', 'usd_return_ew_mean_5/21')": [
+        443.2043965313425,
+        5.684341886080802e-14,
+        3.6046839890524325,
+        15.914943576814244
+    ],
+    "('p/e_return_sw_skew_63_126', 'gold_ew_mean_10/21', 'gold_return_sw_skew_10/21', 'gold_return_ew_std_21/126', 'brent_sw_skew_10/21', 'top3_vol_sw_skew_10/21', 'max/close_10', 'rates_delta_ew_std_63_126', 'gold_sw_std_21/126', 'return_sw_mean_5/21', 'price_vol_adj_return_sw_mean_5', 'p/e_return_ew_std_10_63', 'rates_delta_lag', 'brent_return_sw_mean_10_21', 'bonds_sw_std_21/126', 'brent_return_sw_skew_21/63')": [
+        465.49483403342657,
+        0.0,
+        3.9239330068049867,
+        16.353909955182004
+    ],
+    "('usd_return_sw_skew_21', 'p/e_sw_skew_10_63', 'price_vol_adj_return_ew_mean_5', 'gold_return_sw_skew_126', 'bonds_return_sw_skew_10_63', 'ruonia_sw_mean_21/63', 'usd_sw_mean_63_126', 'usd_ew_std_21_126', 'bonds_return_sw_skew_5', 'bonds_ew_std_63', 'rates_delta_ew_std_10', 'close_ew_std_21_63', 'usd_sw_skew_10_63', 'return_ew_std_63')": [
+        480.53604195347646,
+        0.0,
+        8.581154909851307,
+        17.598830860233193
+    ],
+    "('gold_return_sw_std_21/126', 'usd_sw_skew_5/21', 'brent_sw_skew_10_21', 'top3_vol_sw_skew_63_126', 'ruonia_sw_std_5', 'price_vol_adj_sw_std_63_126', 'p/e_ew_std_10_63', 'brent_return_sw_std_5', 'usd_return_ew_mean_5', 'p/e_return_ew_mean_21_126', 'close_sw_skew_63', 'p/e_return_sw_skew_5_21', 'rates_delta_ew_std_10', 'gold_return_sw_skew_10/21', 'return_ew_std_21_63', 'price_vol_adj_return_sw_std_63/126', 'brent_sw_mean_21_126')": [
+        570.9951252047528,
+        0.0,
+        13.23113928516068,
+        34.009785279817905
+    ],
+    "('p/e_return_ew_mean_21/126', 'p/e_sw_skew_5_21', 'bonds_sw_std_5', 'bonds_return_sw_std_10/21', 'usd_return_sw_mean_21', 'return_ew_mean_5/21', 'brent_sw_mean_63/126', 'rates_delta_sw_skew_10_63', 'price_vol_adj_return_sw_std_63/126', 'gold_return_ew_mean_21/63', 'close_sw_mean_63/126', 'price_vol_adj_sw_std_21/63', 'p/e_sw_mean_63/126', 'price_vol_adj_return_ew_std_10', 'bonds_ew_mean_21_126')": [
+        501.17252488202587,
+        0.0,
+        9.561828747086338,
+        16.36424367659614
+    ],
+    "('price_vol_adj_return_sw_skew_10_21', 'usd_ew_std_10/63', 'gold_ew_std_63', 'rates_delta_ew_mean_10_63', 'bonds_sw_skew_63', 'gold_return_sw_mean_5_21', 'p/e_return_ew_std_5_21', 'gold_sw_std_63/126', 'usd_sw_std_21', 'close_sw_std_21', 'p/e_return_sw_std_63/126', 'bonds_return_ew_std_21/126', 'top3_vol_ew_mean_21/126', 'brent_return_ew_mean_21_63', 'bonds_return_sw_std_5_21', 'price_vol_adj_return_ew_mean_10_21')": [
+        410.8419405964514,
+        0.0,
+        8.274671865392719,
+        17.874492315275596
+    ],
+    "('top3_vol_sw_std_10', 'rates_delta_sw_std_10/63', 'gold_ew_mean_5/21', 'usd_return_sw_skew_63/126', 'usd_sw_mean_21/63', 'gold_ew_mean_10_63', 'return_ew_std_5_21', 'brent_sw_std_5/21', 'ruonia_sw_mean_5_21', 'brent_return_sw_std_21/126', 'p/e_sw_mean_21_126', 'bonds_return_sw_mean_63_126', 'gold_sw_mean_21_63', 'bonds_return_sw_skew_5', 'gold_return_sw_mean_5_21', 'ruonia_ew_mean_10/63', 'bonds_ew_std_5_21')": [
+        469.9678701693645,
+        0.0,
+        25.143419231127808,
+        26.006696806163983
+    ],
+    "('price_vol_adj_return_ew_mean_5', 'brent_sw_mean_63/126', 'brent_return_ew_std_21/126', 'close_sw_std_21_126', 'p/e_return_sw_mean_21_126', 'top3_vol_sw_std_5', 'ruonia_sw_skew_5/21', 'top3_vol_sw_mean_10_21', 'rates_delta_ew_std_126', 'return_ew_std_21', 'return_sw_mean_63', 'bonds_return_sw_skew_10/63', 'brent_sw_skew_21_63')": [
+        489.3144442912629,
+        0.0,
+        4.589627265100489,
+        23.933252047820787
+    ],
+    "('bonds_ew_std_21/126', 'gold_sw_std_10/21', 'usd_return_sw_mean_126', 'usd_ew_mean_21_126', 'rates_delta_sw_skew_21_63', 'gold_return_sw_mean_21/126', 'bonds_sw_std_63', 'brent_return_ew_std_21', 'bonds_sw_skew_10/21', 'price_vol_adj_return_sw_mean_21/126', 'usd_sw_std_63/126', 'gold_sw_skew_5/21', 'p/e_ew_std_5', 'gold_ew_mean_63_126')": [
+        546.694355866761,
+        0.0,
+        7.587240833181795,
+        22.818966901352972
+    ],
+    "('ruonia_sw_std_126', 'bonds_sw_std_21/126', 'rates_delta_ew_mean_10_63', 'price_vol_adj_return_sw_skew_21/63', 'brent_return_ew_mean_21', 'usd_return_ew_mean_10', 'rates_delta_sw_std_21_126', 'brent_return_sw_mean_21/63', 'brent_sw_skew_21/63', 'rates_delta_ew_std_63_126', 'usd_return_sw_skew_63/126', 'usd_return_sw_skew_21_63')": [
+        467.9974966975615,
+        0.0,
+        3.3804787193506343,
+        17.757284855018188
+    ],
+    "('brent_ew_mean_21_126', 'gold_return_ew_std_10', 'bonds_ew_std_10_63', 'usd_ew_std_5/21', 'top3_vol_sw_mean_21_63', 'price_vol_adj_return_ew_mean_5_21', 'usd_return_sw_skew_21/63', 'bonds_ew_mean_21_63', 'close_sw_std_21_126', 'bonds_return_sw_mean_10', 'ruonia_sw_skew_10', 'bonds_return_sw_mean_10/63', 'return_sw_std_10', 'bonds_return_ew_std_21', 'gold_return_ew_std_21/126')": [
+        437.79999863810355,
+        0.0,
+        10.113722192338315,
+        12.478352769299763
+    ],
+    "('brent_ew_mean_10/21', 'usd_return_sw_mean_5', 'return_sw_skew_10_21', 'brent_ew_std_21_126', 'p/e_sw_std_126', 'bonds_return_sw_skew_21/126', 'usd_ew_std_21_126', 'usd_sw_skew_63_126', 'price_vol_adj_return_sw_std_21/126', 'oscillator_sw_21', 'rates_delta_ew_std_63_126')": [
+        568.5014898787871,
+        0.0,
+        5.857337820593784,
+        23.90393630336598
+    ],
+    "('return_ew_mean_126', 'return_ew_std_5/21', 'brent_return_ew_mean_10', 'rates_delta_sw_skew_63/126', 'p/e_sw_skew_21/63', 'rates_delta_ew_std_63_126', 'return_ew_mean_10_21', 'price_vol_adj_return_sw_skew_5_21', 'price_vol_adj_ew_std_10', 'top3_vol_ew_std_63_126', 'rates_delta_ew_mean_63_126', 'gold_sw_skew_63', 'gold_return_ew_std_10_21', 'price_vol_adj_ew_std_63/126', 'brent_return_ew_std_21/126', 'p/e_return_sw_mean_21/63', 'gold_return_ew_std_63_126', 'price_vol_adj_return_ew_mean_21_126', 'usd_sw_skew_21/63', 'usd_ew_mean_63/126', 'brent_sw_skew_126')": [
+        458.97845846775215,
+        0.0,
+        18.36522517605286,
+        12.577561355251813
+    ],
+    "('usd_return_sw_skew_63_126', 'bonds_sw_mean_21_126', 'brent_return_sw_skew_126', 'return_sw_std_21_63', 'bonds_sw_mean_21/63', 'usd_sw_skew_63_126', 'bonds_sw_std_63_126', 'bonds_return_ew_std_21/126', 'p/e_return_ew_std_63/126', 'brent_sw_skew_21_63', 'top3_vol_ew_std_21_63', 'top3_vol_sw_skew_126', 'p/e_sw_mean_63_126', 'usd_return_sw_mean_21/126', 'price_vol_adj_return_ew_mean_21_63', 'brent_return_sw_skew_5/21', 'bonds_return_sw_skew_63/126', 'top3_vol_ew_mean_10/21', 'bonds_return_ew_std_10_63')": [
+        470.0549857386769,
+        0.0,
+        16.944319705599966,
+        16.851754877988526
+    ],
+    "('usd_return_sw_skew_21', 'top3_vol_ew_std_10/21', 'p/e_sw_mean_21/126', 'usd_return_ew_std_126', 'gold_return_ew_mean_126', 'gold_return_ew_mean_10/63', 'bonds_sw_skew_21/63', 'close_sw_std_10_21', 'brent_ew_std_21_126', 'usd_return_sw_mean_63', 'ruonia_ew_std_21/63', 'top3_vol_ew_std_126', 'p/e_ew_mean_21_126', 'brent_ew_mean_10_21', 'usd_sw_std_10_21', 'usd_return_sw_mean_21_126', 'gold_return_ew_std_10', 'usd_return_ew_mean_5_21', 'p/e_return_ew_mean_5/21', 'ruonia_ew_mean_63/126')": [
+        475.2846047342856,
+        5.684341886080802e-14,
+        3.456093356092083,
+        18.95159125559043
+    ],
+    "('price_vol_adj_ew_std_10/21', 'brent_return_ew_mean_5_21', 'usd_sw_mean_63/126', 'brent_sw_std_10/63', 'gold_sw_mean_10_21', 'brent_return_ew_std_10_21', 'bonds_return_ew_mean_21', 'brent_return_ew_std_21/63', 'rates_delta_ew_std_63/126', 'rates_delta_sw_mean_10_21', 'price_vol_adj_return_ew_mean_21', 'gold_return_sw_std_10')": [
+        584.3897424610069,
+        0.0,
+        2.9058943875863292,
+        32.01640652681983
+    ],
+    "('gold_sw_skew_21_126', 'gold_ew_std_21/63', 'bonds_ew_std_10_21', 'usd_return_ew_mean_10/21', 'gold_sw_skew_10/63', 'bonds_ew_std_10/21', 'brent_ew_std_21', 'usd_return_sw_skew_10/21', 'gold_return_sw_mean_10/21', 'price_vol_adj_return_sw_std_10/63', 'bonds_sw_skew_10_63', 'gold_sw_std_5', 'price_vol_adj_return_sw_skew_21/63', 'p/e_sw_std_126', 'top3_vol_sw_std_5/21', 'price_vol_adj_sw_mean_5/21', 'brent_sw_skew_5', 'ruonia_ew_mean_10_21', 'close_ew_mean_21/63', 'bonds_sw_skew_21_63', 'brent_sw_skew_126')": [
+        445.3355739408356,
+        5.684341886080802e-14,
+        3.910359297400234,
+        15.189856188183622
+    ],
+    "('gold_return_ew_mean_63', 'usd_return_sw_mean_21/126', 'bonds_sw_skew_126', 'price_vol_adj_return_ew_mean_21', 'gold_return_sw_skew_21/63', 'return_sw_skew_10/21', 'price_vol_adj_ew_mean_21_63', 'price_vol_adj_return_ew_mean_21/126', 'brent_return_ew_std_63/126', 'close_sw_skew_21_126', 'usd_ew_mean_21_126', 'price_vol_adj_return_sw_mean_10_21', 'close_ew_std_5_21', 'usd_sw_skew_21/63', 'gold_ew_std_21/63', 'p/e_sw_std_5_21', 'p/e_return_sw_mean_63_126', 'usd_return_sw_std_21_63', 'bonds_return_ew_std_10_63')": [
+        559.9391760240578,
+        0.0,
+        3.0572088148166614,
+        25.2110777072692
+    ],
+    "('gold_return_sw_mean_126', 'ruonia_sw_std_21/63', 'ruonia_sw_std_5_21', 'bonds_sw_mean_21_126', 'brent_sw_std_10/63', 'brent_return_ew_mean_5', 'usd_return_sw_mean_10_21', 'brent_return_sw_std_5', 'usd_ew_std_5_21', 'gold_return_sw_std_126')": [
+        495.786665021115,
+        5.684341886080802e-14,
+        14.857517309808358,
+        21.54318138927745
+    ],
+    "('ruonia_sw_skew_10/21', 'price_vol_adj_return_ew_std_21/126', 'top3_vol_sw_skew_21/126', 'brent_return_sw_skew_21/63', 'rsi_sw_10', 'price_vol_adj_return_ew_std_63', 'price_vol_adj_sw_skew_10/21', 'usd_sw_mean_21/126', 'close_sw_skew_63/126', 'usd_ew_std_10/21', 'close_sw_skew_21/126', 'bonds_sw_skew_10/21', 'gold_return_ew_mean_10')": [
+        449.63054476319155,
+        5.684341886080802e-14,
+        2.0212294024783546,
+        26.792305516487556
+    ],
+    "('gold_return_sw_mean_10_21', 'return_sw_std_10_63', 'aroon_up_63', 'brent_return_sw_std_10_63', 'brent_return_sw_std_21/63', 'usd_return_sw_skew_21_126', 'gold_ew_std_63', 'return_sw_std_21_126', 'gold_ew_std_126', 'bonds_ew_std_21/126')": [
+        456.83376526582754,
+        0.0,
+        10.50539645982498,
+        19.592598314620407
+    ],
+    "('gold_sw_mean_5_21', 'p/e_sw_skew_21_63', 'return_sw_std_10_63', 'brent_return_sw_std_5/21', 'p/e_ew_mean_21/126', 'usd_sw_mean_21_126', 'rates_delta_sw_std_10/21', 'ruonia_sw_std_5/21', 'brent_sw_mean_63_126', 'bonds_return_sw_skew_5/21', 'brent_return_sw_mean_63/126', 'mean/close_252', 'brent_ew_mean_10_21', 'gold_sw_skew_5', 'bonds_return_ew_mean_10/63', 'price_vol_adj_sw_std_21/63', 'usd_ew_std_10_21', 'usd_return_sw_mean_63_126', 'bonds_lag', 'usd_return_ew_mean_21_63', 'top3_vol_sw_skew_21/63', 'usd_sw_skew_21/63')": [
+        425.1566669924142,
+        0.0,
+        8.75076397340463,
+        10.020552215596455
+    ],
+    "('usd_return_sw_std_63', 'usd_return_sw_skew_10_63', 'usd_sw_skew_5', 'ruonia_sw_std_21', 'p/e_return_sw_skew_63', 'usd_ew_mean_5_21', 'brent_return_sw_mean_63', 'gold_return_sw_std_5_21', 'gold_ew_mean_10_63', 'p/e_return_sw_mean_21/126', 'ruonia_sw_mean_10_63')": [
+        744.8563659955734,
+        0.0,
+        3.3608428050432906,
+        82.9059758780408
+    ],
+    "('gold_ew_std_10/63', 'p/e_ew_std_21/63', 'rates_delta_sw_mean_5_21', 'gold_sw_std_10/21', 'rates_delta_sw_mean_10/63', 'ruonia_sw_std_10', 'return_ew_mean_10', 'bonds_return_ew_std_21/63', 'usd_sw_mean_21_63', 'usd_return_ew_std_5_21', 'price_vol_adj_ew_mean_10_21', 'usd_sw_mean_63_126', 'usd_return_sw_mean_21/126', 'usd_sw_std_10_21', 'gold_sw_std_21/63')": [
+        435.71473109015807,
+        5.684341886080802e-14,
+        7.659016302952551,
+        15.10692796571189
+    ],
+    "('price_vol_adj_ew_mean_21_63', 'max/close_21', 'p/e_sw_std_10/21', 'bonds_sw_skew_63_126', 'gold_return_sw_skew_21_126', 'p/e_return_sw_mean_63_126', 'close_ew_std_10_63', 'rates_delta_ew_mean_5/21', 'brent_ew_mean_10_21', 'top3_vol_sw_skew_63_126', 'price_vol_adj_return_ew_mean_10_63', 'return_sw_std_10_63', 'bonds_return_sw_std_63/126', 'gold_return_lag', 'ruonia_sw_mean_63/126', 'rates_delta_ew_mean_21_63', 'p/e_return_sw_skew_10_21')": [
+        458.68803262444806,
+        5.684341886080802e-14,
+        7.891459635511325,
+        18.00684372869801
+    ],
+    "('price_vol_adj_return_sw_skew_63', 'usd_sw_std_5', 'usd_ew_mean_21/63', 'usd_return_sw_std_10', 'return_sw_mean_126', 'price_vol_adj_return_ew_std_5_21', 'roc_2', 'max/close_21', 'bonds_sw_std_10_63', 'price_vol_adj_ew_mean_10_63', 'p/e_return_sw_skew_21_126')": [
+        468.6038381441973,
+        0.0,
+        6.317049216835727,
+        17.35066556020122
+    ],
+    "('usd_return_sw_mean_10/63', 'gold_sw_skew_21_126', 'ruonia_sw_mean_5_21', 'price_vol_adj_return_ew_mean_63', 'usd_return_sw_mean_10_21', 'price_vol_adj_return_ew_std_21/126', 'brent_ew_std_10/63', 'bonds_return_ew_mean_5/21', 'gold_sw_skew_21', 'p/e_sw_skew_21/63', 'bonds_ew_mean_21/126', 'gold_return_sw_mean_5', 'mean/close_252', 'rsi_sw_10', 'price_vol_adj_ew_std_5', 'p/e_sw_std_10_21', 'bonds_return_ew_std_21/63', 'return_ew_std_21/63', 'usd_sw_skew_126')": [
+        479.30192693506217,
+        5.684341886080802e-14,
+        1.7995897893404447,
+        22.147750050441317
+    ],
+    "('p/e_return_ew_std_21/63', 'top3_vol_sw_skew_126', 'gold_sw_skew_10/21', 'p/e_return_sw_mean_21_63', 'return_ew_mean_10/63', 'usd_sw_std_5_21', 'bonds_return_sw_mean_21/126', 'usd_return_ew_mean_5', 'return_sw_std_63/126', 'p/e_sw_mean_10_63', 'rates_delta_ew_mean_10_21', 'gold_ew_std_21/126', 'close_sw_skew_21', 'usd_return_ew_mean_63/126', 'rates_delta_ew_mean_21_126', 'ruonia_ew_std_21', 'ruonia_sw_std_126', 'gold_sw_mean_63_126')": [
+        427.83435346105455,
+        0.0,
+        6.041688896978684,
+        14.088733045567391
+    ],
+    "('top3_vol_ew_mean_10/21', 'return_sw_std_63_126', 'price_vol_adj_return_sw_std_10/21', 'price_vol_adj_return_sw_skew_5/21', 'brent_sw_skew_21_63', 'bonds_sw_mean_10/63', 'top3_vol_sw_mean_21_63', 'price_vol_adj_sw_std_10_21', 'usd_sw_skew_63', 'gold_sw_std_5', 'top3_vol_ew_std_126', 'usd_return_sw_mean_5', 'ruonia_sw_skew_63_126', 'brent_return_sw_mean_5', 'price_vol_adj_sw_std_21_63', 'bonds_ew_mean_63_126', 'top3_vol_sw_skew_63', 'return_sw_skew_21_63', 'ruonia_ew_mean_63/126')": [
+        420.7642529897374,
+        5.684341886080802e-14,
+        2.0441219537917164,
+        18.975158793151394
+    ],
+    "('brent_return_sw_mean_126', 'return_sw_std_10/63', 'return_sw_skew_10/63', 'top3_vol_sw_skew_21_126', 'price_vol_adj_return_sw_skew_21', 'brent_sw_skew_21/63', 'gold_sw_skew_63_126', 'usd_return_ew_std_63', 'p/e_ew_std_10_63', 'gold_sw_std_21_63', 'brent_return_ew_mean_10/63', 'top3_vol_sw_std_21', 'bonds_ew_std_5/21', 'rates_delta_sw_mean_5_21', 'gold_return_sw_skew_5/21', 'gold_return_sw_mean_10/63')": [
+        466.61191035868325,
+        5.684341886080802e-14,
+        13.203159099537856,
+        15.83050259568184
+    ],
+    "('return_sw_std_5', 'p/e_return_sw_std_126', 'return_ew_std_63/126', 'return_sw_skew_10/21', 'price_vol_adj_return_ew_std_5_21', 'close_sw_std_10', 'top3_vol_sw_mean_10/63', 'gold_sw_mean_10_63', 'price_vol_adj_ew_mean_21/63', 'brent_ew_std_21_126', 'rsi_sw_21', 'brent_ew_std_21_63', 'ruonia_sw_mean_10/21', 'brent_ew_mean_63/126', 'usd_sw_std_21_63', 'return_ew_std_10/63')": [
+        528.8322640574874,
+        0.0,
+        7.79209659086537,
+        32.54254973823194
+    ],
+    "('brent_sw_skew_21', 'gold_sw_skew_21_126', 'price_vol_adj_sw_skew_63', 'bonds_ew_std_21', 'p/e_sw_skew_10', 'ruonia_ew_std_10', 'bonds_return_sw_mean_5/21', 'brent_return_ew_mean_10', 'close_sw_mean_21/126', 'usd_return_ew_mean_5/21', 'p/e_return_sw_skew_21_126')": [
+        432.4709924212402,
+        0.0,
+        2.5058690857566575,
+        31.193732596072174
+    ],
+    "('usd_return_sw_mean_10_63', 'rates_delta_ew_std_63/126', 'usd_return_ew_mean_5_21', 'price_vol_adj_sw_mean_21_126', 'price_vol_adj_return_sw_std_126', 'price_vol_adj_return_sw_mean_21/63', 'p/e_return_ew_mean_5', 'p/e_return_sw_std_63/126', 'usd_return_sw_skew_21_63', 'close_sw_std_21_126', 'rates_delta_ew_std_5', 'price_vol_adj_ew_mean_63/126', 'rates_delta_sw_std_10_21', 'price_vol_adj_sw_std_126', 'p/e_sw_std_5_21', 'p/e_sw_std_10_21', 'usd_return_sw_mean_21/126', 'usd_sw_std_5/21')": [
+        498.42008268496977,
+        0.0,
+        20.08138317245144,
+        17.241782734266224
+    ],
+    "('bonds_ew_mean_21/63', 'return_sw_std_21', 'bonds_return_sw_skew_10_21', 'rates_delta_sw_std_10', 'rates_delta_ew_mean_5/21', 'rates_delta_ew_mean_5_21', 'close_sw_mean_10/63', 'oscillator_sw_10', 'usd_return_sw_mean_21/126', 'gold_return_sw_mean_21/63', 'close_sw_skew_21_126', 'rates_delta_sw_std_5', 'brent_sw_skew_126', 'bonds_ew_mean_63/126', 'price_vol_adj_return_ew_std_21/63', 'close_ew_mean_5_21')": [
+        681.9065446840763,
+        0.0,
+        1.48923977140538,
+        77.02532572324242
+    ],
+    "('brent_return_sw_skew_10', 'p/e_return_ew_mean_21_126', 'return_ew_std_5_21', 'p/e_ew_mean_21/126', 'brent_sw_skew_63/126', 'rates_delta_ew_mean_5/21', 'p/e_ew_mean_10_63', 'price_vol_adj_return_ew_mean_5', 'rates_delta_sw_mean_10_21', 'gold_return_ew_std_63/126', 'bonds_return_ew_mean_5_21', 'brent_sw_std_21/63', 'rates_delta_ew_mean_63_126', 'usd_return_ew_std_5', 'usd_return_sw_std_21_63', 'price_vol_adj_ew_mean_10_63')": [
+        490.3359085424971,
+        0.0,
+        4.382211544708042,
+        26.122940794353973
+    ],
+    "('gold_sw_skew_21_63', 'ruonia_sw_skew_10', 'gold_sw_std_63/126', 'brent_ew_std_21_126', 'return_sw_skew_21', 'ruonia_sw_std_63', 'bonds_return_sw_std_10_63', 'bonds_return_ew_std_21_63', 'usd_return_sw_std_126', 'rates_delta_ew_std_21', 'return_sw_skew_10/63', 'bonds_return_sw_mean_10_63', 'price_vol_adj_return_sw_std_5_21', 'p/e_return_ew_std_10/21', 'bonds_ew_std_10/63', 'p/e_return_sw_std_5', 'top3_vol_ew_mean_10_63', 'brent_ew_std_21/63', 'price_vol_adj_sw_mean_21/63', 'top3_vol_ew_mean_10/63', 'return_sw_mean_5_21')": [
+        500.71730482516796,
+        0.0,
+        2.7319531883348844,
+        26.77181728740287
+    ],
+    "('gold_ew_std_10_63', 'p/e_return_ew_mean_63', 'oscillator_sw_63', 'usd_return_sw_std_5/21', 'price_vol_adj_return_sw_mean_21_63', 'usd_ew_mean_21_126', 'bonds_return_sw_std_21/126', 'price_vol_adj_return_ew_mean_126', 'rates_delta_ew_mean_5/21', 'usd_ew_mean_63_126', 'brent_return_ew_std_63_126', 'bonds_return_ew_mean_10', 'rsi_sw_10', 'ruonia_sw_skew_63_126', 'close_sw_mean_10/63', 'price_vol_adj_sw_std_21/126', 'usd_sw_skew_63/126', 'bonds_return_sw_mean_63/126', 'brent_return_ew_mean_63_126')": [
+        524.4529329119268,
+        0.0,
+        20.891723159674626,
+        32.58574878523087
+    ],
+    "('p/e_return_ew_mean_63', 'usd_return_sw_std_5/21', 'ruonia_sw_skew_63', 'rates_delta_sw_skew_21/63', 'top3_vol_sw_std_5', 'rates_delta_ew_mean_63/126', 'aroon_down_63', 'bonds_ew_mean_21_63', 'bonds_return_ew_std_5_21', 'bonds_sw_mean_10_63', 'gold_return_sw_skew_10/21', 'bonds_ew_std_10_63', 'gold_ew_mean_21/63', 'p/e_sw_skew_10_21', 'return_ew_mean_21/126', 'price_vol_adj_return_sw_skew_10/63', 'rates_delta_sw_skew_10_21', 'return_sw_std_21_63', 'usd_return_ew_mean_5_21', 'gold_return_sw_skew_63', 'usd_ew_std_21')": [
+        628.8983896731075,
+        0.0,
+        0.3062577896832437,
+        39.36166530344451
+    ],
+    "('usd_return_sw_mean_63_126', 'top3_vol_ew_std_63_126', 'top3_vol_sw_mean_21/126', 'price_vol_adj_sw_skew_21', 'return_sw_mean_63', 'price_vol_adj_return_sw_mean_5', 'brent_return_sw_skew_10', 'p/e_return_sw_skew_5/21', 'gold_sw_std_21/126', 'p/e_return_ew_std_5', 'usd_return_sw_mean_21/126', 'gold_return_sw_mean_10_63', 'rates_delta_sw_skew_63_126', 'brent_sw_skew_5_21', 'p/e_return_ew_mean_21_126', 'gold_return_sw_std_21_126', 'gold_ew_std_126')": [
+        464.1861359875321,
+        0.0,
+        3.458793885906374,
+        18.714225408592554
+    ],
+    "('usd_return_ew_std_21/63', 'usd_return_ew_mean_10/21', 'brent_return_ew_mean_10', 'bonds_return_sw_skew_63/126', 'bonds_ew_mean_21_126', 'p/e_return_sw_skew_21/126', 'bonds_return_sw_std_5_21', 'brent_return_ew_mean_21_63', 'brent_return_ew_std_63_126', 'p/e_sw_std_10/63', 'gold_return_sw_mean_5', 'gold_return_sw_skew_63/126', 'top3_vol_sw_std_63', 'gold_sw_std_5/21', 'rates_delta_ew_std_126', 'price_vol_adj_sw_std_21/126', 'ruonia_ew_std_126', 'bonds_return_sw_std_63_126', 'return_sw_mean_63/126', 'top3_vol_ew_std_63/126')": [
+        480.75872623149445,
+        5.684341886080802e-14,
+        2.397479084983331,
+        16.655768273885883
+    ],
+    "('bonds_ew_mean_10_21', 'price_vol_adj_return_sw_skew_63', 'brent_sw_skew_21_63', 'price_vol_adj_return_ew_std_5/21', 'return_ew_std_21/63', 'ruonia_ew_std_126', 'bonds_return_ew_mean_5', 'usd_return_sw_std_21', 'ruonia_sw_skew_10', 'return_sw_std_10/63', 'ruonia_sw_std_63', 'rates_delta_sw_std_21')": [
+        473.72051649264495,
+        0.0,
+        2.766233711640396,
+        19.414126037162156
+    ],
+    "('gold_return_ew_mean_10_21', 'brent_sw_std_63', 'rates_delta_ew_std_10/21', 'ruonia_sw_skew_63', 'ruonia_sw_std_63_126', 'min/close_126', 'usd_return_ew_mean_5_21', 'bonds_return_ew_std_63', 'brent_ew_std_10_63', 'brent_ew_std_126', 'bonds_ew_mean_10/63', 'ruonia_lag', 'bonds_sw_skew_5', 'p/e_return_sw_std_5_21', 'p/e_return_ew_mean_10_63', 'roc_10')": [
+        511.9531686381964,
+        5.684341886080802e-14,
+        0.1291234425741834,
+        26.674920824826636
+    ],
+    "('top3_vol_ew_mean_21/126', 'p/e_sw_std_5_21', 'price_vol_adj_ew_mean_63/126', 'return_ew_std_21', 'usd_sw_skew_10/21', 'brent_sw_mean_10/63', 'brent_return_sw_skew_10_63', 'price_vol_adj_ew_std_21_63', 'return_sw_mean_10_21', 'brent_return_ew_mean_10/63', 'price_vol_adj_return_ew_std_126')": [
+        554.1392867152755,
+        0.0,
+        2.8000414287684947,
+        21.43065347481718
+    ],
+    "('p/e_sw_skew_10/63', 'bonds_sw_mean_21_63', 'usd_return_sw_skew_5', 'price_vol_adj_return_sw_mean_63_126', 'p/e_ew_std_5_21', 'brent_return_ew_std_63_126', 'bonds_return_sw_skew_5/21', 'bonds_sw_std_21', 'p/e_return_sw_mean_10_63', 'p/e_sw_std_10_21', 'top3_vol_sw_skew_21_126')": [
+        585.3463803063263,
+        0.0,
+        20.26707585117049,
+        47.45518276941203
+    ],
+    "('price_vol_adj_sw_std_126', 'p/e_sw_skew_10_63', 'rates_delta_sw_skew_63_126', 'p/e_ew_std_10/63', 'p/e_return_ew_mean_10/63', 'gold_sw_mean_10/21', 'close_sw_std_21_126', 'brent_sw_std_10_21', 'return_sw_std_21_63', 'usd_sw_mean_63/126', 'bonds_return_sw_mean_21/126', 'usd_return_ew_std_5', 'top3_vol_ew_mean_63/126', 'rates_delta_ew_mean_63_126')": [
+        533.6112221890223,
+        0.0,
+        19.162330011781023,
+        17.35329862691884
+    ],
+    "('p/e_ew_std_10_63', 'brent_return_sw_skew_10_21', 'gold_ew_mean_63/126', 'brent_return_sw_skew_126', 'close_ew_std_21/126', 'brent_sw_std_10_21', 'bonds_return_ew_mean_21_126', 'brent_return_ew_mean_21', 'return_sw_skew_63/126', 'brent_ew_mean_21/126', 'usd_return_ew_std_5', 'bonds_sw_mean_10_63', 'usd_ew_mean_63/126', 'rates_delta_ew_mean_10/63', 'bonds_return_sw_std_21/63')": [
+        590.4880120618867,
+        0.0,
+        17.674459279951577,
+        28.705451052049078
+    ],
+    "('gold_return_sw_mean_5', 'price_vol_adj_return_ew_std_63/126', 'price_vol_adj_return_ew_mean_21', 'price_vol_adj_return_ew_std_5/21', 'ruonia_sw_mean_10/63', 'brent_return_sw_skew_5/21', 'bonds_ew_mean_63_126', 'return_sw_std_10', 'price_vol_adj_sw_std_63_126', 'usd_ew_mean_21_63', 'usd_sw_skew_21/63', 'rates_delta_sw_mean_21/63', 'p/e_sw_mean_63_126')": [
+        544.6698158237343,
+        0.0,
+        2.5866082331179143,
+        28.288214940403982
+    ],
+    "('top3_vol_ew_std_10/21', 'brent_sw_std_21', 'usd_ew_mean_21_126', 'brent_return_sw_std_10/21', 'usd_return_sw_skew_126', 'bonds_return_sw_skew_10', 'p/e_sw_skew_21/126', 'gold_return_sw_mean_10/63', 'p/e_return_sw_mean_21_63', 'price_vol_adj_sw_mean_63_126', 'price_vol_adj_return_sw_std_5/21', 'ruonia_sw_mean_10_21', 'p/e_return_ew_mean_5_21', 'gold_return_sw_mean_5', 'p/e_ew_mean_21_126', 'usd_return_ew_std_21_63', 'median/close_10', 'brent_sw_skew_5/21', 'top3_vol_sw_mean_10/63', 'rates_delta_sw_skew_5_21')": [
+        663.1842318176331,
+        0.0,
+        38.31758758779259,
+        61.91533586539593
+    ],
+    "('bonds_return_sw_skew_63', 'brent_sw_std_5_21', 'brent_return_ew_std_63/126', 'price_vol_adj_ew_std_21_126', 'bonds_sw_skew_10_21', 'p/e_ew_std_21_126', 'return_sw_std_21/63', 'return_sw_skew_5', 'close_ew_std_10_21', 'p/e_return_sw_skew_10/21', 'rates_delta_ew_mean_10/63', 'bonds_return_ew_std_21', 'bonds_return_sw_mean_21', 'ruonia_ew_mean_10_63')": [
+        532.3257270174395,
+        0.0,
+        16.43636573685876,
+        20.05745146310701
+    ],
+    "('return_ew_std_10/21', 'gold_sw_mean_5_21', 'usd_return_ew_std_126', 'brent_return_ew_mean_10', 'rates_delta_sw_mean_63/126', 'gold_return_ew_std_21/126', 'usd_return_ew_mean_21', 'brent_return_ew_mean_63', 'usd_ew_std_10/21', 'top3_vol_ew_std_5', 'bonds_sw_std_5', 'p/e_ew_mean_21_126', 'brent_ew_mean_5/21', 'ruonia_sw_std_21_126', 'ruonia_ew_std_10/63', 'top3_vol_sw_skew_21_63', 'p/e_sw_skew_10_21', 'ruonia_sw_std_126', 'p/e_return_sw_std_10_63')": [
+        457.6140982128936,
+        0.0,
+        11.781683190633686,
+        14.300931239510316
+    ],
+    "('gold_ew_std_21/63', 'close_sw_std_21_63', 'usd_ew_mean_21_126', 'bonds_return_sw_std_21/126', 'p/e_return_sw_mean_21', 'p/e_return_ew_std_10', 'bonds_ew_std_126', 'brent_return_ew_std_21_63', 'return_sw_mean_21/126', 'gold_ew_std_21/126', 'top3_vol_ew_mean_10_21', 'usd_ew_std_21/126', 'usd_return_ew_std_63/126', 'p/e_return_sw_mean_10/63', 'usd_return_ew_std_5/21', 'top3_vol_ew_std_63_126', 'brent_return_ew_mean_5/21', 'gold_return_ew_std_10', 'top3_vol_ew_std_10', 'ruonia_ew_std_5/21', 'brent_return_ew_mean_10/63')": [
+        425.37699903391075,
+        0.0,
+        6.467025233240136,
+        13.64691555887327
+    ],
+    "('gold_return_sw_mean_5', 'gold_return_sw_skew_63/126', 'bonds_sw_skew_5/21', 'brent_return_ew_std_10', 'bonds_return_ew_mean_21/126', 'p/e_return_sw_std_21', 'close_sw_std_21/63', 'usd_ew_mean_21_126', 'p/e_ew_mean_21/126', 'brent_sw_std_5_21', 'median/close_252')": [
+        528.7417733726479,
+        0.0,
+        3.553901598701856,
+        25.504914235305602
+    ],
+    "('price_vol_adj_return_ew_mean_5/21', 'rates_delta_sw_skew_10/63', 'price_vol_adj_sw_std_10_21', 'bonds_sw_mean_63/126', 'price_vol_adj_sw_mean_10/63', 'price_vol_adj_return_sw_skew_21_126', 'bonds_return_ew_mean_63/126', 'max/close_126', 'brent_return_ew_mean_21_63', 'return_sw_std_10_63', 'p/e_return_sw_std_5/21', 'usd_sw_skew_5/21', 'brent_sw_std_5_21', 'top3_vol_ew_std_5_21', 'usd_ew_mean_63/126', 'min/close_252', 'rates_delta_ew_mean_63_126')": [
+        519.0903335898271,
+        0.0,
+        2.590219039721404,
+        23.864198779707316
+    ],
+    "('bonds_sw_skew_5/21', 'brent_ew_std_21', 'ruonia_ew_mean_10/63', 'rsi_sw_63', 'usd_return_sw_std_126', 'bonds_return_sw_skew_21', 'ruonia_sw_skew_10/63', 'gold_sw_std_63/126', 'price_vol_adj_return_sw_std_10/63', 'gold_sw_mean_63/126', 'usd_return_ew_std_10/63', 'usd_sw_std_21', 'price_vol_adj_return_ew_std_10_63', 'return_sw_std_10_63', 'bonds_ew_mean_10/21', 'price_vol_adj_sw_std_21', 'brent_sw_std_5_21', 'gold_ew_std_5_21')": [
+        498.8465257733686,
+        0.0,
+        1.060283505269524,
+        20.161582634304647
+    ],
+    "('usd_return_ew_std_10/21', 'usd_return_sw_skew_10', 'top3_vol_sw_mean_21/126', 'usd_return_sw_mean_10_21', 'brent_sw_skew_5_21', 'p/e_return_ew_mean_63_126', 'bonds_ew_mean_21_126', 'return_sw_skew_10_63', 'p/e_ew_std_126', 'price_vol_adj_sw_std_63_126', 'brent_sw_mean_10/21', 'return_sw_mean_21/126', 'p/e_return_sw_skew_126', 'p/e_sw_std_63/126', 'bonds_sw_skew_21', 'price_vol_adj_return_sw_mean_126', 'close_sw_skew_21', 'top3_vol_sw_mean_10/63', 'gold_sw_mean_21/63', 'usd_return_ew_std_10/63', 'price_vol_adj_sw_std_5')": [
+        545.0340622823467,
+        0.0,
+        8.837294075734036,
+        28.426000093258086
+    ],
+    "('usd_return_ew_std_5/21', 'price_vol_adj_sw_std_10_21', 'bonds_return_sw_skew_5/21', 'ruonia_ew_std_63/126', 'close_ew_mean_10_63', 'gold_return_sw_std_63/126', 'p/e_return_sw_std_63_126', 'return_ew_mean_21_126', 'usd_sw_std_21/126', 'return_sw_mean_21_63', 'bonds_sw_std_126', 'close_ew_std_21_126')": [
+        535.7273989179798,
+        0.0,
+        2.108035291059707,
+        19.201996764785008
+    ],
+    "('p/e_sw_skew_10/63', 'price_vol_adj_sw_std_126', 'gold_return_sw_std_126', 'gold_ew_std_21/126', 'p/e_sw_std_10_63', 'bonds_sw_std_21', 'rates_delta_sw_skew_63_126', 'ruonia_ew_mean_10/63', 'usd_sw_skew_10_21', 'bonds_return_ew_std_63/126', 'price_vol_adj_ew_std_10_21', 'price_vol_adj_return_sw_mean_21', 'p/e_sw_skew_126', 'price_vol_adj_sw_mean_10/21', 'p/e_return_sw_std_63')": [
+        514.5810047189901,
+        0.0,
+        19.467463279040203,
+        17.326186099383765
+    ],
+    "('brent_return_sw_std_10', 'ruonia_ew_mean_10/63', 'bonds_ew_std_10_63', 'bonds_return_sw_std_5_21', 'usd_return_sw_std_10_21', 'p/e_return_ew_std_5', 'bonds_sw_skew_5', 'price_vol_adj_sw_skew_21', 'brent_sw_skew_21_126', 'return_ew_mean_21/126', 'brent_return_sw_std_126', 'return_sw_skew_126', 'usd_sw_mean_21_63')": [
+        487.9809748689405,
+        5.684341886080802e-14,
+        2.2619298031686412,
+        17.13200734465392
+    ],
+    "('oscillator_sw_63', 'return_ew_mean_5', 'gold_ew_std_21_126', 'gold_sw_std_21', 'price_vol_adj_return_sw_std_21_63', 'gold_return_sw_mean_10_21', 'rates_delta_ew_std_5_21', 'ruonia_sw_std_5/21', 'gold_sw_std_21_63', 'rates_delta_ew_std_21', 'usd_sw_std_10_21', 'brent_ew_std_21_63', 'return_sw_std_10/21', 'close_ew_std_10_21', 'price_vol_adj_return_sw_std_5_21', 'min/close_10', 'bonds_sw_mean_21/126', 'return_sw_std_21_63', 'close_sw_std_5_21', 'close_sw_skew_5/21', 'price_vol_adj_ew_mean_21_63', 'top3_vol_sw_skew_21_126')": [
+        521.6767647855369,
+        0.0,
+        11.57585001717402,
+        24.32592549590288
+    ],
+    "('usd_sw_skew_10/21', 'bonds_return_ew_mean_63_126', 'usd_sw_mean_5_21', 'roc_2', 'ruonia_sw_mean_10_21', 'usd_return_ew_mean_10/21', 'top3_vol_ew_mean_10/21', 'p/e_return_ew_std_63/126', 'rates_delta_sw_mean_10_63', 'usd_return_sw_std_126', 'gold_return_ew_std_63', 'gold_ew_mean_21/63', 'usd_return_ew_std_21/126', 'p/e_ew_std_10_21')": [
+        542.1051941215688,
+        0.0,
+        3.5538489002525466,
+        29.03509455225754
+    ],
+    "('bonds_ew_mean_10_21', 'brent_return_ew_std_21_126', 'usd_return_ew_std_126', 'brent_return_sw_std_10/21', 'gold_ew_std_10', 'usd_return_ew_std_10', 'rates_delta_ew_std_10/63', 'close_sw_skew_10/21', 'usd_ew_mean_63_126', 'usd_return_ew_std_21/126', 'price_vol_adj_return_ew_mean_5_21', 'price_vol_adj_return_ew_mean_21_63', 'rates_delta_sw_mean_63_126', 'p/e_sw_mean_10/63', 'p/e_return_sw_std_63', 'price_vol_adj_return_sw_std_5_21', 'usd_return_sw_skew_5', 'ruonia_ew_std_10/21', 'usd_sw_skew_5/21')": [
+        556.1001923033912,
+        0.0,
+        19.821555084849194,
+        25.002613647217224
+    ],
+    "('price_vol_adj_return_sw_mean_21/63', 'price_vol_adj_return_ew_mean_126', 'usd_ew_mean_63_126', 'rates_delta_ew_std_21/126', 'close_sw_skew_126', 'return_sw_std_10_21', 'price_vol_adj_sw_skew_21/63', 'bonds_ew_std_63', 'aroon_down_21', 'bonds_ew_mean_10/21', 'price_vol_adj_return_ew_mean_63_126', 'brent_return_ew_std_10/21', 'price_vol_adj_return_sw_std_5_21', 'gold_ew_std_63_126', 'price_vol_adj_sw_std_21/126', 'return_sw_skew_63_126', 'p/e_return_ew_std_10_63', 'p/e_ew_mean_5_21', 'rates_delta_sw_std_63', 'usd_sw_std_21/126', 'return_ew_std_21/126')": [
+        494.1379923691419,
+        5.684341886080802e-14,
+        6.0219207350396005,
+        17.489152353447274
+    ],
+    "('p/e_return_ew_std_5/21', 'gold_ew_std_21/63', 'top3_vol_ew_mean_10_63', 'price_vol_adj_return_sw_mean_21/63', 'gold_sw_skew_21_63', 'gold_sw_mean_21/63', 'price_vol_adj_ew_std_63_126', 'p/e_ew_std_126', 'rates_delta_sw_skew_10/21', 'return_sw_std_10/63', 'gold_return_sw_mean_21/63', 'usd_ew_mean_63/126', 'usd_return_sw_mean_21/126')": [
+        529.8335896709638,
+        0.0,
+        23.60728049162634,
+        20.412711950145997
+    ],
+    "('brent_sw_std_5_21', 'p/e_return_ew_std_63_126', 'p/e_return_sw_std_5', 'ruonia_ew_mean_10/63', 'price_vol_adj_return_sw_std_10_63', 'return_ew_std_21_63', 'return_ew_std_21/63', 'bonds_return_sw_mean_10_21', 'p/e_sw_skew_21/63', 'usd_ew_mean_21/126', 'gold_return_sw_skew_10', 'max/close_63', 'brent_sw_mean_10_21', 'brent_return_sw_skew_10/21', 'price_vol_adj_ew_mean_5_21', 'price_vol_adj_ew_mean_21_63', 'close_ew_std_10_21')": [
+        636.4787140701178,
+        0.0,
+        8.161405046943031,
+        53.864227513614466
+    ],
+    "('usd_return_ew_std_63', 'price_vol_adj_return_sw_mean_21/126', 'bonds_return_sw_mean_5', 'p/e_sw_skew_21/63', 'price_vol_adj_sw_skew_63', 'p/e_return_sw_skew_10', 'bonds_ew_std_63_126', 'bonds_sw_std_21_63', 'price_vol_adj_sw_skew_5/21', 'price_vol_adj_ew_std_10_21')": [
+        408.2687446534971,
+        0.0,
+        2.0834832422353315,
+        19.90080375764516
+    ],
+    "('brent_sw_std_5/21', 'p/e_return_ew_mean_63_126', 'top3_vol_ew_mean_10/63', 'price_vol_adj_return_ew_mean_10', 'return_sw_mean_5/21', 'p/e_sw_skew_21/126', 'close_ew_std_10_63', 'gold_return_sw_mean_10/63', 'usd_sw_mean_63_126', 'gold_return_ew_std_21_63', 'return_sw_std_10', 'top3_vol_sw_mean_21_126', 'brent_return_ew_mean_10_21', 'close_sw_std_21/63', 'return_ew_std_21')": [
+        513.8686982817477,
+        0.0,
+        17.01240541349108,
+        17.89879620523102
+    ],
+    "('gold_return_ew_mean_5', 'rates_delta_sw_skew_10_63', 'price_vol_adj_return_sw_skew_63', 'usd_sw_std_5', 'brent_return_sw_std_21/63', 'brent_sw_skew_10/21', 'bonds_ew_std_5/21', 'gold_ew_std_10/63', 'max/close_10', 'bonds_sw_mean_63_126', 'usd_return_sw_std_21/63', 'brent_return_sw_skew_10/21')": [
+        418.65777372587775,
+        0.0,
+        2.7171105789595913,
+        16.926696251528423
+    ],
+    "('top3_vol_sw_std_21/126', 'bonds_ew_std_5_21', 'usd_sw_skew_5_21', 'top3_vol_ew_std_5_21', 'top3_vol_sw_skew_21/126', 'gold_return_ew_std_21_63', 'usd_return_sw_mean_21/63', 'ruonia_ew_mean_21/63', 'rates_delta_lag', 'ruonia_sw_skew_63_126', 'usd_return_ew_std_10_21', 'p/e_return_ew_mean_21/126', 'bonds_sw_std_10_63', 'return_sw_skew_10/63', 'usd_return_sw_mean_10_63', 'ruonia_sw_std_21/63', 'gold_sw_skew_63', 'gold_sw_skew_5', 'gold_sw_std_10/63', 'brent_return_sw_skew_5')": [
+        454.1378494227191,
+        5.684341886080802e-14,
+        8.961705689802002,
+        14.012907201498555
+    ],
+    "('bonds_return_ew_std_5/21', 'p/e_sw_skew_10', 'bonds_return_sw_mean_10/63', 'gold_ew_mean_10/21', 'rates_delta_sw_std_5', 'bonds_return_ew_mean_21_63', 'brent_ew_mean_10/21', 'usd_sw_std_63/126', 'rates_delta_ew_mean_10/21', 'price_vol_adj_ew_std_10/21', 'usd_ew_mean_63/126', 'usd_sw_mean_5/21', 'usd_return_ew_std_10_21', 'usd_sw_skew_63_126', 'brent_sw_skew_21/63', 'brent_return_sw_skew_10_21', 'return_sw_mean_21/63', 'brent_sw_std_5/21', 'gold_sw_skew_21', 'price_vol_adj_return_ew_mean_10/21')": [
+        428.1478092213425,
+        0.0,
+        11.694431853089952,
+        15.36316051657602
+    ],
+    "('return_ew_std_10_21', 'p/e_return_ew_mean_63/126', 'bonds_return_sw_skew_126', 'price_vol_adj_sw_mean_10_63', 'rates_delta_sw_std_5/21', 'usd_ew_std_5/21', 'bonds_ew_std_126', 'ruonia_ew_mean_10_63', 'price_vol_adj_sw_std_10_21', 'brent_return_sw_skew_21/126', 'return_ew_std_5_21')": [
+        400.1739673083965,
+        0.0,
+        10.67667244420403,
+        23.273524247480008
+    ],
+    "('gold_return_sw_skew_126', 'gold_ew_mean_10/63', 'price_vol_adj_return_sw_mean_126', 'bonds_return_sw_std_5/21', 'usd_sw_std_10', 'close_sw_skew_5_21', 'p/e_return_ew_mean_10_21', 'bonds_return_ew_mean_5/21', 'close_sw_std_21_126', 'return_ew_mean_10/63', 'aroon_down_10', 'bonds_ew_std_21/63')": [
+        537.9238861476128,
+        0.0,
+        9.557741825517397,
+        29.350563093589244
+    ],
+    "('ruonia_ew_std_21', 'usd_sw_mean_21/126', 'return_sw_skew_63', 'close_ew_std_63/126', 'bonds_return_sw_skew_10', 'usd_return_sw_std_21/63', 'rates_delta_ew_std_10/21', 'rates_delta_sw_mean_10/63', 'close_sw_std_10_21', 'bonds_return_ew_mean_5/21', 'usd_ew_mean_63_126', 'rates_delta_ew_std_63_126', 'brent_return_sw_mean_21/126', 'p/e_return_ew_std_63_126', 'bonds_sw_skew_63', 'price_vol_adj_return_ew_mean_63/126', 'price_vol_adj_ew_std_5', 'gold_ew_mean_10_21', 'price_vol_adj_return_sw_mean_63', 'p/e_return_sw_mean_126', 'ruonia_ew_std_126')": [
+        485.08823247878155,
+        0.0,
+        1.9827865582416564,
+        14.59492364502238
+    ],
+    "('top3_vol_sw_std_5', 'close_ew_std_21', 'p/e_return_sw_std_21/63', 'brent_sw_mean_21_63', 'bonds_ew_std_126', 'gold_sw_skew_5', 'brent_sw_skew_5/21', 'price_vol_adj_return_ew_std_5', 'brent_return_sw_skew_126', 'return_ew_mean_63/126', 'brent_return_ew_mean_63', 'rates_delta_lag', 'brent_return_ew_mean_10/21', 'p/e_return_sw_skew_10')": [
+        491.73987482655195,
+        0.0,
+        9.131636664200244,
+        16.873975080929494
+    ],
+    "('rates_delta_sw_skew_10_63', 'brent_return_sw_mean_5', 'usd_return_sw_mean_21/126', 'bonds_return_sw_std_21', 'usd_sw_mean_21_63', 'close_ew_mean_10/21', 'gold_return_sw_std_5', 'usd_return_ew_mean_21', 'bonds_return_ew_mean_5/21', 'brent_return_ew_mean_10_63', 'roc_21', 'p/e_sw_skew_21/63', 'bonds_sw_mean_63_126', 'return_sw_mean_5_21', 'bonds_sw_mean_10/21', 'usd_return_ew_std_63', 'gold_sw_std_126')": [
+        512.3565818777114,
+        0.0,
+        1.6777697041383703,
+        21.42812049842692
+    ],
+    "('usd_return_sw_std_21_126', 'bonds_return_sw_mean_63_126', 'rates_delta_ew_std_63/126', 'gold_ew_mean_10_63', 'bonds_return_ew_std_21', 'gold_return_sw_skew_126', 'price_vol_adj_ew_mean_21_126', 'p/e_sw_skew_10', 'p/e_return_sw_mean_21_126', 'bonds_return_ew_std_63/126', 'usd_return_ew_std_5', 'gold_return_ew_mean_10/21', 'ruonia_ew_std_21/126', 'price_vol_adj_return_ew_mean_5', 'top3_vol_ew_std_126', 'price_vol_adj_ew_std_10_21', 'usd_return_sw_mean_63_126', 'brent_return_sw_skew_10/63', 'top3_vol_ew_mean_10_63', 'price_vol_adj_ew_std_63/126', 'price_vol_adj_sw_skew_126', 'usd_sw_mean_10_21')": [
+        530.9628224578844,
+        0.0,
+        13.260112200074985,
+        28.361768566055012
+    ],
+    "('price_vol_adj_return_ew_std_126', 'bonds_sw_std_21/126', 'price_vol_adj_return_sw_mean_63', 'price_vol_adj_ew_mean_63/126', 'price_vol_adj_return_sw_skew_10_63', 'price_vol_adj_ew_std_5_21', 'brent_sw_skew_21_63', 'top3_vol_sw_mean_21_63', 'brent_return_sw_skew_5_21', 'gold_return_ew_std_21/126', 'roc_1', 'usd_return_sw_mean_63/126', 'p/e_return_ew_mean_10')": [
+        400.2082677704559,
+        0.0,
+        0.5245615006262767,
+        15.127834512713175
+    ],
+    "('return_ew_std_10_63', 'price_vol_adj_return_sw_std_10_63', 'ruonia_sw_std_63/126', 'rates_delta_ew_std_10/63', 'usd_sw_std_10_21', 'usd_return_ew_mean_10', 'p/e_sw_skew_63/126', 'return_sw_std_10_63', 'brent_sw_mean_10_21', 'usd_ew_std_10_21', 'price_vol_adj_return_ew_std_63_126', 'gold_sw_mean_21_63', 'brent_return_sw_mean_63/126', 'aroon_up_10', 'usd_return_ew_std_63')": [
+        468.7680542388501,
+        0.0,
+        13.034030768179647,
+        23.984563792997175
+    ],
+    "('usd_return_sw_mean_5', 'price_vol_adj_sw_skew_5/21', 'bonds_ew_mean_21/63', 'price_vol_adj_sw_skew_63_126', 'usd_return_ew_mean_10/21', 'gold_sw_std_63/126', 'gold_return_ew_mean_21_126', 'usd_ew_std_126', 'price_vol_adj_ew_mean_21_63', 'rates_delta_ew_mean_21/63', 'gold_return_ew_std_10_21', 'usd_sw_mean_63/126', 'brent_return_ew_std_10/63', 'bonds_return_sw_skew_5', 'price_vol_adj_return_ew_mean_21', 'ruonia_sw_std_63/126')": [
+        626.763764616538,
+        0.0,
+        11.679841386716191,
+        45.177591748261236
+    ],
+    "('price_vol_adj_return_ew_mean_126', 'usd_ew_std_21_126', 'usd_return_ew_mean_10_63', 'price_vol_adj_sw_skew_63/126', 'gold_sw_std_63/126', 'brent_sw_skew_63/126', 'ruonia_sw_std_21', 'rates_delta_ew_std_21/126', 'usd_return_ew_std_63_126', 'return_sw_mean_21_126', 'brent_sw_std_21/126', 'bonds_return_ew_mean_10/63', 'ruonia_sw_skew_10_63', 'brent_return_ew_mean_5/21', 'p/e_return_sw_std_63_126', 'close_sw_mean_21_126', 'bonds_sw_skew_10', 'gold_sw_mean_21_63', 'gold_ew_mean_5/21', 'brent_sw_std_10/21')": [
+        402.66241041900594,
+        0.0,
+        5.056312147695635,
+        30.95327452401977
+    ],
+    "('gold_return_sw_skew_63/126', 'brent_return_sw_std_63', 'usd_return_ew_mean_21/126', 'gold_sw_std_10_21', 'rates_delta_ew_std_21/126', 'bonds_sw_std_5_21', 'p/e_return_ew_std_10', 'brent_return_ew_mean_5/21', 'return_sw_skew_10/21', 'ruonia_sw_skew_21_63', 'brent_return_sw_mean_5/21', 'price_vol_adj_return_sw_mean_21_126', 'brent_sw_mean_63_126', 'usd_return_ew_std_5_21', 'return_sw_std_21_126', 'gold_ew_mean_21/126', 'p/e_sw_skew_21/126', 'p/e_return_sw_std_63')": [
+        604.9542043002839,
+        0.0,
+        5.542887229322901,
+        60.96163636959868
+    ],
+    "('ruonia_ew_mean_5/21', 'price_vol_adj_sw_skew_5', 'rates_delta_ew_mean_63/126', 'return_sw_mean_126', 'roc_10', 'ruonia_sw_skew_5', 'top3_vol_ew_std_21', 'price_vol_adj_sw_std_10_63', 'top3_vol_sw_mean_5_21', 'median/close_21', 'bonds_ew_mean_5/21', 'bonds_return_ew_mean_63', 'brent_sw_skew_5_21', 'close_ew_mean_63/126', 'usd_sw_skew_10/21')": [
+        452.5842210580813,
+        0.0,
+        17.118246204519323,
+        15.295570154630244
+    ],
+    "('gold_return_sw_std_10', 'brent_sw_mean_63/126', 'brent_ew_std_10', 'top3_vol_ew_mean_10_63', 'p/e_ew_std_21', 'usd_sw_mean_10/63', 'top3_vol_sw_skew_10/63', 'p/e_ew_std_10/21', 'ruonia_sw_skew_21_126', 'close_sw_std_10_63', 'p/e_return_ew_mean_63_126')": [
+        454.6825169546939,
+        5.684341886080802e-14,
+        5.68407310047705,
+        19.344549641908856
+    ],
+    "('usd_return_sw_mean_10/63', 'brent_ew_mean_21_126', 'bonds_return_sw_skew_10', 'usd_sw_std_10/21', 'bonds_return_sw_mean_10', 'top3_vol_sw_std_21', 'usd_sw_skew_10_63', 'p/e_return_ew_mean_10', 'p/e_sw_std_126', 'brent_return_sw_mean_5/21', 'ruonia_sw_skew_63/126', 'top3_vol_sw_std_5/21', 'bonds_sw_std_5/21', 'brent_ew_std_10_63', 'price_vol_adj_return_sw_mean_126', 'usd_return_ew_mean_10/63', 'brent_sw_skew_5', 'ruonia_ew_std_126', 'gold_return_sw_skew_63', 'brent_return_ew_mean_21', 'price_vol_adj_return_ew_std_21')": [
+        571.561625656119,
+        0.0,
+        22.998105869008498,
+        34.25114242554634
+    ],
+    "('bonds_sw_mean_21/126', 'price_vol_adj_return_sw_std_21', 'close_ew_mean_63/126', 'close_sw_skew_21_63', 'price_vol_adj_return_ew_mean_10_63', 'top3_vol_sw_std_10', 'gold_sw_std_21', 'p/e_return_sw_mean_5/21', 'p/e_return_ew_mean_10', 'rates_delta_sw_skew_10/21', 'brent_return_sw_mean_10', 'gold_return_sw_mean_21_126', 'gold_sw_std_126')": [
+        531.8126341568702,
+        0.0,
+        2.803062897947342,
+        23.752665937480888
+    ],
+    "('price_vol_adj_sw_std_5_21', 'bonds_sw_mean_63/126', 'max/close_10', 'rates_delta_sw_mean_63/126', 'p/e_return_sw_mean_5_21', 'brent_sw_skew_21', 'usd_return_sw_std_5', 'price_vol_adj_sw_mean_63_126', 'p/e_ew_mean_10/63', 'aroon_up_21', 'brent_sw_std_21_126', 'bonds_return_sw_std_126', 'p/e_sw_std_10/63', 'ruonia_sw_skew_21', 'usd_sw_std_21', 'oscillator_sw_126', 'bonds_ew_std_63', 'top3_vol_sw_mean_10_21', 'price_vol_adj_sw_std_63/126', 'p/e_return_ew_std_126', 'close_sw_skew_10', 'gold_return_ew_std_63')": [
+        509.7573593835285,
+        0.0,
+        7.272219016162438,
+        19.398714147057785
+    ],
+    "('brent_return_sw_skew_10/63', 'top3_vol_ew_std_10/63', 'price_vol_adj_ew_std_5_21', 'median/close_21', 'bonds_ew_std_10_21', 'brent_sw_std_63/126', 'gold_sw_skew_21/126', 'usd_return_sw_mean_10/21', 'bonds_sw_mean_5/21', 'bonds_return_sw_std_126', 'top3_vol_sw_skew_126')": [
+        557.8052294312943,
+        0.0,
+        45.58630818155018,
+        30.112229577569472
+    ],
+    "('ruonia_sw_skew_5_21', 'brent_return_ew_mean_5', 'top3_vol_sw_mean_21_63', 'top3_vol_ew_mean_10/63', 'bonds_ew_std_63/126', 'brent_sw_mean_63/126', 'brent_return_ew_mean_10_63', 'brent_sw_std_63/126', 'top3_vol_sw_std_10', 'price_vol_adj_return_sw_std_63', 'gold_sw_std_10_21', 'p/e_return_sw_skew_10', 'gold_ew_mean_63_126', 'bonds_return_ew_mean_21/63')": [
+        491.6555163862543,
+        0.0,
+        12.842541271083206,
+        21.607416174749442
+    ],
+    "('price_vol_adj_ew_mean_21/63', 'price_vol_adj_ew_std_5/21', 'bonds_ew_std_5_21', 'gold_sw_std_10_63', 'usd_return_ew_std_10', 'p/e_return_sw_mean_10', 'usd_return_sw_mean_63_126', 'bonds_lag', 'usd_sw_skew_63_126', 'brent_return_ew_std_10_63', 'brent_sw_std_63_126', 'bonds_sw_skew_21_63', 'usd_return_ew_mean_5_21', 'price_vol_adj_return_sw_skew_21', 'rates_delta_sw_mean_10/63', 'top3_vol_ew_mean_63/126')": [
+        622.0262651393891,
+        0.0,
+        12.157983312959828,
+        48.696874417564466
+    ],
+    "('roc_5', 'p/e_return_ew_std_10_63', 'brent_sw_skew_63/126', 'brent_return_sw_mean_126', 'bonds_return_ew_std_21/126', 'brent_return_ew_std_63', 'brent_return_sw_skew_10', 'usd_ew_std_21/63', 'usd_return_sw_skew_21_126', 'gold_return_sw_std_21_126', 'brent_sw_skew_21/63', 'gold_return_sw_mean_10_21', 'gold_ew_std_5/21')": [
+        423.516023486037,
+        5.684341886080802e-14,
+        0.8358259685057874,
+        24.942281551788387
+    ],
+    "('p/e_sw_std_10/21', 'bonds_sw_std_21', 'p/e_return_sw_mean_5/21', 'p/e_sw_std_63/126', 'bonds_return_sw_mean_63_126', 'p/e_return_sw_skew_63/126', 'bonds_return_ew_std_5/21', 'price_vol_adj_return_sw_std_10/63', 'bonds_return_ew_mean_21_63', 'top3_vol_ew_std_10', 'price_vol_adj_return_sw_mean_21', 'gold_sw_skew_10_21', 'brent_sw_skew_126', 'brent_return_sw_std_21/126', 'usd_return_ew_mean_63_126', 'gold_return_sw_std_10', 'bonds_ew_std_5/21', 'return_ew_mean_63', 'rates_delta_sw_skew_63_126', 'top3_vol_sw_skew_21/126')": [
+        413.2154621521454,
+        0.0,
+        16.743215817264996,
+        20.2198004601687
+    ],
+    "('brent_return_ew_std_10', 'ruonia_sw_mean_5_21', 'p/e_return_sw_skew_21/126', 'rates_delta_sw_skew_63_126', 'price_vol_adj_return_ew_mean_10/63', 'p/e_ew_mean_21_126', 'gold_ew_std_5/21', 'p/e_ew_mean_10_21', 'gold_sw_std_63/126', 'bonds_ew_std_5/21', 'price_vol_adj_ew_std_21/126', 'usd_sw_skew_21', 'mean/close_21', 'rates_delta_ew_std_126', 'brent_return_ew_mean_63_126', 'price_vol_adj_return_ew_std_21_126', 'brent_sw_std_5_21', 'ruonia_ew_mean_10/21')": [
+        490.5738367525863,
+        0.0,
+        14.720182689593855,
+        39.73529533356356
+    ],
+    "('bonds_ew_std_21', 'p/e_return_sw_skew_10_63', 'ruonia_sw_skew_10/21', 'price_vol_adj_sw_std_10_63', 'price_vol_adj_return_sw_mean_21_63', 'usd_return_sw_std_21_126', 'price_vol_adj_return_sw_skew_10', 'brent_return_ew_std_10/21', 'usd_sw_std_10/21', 'gold_return_sw_mean_63_126', 'return_ew_std_5/21', 'brent_ew_mean_5/21', 'roc_21', 'p/e_return_sw_mean_10_63', 'bonds_ew_std_126', 'rates_delta_sw_std_126', 'return_ew_std_10', 'p/e_return_sw_skew_21/126', 'ruonia_sw_skew_21/63')": [
+        505.4602234072557,
+        0.0,
+        1.653381743587886,
+        19.804335643727587
+    ],
+    "('usd_ew_std_21_126', 'gold_return_sw_std_10_21', 'usd_sw_mean_63/126', 'ruonia_sw_skew_5_21', 'usd_ew_std_21/63', 'usd_ew_mean_5_21', 'return_ew_mean_5', 'p/e_return_ew_mean_10_63', 'brent_sw_skew_21/63', 'gold_return_sw_skew_21', 'bonds_sw_skew_10_21', 'usd_return_sw_mean_10/21')": [
+        455.6033862792748,
+        0.0,
+        9.85912943410338,
+        20.646510880637862
+    ],
+    "('brent_return_ew_std_10/21', 'rates_delta_sw_std_10/21', 'return_ew_mean_63/126', 'aroon_delta_126', 'close_sw_std_21_126', 'bonds_return_ew_mean_10_63', 'ruonia_sw_skew_21_63', 'usd_return_ew_mean_10/21', 'p/e_sw_skew_5', 'brent_ew_mean_10/21', 'top3_vol_ew_std_63/126', 'gold_ew_std_5_21')": [
+        443.6264816671017,
+        5.684341886080802e-14,
+        2.9393022700882625,
+        21.53596903353123
+    ],
+    "('brent_ew_std_10_63', 'price_vol_adj_sw_skew_21_126', 'top3_vol_sw_mean_21_63', 'usd_ew_std_63_126', 'return_sw_std_63_126', 'brent_return_ew_std_63/126', 'usd_return_sw_mean_126', 'price_vol_adj_sw_std_21/126', 'close_sw_mean_21_63', 'gold_sw_std_126', 'top3_vol_sw_mean_21/126', 'price_vol_adj_sw_std_21_63', 'rates_delta_ew_mean_21_126', 'gold_return_sw_std_63_126', 'usd_return_ew_mean_5', 'p/e_sw_skew_10', 'usd_return_ew_mean_21/63', 'bonds_sw_std_21/63', 'gold_return_sw_std_21/126', 'brent_return_sw_std_21')": [
+        491.95929697407627,
+        5.684341886080802e-14,
+        0.7114451005598283,
+        13.354744358291658
+    ],
+    "('usd_ew_std_10', 'p/e_return_ew_mean_21_63', 'close_sw_std_63_126', 'rates_delta_sw_mean_10_21', 'usd_return_sw_skew_21/126', 'usd_ew_mean_10/21', 'usd_sw_mean_63/126', 'aroon_up_21', 'usd_return_sw_mean_5/21', 'price_vol_adj_sw_skew_10', 'brent_return_ew_mean_63')": [
+        578.6027477748759,
+        0.0,
+        15.391371390345668,
+        33.60133204556279
+    ],
+    "('brent_return_sw_skew_63_126', 'bonds_return_sw_mean_126', 'p/e_sw_std_21_63', 'bonds_sw_mean_63/126', 'top3_vol_sw_skew_10/21', 'brent_sw_mean_10/21', 'ruonia_ew_std_21_63', 'p/e_sw_mean_5_21', 'usd_ew_std_21/126', 'p/e_ew_mean_63_126', 'brent_return_ew_mean_10_21', 'usd_sw_skew_10/21', 'rates_delta_ew_mean_10_21', 'usd_return_sw_std_63/126', 'bonds_return_sw_mean_5/21')": [
+        418.26904737618406,
+        0.0,
+        5.288441271819153,
+        20.917082572089154
+    ],
+    "('brent_ew_mean_21/63', 'usd_sw_skew_21/126', 'price_vol_adj_sw_std_10/21', 'usd_return_ew_mean_5/21', 'bonds_return_sw_skew_5/21', 'usd_sw_std_21/63', 'rates_delta_sw_skew_10_63', 'close_ew_std_21/63', 'brent_return_sw_std_5_21', 'price_vol_adj_ew_mean_21/126', 'bonds_sw_mean_5_21', 'p/e_sw_skew_10/21', 'p/e_return_sw_mean_63/126', 'brent_sw_skew_10_21', 'price_vol_adj_return_sw_std_21_63', 'top3_vol_sw_skew_10', 'usd_sw_std_5_21', 'rates_delta_sw_mean_10/63', 'usd_sw_std_21/126', 'usd_return_ew_std_63/126')": [
+        453.907168838274,
+        0.0,
+        27.344487751277768,
+        14.231687474333404
+    ],
+    "('gold_return_ew_std_10_21', 'top3_vol_ew_std_21', 'brent_sw_skew_21', 'usd_sw_std_10', 'p/e_return_ew_std_63', 'p/e_return_sw_skew_21/63', 'gold_return_ew_std_10/63', 'return_ew_mean_21/63', 'close_sw_skew_21/63', 'top3_vol_sw_skew_21_63', 'close_ew_std_63')": [
+        433.5079646941325,
+        5.684341886080802e-14,
+        9.480634932692908,
+        21.03181416120786
+    ],
+    "('bonds_return_sw_std_21', 'bonds_ew_std_21_63', 'gold_sw_mean_21/126', 'top3_vol_sw_std_10/63', 'brent_return_sw_skew_126', 'gold_sw_skew_10_63', 'p/e_sw_std_21', 'bonds_sw_std_10_21', 'usd_return_ew_mean_126', 'rates_delta_ew_std_126', 'brent_ew_std_21_63', 'ruonia_sw_skew_10', 'p/e_sw_std_10/63', 'top3_vol_sw_skew_21/126', 'rates_delta_sw_mean_63/126')": [
+        448.62457824473074,
+        0.0,
+        1.4924927543206223,
+        12.318297712505444
+    ],
+    "('bonds_ew_mean_63/126', 'rates_delta_ew_mean_10_63', 'usd_return_ew_std_21/126', 'usd_ew_std_21_126', 'usd_return_sw_skew_63', 'p/e_sw_skew_10', 'brent_ew_mean_5/21', 'brent_sw_std_10_21', 'brent_ew_std_21_126', 'usd_ew_mean_63_126', 'rates_delta_ew_std_63_126', 'ruonia_ew_std_5', 'brent_return_sw_mean_10', 'gold_sw_std_21/126')": [
+        620.3483114174281,
+        0.0,
+        9.313340605743917,
+        35.451561269101596
+    ],
+    "('p/e_return_ew_mean_10_63', 'rates_delta_ew_std_5', 'bonds_return_ew_mean_21/126', 'ruonia_ew_mean_10/63', 'brent_return_ew_mean_21_126', 'return_ew_mean_10_63', 'top3_vol_ew_mean_63_126', 'price_vol_adj_return_ew_std_5_21', 'price_vol_adj_return_sw_skew_63/126', 'rates_delta_ew_std_21_126', 'price_vol_adj_return_sw_std_21/126', 'usd_ew_std_10_21', 'gold_sw_std_63', 'usd_return_sw_std_5_21', 'ruonia_sw_std_10_63')": [
+        470.3884319791532,
+        0.0,
+        14.645918075058518,
+        13.610036479730638
+    ],
+    "('ruonia_sw_std_5', 'usd_sw_std_5_21', 'p/e_return_sw_skew_63/126', 'rates_delta_ew_std_5_21', 'return_sw_skew_10_63', 'usd_ew_mean_63_126', 'gold_sw_std_21/63', 'usd_return_sw_std_10_63', 'bonds_ew_std_10', 'usd_sw_skew_21_126', 'bonds_return_sw_mean_10_63', 'ruonia_sw_std_126', 'close_sw_skew_21', 'brent_return_sw_std_21/126', 'brent_return_ew_mean_21', 'usd_return_sw_mean_5_21', 'gold_return_sw_skew_10_21', 'price_vol_adj_return_ew_mean_21_126', 'bonds_sw_skew_10/21', 'usd_sw_skew_21/126', 'gold_sw_std_126')": [
+        542.1541522004717,
+        0.0,
+        9.055042788840979,
+        22.175895514131973
+    ],
+    "('gold_ew_std_5/21', 'rates_delta_sw_std_126', 'max/close_10', 'brent_return_ew_mean_10_21', 'min/close_252', 'top3_vol_sw_mean_21_63', 'brent_sw_skew_21/63', 'p/e_sw_std_63_126', 'usd_sw_skew_21_126', 'bonds_return_ew_mean_21/63', 'close_sw_skew_126', 'usd_return_sw_mean_126', 'return_ew_mean_21_63', 'brent_return_ew_mean_5/21', 'price_vol_adj_return_sw_std_21', 'ruonia_sw_skew_10/63', 'p/e_return_sw_mean_21/63', 'p/e_sw_skew_63/126', 'bonds_return_sw_mean_5_21')": [
+        462.09065578653326,
+        0.0,
+        3.549137606721615,
+        12.653283286525342
+    ],
+    "('gold_sw_skew_21_126', 'usd_return_ew_mean_10/21', 'gold_sw_skew_126', 'p/e_return_ew_std_10_21', 'rates_delta_sw_std_10/21', 'gold_return_ew_mean_10/63', 'ruonia_ew_mean_21/126', 'bonds_ew_std_21_126', 'price_vol_adj_return_sw_std_63_126', 'brent_return_ew_std_63_126', 'rates_delta_ew_std_63_126', 'usd_return_sw_std_10_63', 'rates_delta_sw_mean_63_126', 'top3_vol_ew_std_10_63', 'brent_sw_std_21/63', 'usd_ew_std_10_21', 'brent_sw_std_5/21', 'p/e_return_sw_std_21/63', 'price_vol_adj_return_sw_mean_126')": [
+        566.6293802289689,
+        0.0,
+        8.620689954683996,
+        34.77480427070034
+    ],
+    "('usd_return_sw_mean_10', 'p/e_ew_mean_21_126', 'return_ew_mean_63_126', 'usd_ew_mean_63/126', 'gold_return_ew_std_63/126', 'bonds_return_sw_mean_10/63', 'brent_sw_std_21_126', 'rates_delta_ew_mean_5_21', 'ruonia_sw_skew_5_21', 'bonds_sw_std_10_21', 'price_vol_adj_return_sw_std_5_21', 'ruonia_ew_std_21_63', 'p/e_ew_std_21/63', 'close_sw_skew_63', 'gold_return_sw_skew_63_126')": [
+        440.90682611354094,
+        5.684341886080802e-14,
+        3.234272272914396,
+        14.323389163210754
+    ],
+    "('bonds_return_sw_mean_10_63', 'p/e_return_sw_skew_63/126', 'brent_ew_std_63/126', 'p/e_ew_std_21', 'p/e_sw_skew_21_126', 'price_vol_adj_ew_std_10/21', 'p/e_ew_mean_10_21', 'brent_return_ew_mean_21/63', 'bonds_return_ew_mean_10_63', 'ruonia_ew_std_63_126', 'close_ew_std_126', 'bonds_return_ew_std_63', 'return_sw_mean_63_126', 'bonds_ew_std_21', 'brent_sw_skew_5_21', 'p/e_return_sw_skew_21', 'gold_return_ew_std_21/126')": [
+        512.5145009592611,
+        0.0,
+        2.8802927820855473,
+        21.374075914889747
+    ],
+    "('gold_return_sw_mean_126', 'p/e_return_sw_std_5_21', 'close_sw_skew_63/126', 'price_vol_adj_return_sw_std_10', 'price_vol_adj_sw_std_10_21', 'ruonia_sw_std_126', 'rates_delta_ew_std_10_63', 'usd_sw_skew_63/126', 'brent_ew_std_10_63', 'rates_delta_sw_std_10_63', 'usd_sw_skew_21/63', 'bonds_return_sw_mean_10', 'return_sw_std_10_63', 'return_sw_std_10/21', 'usd_sw_std_21_126')": [
+        429.3881645284317,
+        0.0,
+        5.428001414954281,
+        31.668009869630044
+    ],
+    "('usd_return_ew_mean_10/21', 'bonds_return_sw_skew_21/126', 'ruonia_ew_mean_5_21', 'ruonia_sw_std_10/63', 'median/close_252', 'gold_return_sw_mean_10/63', 'aroon_delta_63', 'p/e_return_sw_skew_63', 'bonds_return_sw_skew_5/21', 'return_sw_mean_21/126', 'p/e_return_sw_skew_10_21', 'price_vol_adj_return_ew_mean_21_63', 'close_sw_skew_126', 'return_sw_mean_126', 'gold_return_sw_skew_10/63', 'price_vol_adj_return_sw_skew_10/63', 'brent_return_sw_skew_21', 'bonds_return_ew_std_21/63', 'rates_delta_ew_mean_21/63', 'gold_return_sw_mean_21_126')": [
+        456.6156282476576,
+        0.0,
+        0.5074928194554786,
+        15.095019461920026
+    ]
+}
