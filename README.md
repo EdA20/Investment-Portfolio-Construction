@@ -42,6 +42,8 @@ To be continued...
 ```bash
 poetry run dvc remote modify s3-portfolio-construction --local access_key_id $(DVC_ACCESS_KEY_ID)
 poetry run dvc remote modify s3-portfolio-construction --local secret_access_key $(DVC_SECRET_ACCESS_KEY)
+poetry run dvc pull # for pulling data
+poetry run dvc add data && poetry run dvc push # for updating data
 ```
 
 
