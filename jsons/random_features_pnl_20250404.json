@@ -1,7 +1,0 @@
-{
-    "('aroon_down_126', 'price_vol_adj_return_roc_63', 'long/short_physic_ratio_return_ew_mean_10/63', 'bonds10y_sw_mean_21/63', 'top3_mean_vol_sw_mean_21_63', 'price_return_ew_mean_21/126', 'usd_return_ew_std_10/21', 'rates_delta_sw_std_5', 'brent_ew_mean_5/21', 'long/short_entity_ratio_sw_mean_63_126', 'mredc_return_sw_mean_21/126', 'price_return_ew_std_21_63', 'gold_return_sw_mean_63', 'gold_ew_std_10', 'gold_return_ew_mean_5_21')": 497.0285202193905,
-    "('price_ew_mean_21_126', 'rates_delta_ew_std_10', 'long/short_entity_ratio_sw_std_10/21', 'price_sw_std_63_126', 'long/short_physic_ratio_return_roc_10', 'long/short_physic_ratio_sw_std_5/21', 'usd_sw_std_21')": 448.6795530661981,
-    "('usd_return_sw_std_5_21', 'gold_sw_std_10/21', 'long/short_physic_ratio', 'usd_sw_std_63_126', 'brent_return_sw_std_10', 'price_ew_mean_21/63', 'mredc_return_roc_21', 'top3_mean_vol_sw_mean_5/21', 'min/price_126', 'long/short_physic_ratio_sw_mean_10/63', 'rates_delta_ew_mean_5', 'rates_delta_sw_mean_10_63', 'ruonia_sw_std_21_126')": 508.1932258558261,
-    "('long/short_entity_ratio_sw_std_21_63', 'ruonia_ew_std_5/21', 'top3_mean_vol_return_ew_std_63', 'long/short_entity_ratio_sw_std_63', 'price_sw_std_10/63', 'usd_sw_mean_10_21', 'price_sw_std_21_126', 'mredc_return_ew_std_63_126')": 336.53511784253226,
-    "('long/short_physic_ratio_ew_mean_63_126', 'imoex_pe_ew_std_63/126', 'price_return_ew_std_63', 'price_ew_std_21', 'top3_mean_vol_sw_mean_5/21', 'mredc_return_sw_mean_21', 'long/short_entity_ratio_ew_std_10/21', 'usd_return_ew_mean_10')": 800.5169594631019
-}
