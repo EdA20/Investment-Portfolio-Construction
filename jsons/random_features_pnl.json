@@ -1,8 +1,0 @@
-{
-    "('long_physic_ew_std_63_126', 'brent_return_sw_mean_63_126', 'long/short_physic_return_ew_std_5/21', 'return_ew_mean_5_21', 'long_entity_return_sw_std_5/21', 'long_entity_sw_std_10/21', 'rates_delta_sw_std_21_63', 'brent_ew_std_10', 'price_vol_adj_ew_mean_5_21', 'short_entity_ew_std_21', 'price_vol_adj_return_ew_mean_10', 'close_sw_std_10_21', 'gold_return_sw_std_10', 'long/short_physic_ew_mean_10_63', 'bonds_sw_std_21/63', 'long/short_physic_ew_std_5', 'long/short_physic_return_ew_std_10_63', 'top3_vol_sw_mean_21/126', 'brent_ew_std_63/126', 'brent_ew_std_21_63', 'return_ew_mean_21/126', 'short_physic_return_sw_mean_21', 'return_sw_mean_63', 'mean/close_126', 'long/short_physic_return_ew_std_10/21', 'close_ew_std_10_63', 'short_physic_return_ew_mean_5_21', 'price_vol_adj_ew_std_21', 'price_vol_adj_sw_mean_21/126', 'long_entity_sw_mean_10/63', 'short_physic_sw_mean_63_126', 'brent_sw_mean_10/21', 'long_physic_return_ew_mean_63_126', 'oscillator_sw_126', 'bonds_return_ew_mean_63/126', 'return_ew_std_63', 'short_physic_return_sw_std_5', 'brent_ew_std_10/21', 'bonds_return_sw_std_10_21', 'long/short_physic_return_ew_mean_10/21', 'short_entity_return_sw_std_10_63', 'ruonia_sw_std_21/63', 'return_ew_mean_63', 'gold_return_ew_std_10/63', 'usd_return_sw_std_10_63', 'short_physic_return_ew_std_63')": [
-        379.2127147475154,
-        0.0,
-        33.02418261105606,
-        53.703388378461504
-    ]
-}

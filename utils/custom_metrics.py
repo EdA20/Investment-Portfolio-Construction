@@ -1,6 +1,6 @@
 import numpy as np
 
-__all__ = ['ProfitMetric', 'CriticalF1Metric', 'FocalLossMetric', 'FocalLossObjective']
+__all__ = ["ProfitMetric", "CriticalF1Metric", "FocalLossMetric", "FocalLossObjective"]
 
 MAX_Z = 33
 
@@ -20,22 +20,24 @@ class ProfitMetric(object):
         assert len(target) == len(approxes[0])
 
         approx = approxes[0]
-        val_data_idx = np.where(self.profit_metric_df['size'] == len(approx))[0][0]
-        val_data = self.profit_metric_df.loc[val_data_idx, 'data'].copy()
+        val_data_idx = np.where(self.profit_metric_df["size"] == len(approx))[0][0]
+        val_data = self.profit_metric_df.loc[val_data_idx, "data"].copy()
 
-        val_data['preds'] = np.exp(approx) / (1 + np.exp(approx))
-        val_data['preds'] = val_data['preds'].shift().fillna(0)
+        val_data["preds"] = np.exp(approx) / (1 + np.exp(approx))
+        val_data["preds"] = val_data["preds"].shift().fillna(0)
 
-        val_data['moex_long_weight'] = val_data['preds'].apply(lambda x: x if x >= 0.5 else 0)
-        val_data['strat_return'] = (
-            val_data['moex_long_weight'] * val_data['price_return'] +
-            (1 - val_data['moex_long_weight']) * val_data['ruonia_daily']
+        val_data["moex_long_weight"] = val_data["preds"].apply(
+            lambda x: x if x >= 0.5 else 0
         )
-        val_data.loc[0, ['price_return', 'strat_return']] = 0
-        val_data['strategy_perf'] = (val_data['strat_return'] + 1).cumprod() * 100
-        val_data['bench_perf'] = (val_data['strat_return'] + 1).cumprod() * 100
-        val_data['perf_delta'] = val_data['strategy_perf'] - val_data['bench_perf']
-        median_perf_delta = val_data['perf_delta'].median()
+        val_data["strat_return"] = (
+            val_data["moex_long_weight"] * val_data["price_return"]
+            + (1 - val_data["moex_long_weight"]) * val_data["ruonia_daily"]
+        )
+        val_data.loc[0, ["price_return", "strat_return"]] = 0
+        val_data["strategy_perf"] = (val_data["strat_return"] + 1).cumprod() * 100
+        val_data["bench_perf"] = (val_data["strat_return"] + 1).cumprod() * 100
+        val_data["perf_delta"] = val_data["strategy_perf"] - val_data["bench_perf"]
+        median_perf_delta = val_data["perf_delta"].median()
 
         return median_perf_delta, 1
 
@@ -53,7 +55,7 @@ class CriticalF1Metric:
         # weight - веса наблюдений
 
         # Выделяем критичные наблюдения
-        critical_mask = (weight == 10)  # Предполагаем, что вес=10 для важных точек
+        critical_mask = weight == 10  # Предполагаем, что вес=10 для важных точек
         approx = np.array(approxes[0])
         y_pred = (approx > 0.5).astype(int)
         y_true = np.array(target)
@@ -90,18 +92,29 @@ class FocalLossObjective:
 
             if y == 1:
                 # Градиент и гессиан для y=1 (проверено ранее)
-                grad = alpha * (1 - p)**gamma * (gamma * p * np.log(p) + p - 1)
-                hess = alpha * p * (1 - p)**(1 + gamma) * (
-                    1 + 2 * gamma -
-                    gamma * np.log(p) -
-                    (gamma**2 * p * np.log(p)) / (1 - p)
+                grad = alpha * (1 - p) ** gamma * (gamma * p * np.log(p) + p - 1)
+                hess = (
+                    alpha
+                    * p
+                    * (1 - p) ** (1 + gamma)
+                    * (
+                        1
+                        + 2 * gamma
+                        - gamma * np.log(p)
+                        - (gamma**2 * p * np.log(p)) / (1 - p)
+                    )
                 )
             else:
                 # Градиент и гессиан для y=0 (на основе Wolfram Alpha)
                 grad = (1 - alpha) * p**gamma * (gamma * (1 - p) * np.log(1 - p) - p)
-                hess = -(1 - alpha) * p**gamma * (1 - p) * (
-                    gamma * np.log(1 - p) * (gamma * p - gamma + p) +
-                    p * (2 * gamma + 1)
+                hess = (
+                    -(1 - alpha)
+                    * p**gamma
+                    * (1 - p)
+                    * (
+                        gamma * np.log(1 - p) * (gamma * p - gamma + p)
+                        + p * (2 * gamma + 1)
+                    )
                 )
 
             ders1.append(w * grad)
@@ -139,8 +152,8 @@ class FocalLossMetric(object):
             w = 1.0 if weight is None else weight[i]
             weight_sum += w
             error_sum += -w * (
-                alpha * np.log(1-p)**gamma * t * np.log(p) +
-                (1 - alpha) * np.log(p)**gamma * (1 - t) * np.log(1 - p)
+                alpha * np.log(1 - p) ** gamma * t * np.log(p)
+                + (1 - alpha) * np.log(p) ** gamma * (1 - t) * np.log(1 - p)
             )
 
         return error_sum, weight_sum

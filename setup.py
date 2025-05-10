@@ -26,8 +26,11 @@ def main():
 
     # Устанавливаем зависимости
     try:
-        print('Запуск установки необходимых библиотек')
-        subprocess.run([pip_path, "install", "--upgrade", "--force-reinstall", "-r", REQUIREMENTS], check=True)
+        print("Запуск установки необходимых библиотек")
+        subprocess.run(
+            [pip_path, "install", "--upgrade", "--force-reinstall", "-r", REQUIREMENTS],
+            check=True,
+        )
     except FileNotFoundError:
         sys.exit(f"Файл {REQUIREMENTS} не найден")
     except subprocess.CalledProcessError:

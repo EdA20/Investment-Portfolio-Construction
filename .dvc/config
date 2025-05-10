@@ -1,0 +1,5 @@
+[core]
+    remote = s3-portfolio-construction
+['remote "s3-portfolio-construction"']
+    url = s3://portfolio-construction/
+    endpointurl = https://storage.yandexcloud.net
