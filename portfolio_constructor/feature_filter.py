@@ -1,13 +1,13 @@
-from utils import ALL_DATA_FILES, ALL_DATA_PATH, PROJECT_ROOT
-from utils.feature_generator import position_rotator
-
 import sys
+from typing import Iterable, List, Union
+
 import numpy as np
 import pandas as pd
-
+from sklearn.feature_selection import VarianceThreshold, mutual_info_classif
 from tqdm import tqdm
-from typing import List, Union, Iterable
-from sklearn.feature_selection import mutual_info_classif, VarianceThreshold
+
+from portfolio_constructor import ALL_DATA_FILES, ALL_DATA_PATH, PROJECT_ROOT
+from portfolio_constructor.feature_generator import position_rotator
 
 
 def group_features(features_to_group: List[str], grouping_lvl: str = "base_cols"):

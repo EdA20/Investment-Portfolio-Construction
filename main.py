@@ -6,16 +6,14 @@ from warnings import simplefilter
 import numpy as np
 import pandas as pd
 
-from utils.feature_filter import feature_filter
-from utils.feature_generator import (
+from portfolio_constructor.feature_filter import feature_filter
+from portfolio_constructor.feature_generator import (
     data_generator,
     replace_old_feature_names,
 )
 
 # from utils.sampler import SampleStrategy
-from utils.model import read_logger, strategy_full_cycle
-from utils.plotter import plot_startegy_performance
-from sklearn.feature_selection import mutual_info_classif
+from portfolio_constructor.model import strategy_full_cycle, read_logger
 
 
 def main(parser):

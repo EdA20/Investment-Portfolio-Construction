@@ -1,4 +1,4 @@
-from utils import EXOG_DATA_PRICE_FILES, EXOG_DATA_OTHER_FILES
+from portfolio_constructor import EXOG_DATA_PRICE_FILES, EXOG_DATA_OTHER_FILES
 
 import pandas as pd
 import numpy as np
@@ -7,7 +7,7 @@ import seaborn as sns
 
 from IPython.display import display, HTML, clear_output
 from tqdm import tqdm
-from utils.feature_generator import position_rotator
+from portfolio_constructor.feature_generator import position_rotator
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 sns.set_style('darkgrid')
