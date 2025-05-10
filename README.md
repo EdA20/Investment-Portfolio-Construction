@@ -37,6 +37,14 @@ To be continued...
 
 ## Contribution tips:
 
+- Data DVC sync - set env variables `$DVC_ACCESS_KEY_ID` and `$DVC_SECRET_ACCESS_KEY`
+
+```bash
+poetry run dvc remote modify s3-portfolio-construction --local access_key_id $(DVC_ACCESS_KEY_ID)
+poetry run dvc remote modify s3-portfolio-construction --local secret_access_key $(DVC_SECRET_ACCESS_KEY)
+```
+
+
 - Formatting:
 
 ```bash
