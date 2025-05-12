@@ -12,7 +12,7 @@ from IPython.display import clear_output, display
 from tqdm import tqdm
 
 from utils.model import StrategyModeller, write_log_file
-from utils.strategy_plots import *
+from utils.plotter import *
 
 
 def get_json_path():

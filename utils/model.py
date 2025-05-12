@@ -9,13 +9,17 @@ import pandas as pd
 
 from utils.feature_generator import data_generator, position_rotator
 from utils.custom_metrics import *
-from utils.strategy_plots import plot_startegy_performance
+from utils.plotter import plot_startegy_performance
 
 from typing import Union, Dict
 from IPython.display import display, clear_output
 from tqdm import tqdm
 from catboost import Pool, CatBoostClassifier
 from sktime.split import SlidingWindowSplitter, ExpandingWindowSplitter
+
+# to plot in debug mode use this
+# import matplotlib as mpl
+# mpl.use('TkAgg')
 
 
 def write_log_file(info_to_log: Union[Dict, str] = None):
@@ -40,6 +44,10 @@ def write_log_file(info_to_log: Union[Dict, str] = None):
 
     for handler in logging.root.handlers:
         logging.getLogger().removeHandler(handler)
+
+
+def csv_logger(data, trial_name):
+    pass
 
 
 def read_logger(path: str = None):
@@ -90,6 +98,49 @@ def open_random_features_pnl_file(path=None):
     return random_features_pnl
 
 
+def propect_value_func(x, ind_estim=1, neg_bias=0.9, ext_mult=5):
+    value = x ** ind_estim if x >= 0 else -neg_bias * (-x) ** ind_estim
+    if abs(x) >= 5:
+        value *= ext_mult
+    else:
+        value = 1
+
+    return value
+
+
+def time_critical_weighting(init_w, returns, k=100, q=0.01, jump_coef=20, fading_factor=21):
+    init_w = init_w.copy()
+    returns = returns.copy()
+
+    cum_weights = init_w.cumsum()
+    alpha = np.log(k) / len(cum_weights)
+    time_weighting = np.exp(alpha * cum_weights)
+
+    crit_dates = returns.index[np.where(returns < returns.quantile(q))]
+    gamma = np.log(k) / fading_factor
+    critical_ws = []
+    for crit_date in crit_dates:
+        critical_w = init_w.loc[crit_date:]
+        critical_w = critical_w.cumsum()
+        critical_w = jump_coef * np.exp(-gamma * critical_w)
+        critical_ws.append(critical_w)
+    critical_weighting = pd.concat(critical_ws, axis=1).fillna(0).max(axis=1)
+    weights = pd.concat([time_weighting, critical_weighting], axis=1).fillna(0).sum(axis=1)
+    weights = weights / weights.sum()
+
+    return weights
+
+
+def pnl_power_weight_function(x, power):
+    weight = x ** power
+    return weight / sum(weight)
+
+
+def pnl_sigmoid_weight_function(x, k=1, shift=0):
+    weight = 1.0 / (1.0 + k * np.exp(-x + shift))
+    return weight / sum(weight)
+
+
 class Dataset:
     def __init__(
         self,
@@ -102,16 +153,6 @@ class Dataset:
         self.sample_weight_kwargs = sample_weight_kwargs
         self.position_rotator_kwargs = position_rotator_kwargs
         self.feature_info = feature_info
-
-    @staticmethod
-    def propect_value_func(x, ind_estim=1, neg_bias=0.9, ext_mult=5):
-        value = x**ind_estim if x >= 0 else -neg_bias * (-x) ** ind_estim
-        if abs(x) >= 5:
-            value *= ext_mult
-        else:
-            value = 1
-
-        return value
 
     @staticmethod
     def get_sample_weights(
@@ -129,14 +170,28 @@ class Dataset:
         mode = list(weight_params.keys())[0]
         weight_params = weight_params[mode]
 
-        if mode == "rotation_event":
-            if weight_params.get("imptnt_obs_lag_reaction") is None:
-                raise Exception(
-                    'pass "imptnt_obs_lag_reaction" arg in "weight_sample_kwargs"'
-                )
-            if weight_params.get("imptnt_obs_w") is None:
-                raise Exception('pass "imptnt_obs_w" arg in "weight_sample_kwargs"')
+        if mode == 'time_critical':
+            cum_weights = data[weight_name].cumsum()
+            alpha = np.log(weight_params['k']) / len(cum_weights)
+            time_weighting = np.exp(alpha * cum_weights)
 
+            crit_dates = data.index[np.where(data['price_return'] < data['price_return'].quantile(weight_params['q']))]
+            gamma = np.log(weight_params['k']) / weight_params['fading_factor']
+            critical_ws = []
+            for crit_date in crit_dates:
+                critical_w = data[weight_name].loc[crit_date:]
+                critical_w = critical_w.cumsum()
+                critical_w = weight_params['jump_coef'] * np.exp(-gamma * critical_w)
+                critical_ws.append(critical_w)
+            critical_weighting = pd.concat(critical_ws, axis=1).fillna(0).max(axis=1)
+
+            data[weight_name] = pd.concat([time_weighting, critical_weighting], axis=1).fillna(0).sum(axis=1)
+
+        if mode == 'rotation_event':
+            if weight_params.get('imptnt_obs_lag_reaction') is None:
+                raise Exception('pass "imptnt_obs_lag_reaction" arg in "weight_sample_kwargs"')
+            if weight_params.get('imptnt_obs_w') is None:
+                raise Exception('pass "imptnt_obs_w" arg in "weight_sample_kwargs"')
             reaction_days = np.arange(
                 1, 1 + weight_params["imptnt_obs_lag_reaction"]
             ).reshape(-1, 1)
@@ -155,8 +210,7 @@ class Dataset:
                 raise Exception('pass "return_mult" arg for "weight_sample_kwargs"')
             if weight_params.get("return_thresh") is None:
                 raise Exception('pass "return_thresh" arg for "weight_sample_kwargs"')
-
-            data[weight_name] = data["price_return"].shift(-1).ffill()
+            data[weight_name] = data['price_return'].copy()
             data[weight_name] = data[weight_name].apply(
                 lambda x: x * weight_params["return_mult"]
                 if (x <= -weight_params["return_thresh"])
@@ -171,38 +225,18 @@ class Dataset:
             if weight_params.get("sqrt_scale") is None:
                 raise Exception('pass "sqrt_scale" arg for "weight_sample_kwargs"')
 
-            max_wieght = len(data) * weight_params["obs_frac"]
-            shifted_returns = data["price_return"].shift(-1).ffill()
-            data[weight_name] = abs(
-                np.emath.logn(1 + shifted_returns.mean(), 1 + shifted_returns)
-            )
+            max_wieght = len(data) * weight_params['obs_frac']
+            shifted_returns = data['price_return'].copy()
+            data[weight_name] = abs(np.emath.logn(1 + shifted_returns.mean(), 1 + shifted_returns))
             data[weight_name] = np.clip(data[weight_name], 0, max_wieght)
             if weight_params["sqrt_scale"]:
                 data[weight_name] = np.sqrt(data[weight_name])
 
-        if weight_smoothing.get("win_type") == "exp":
-            data[weight_name] = (
-                data[weight_name]
-                .rolling(window=weight_smoothing["window"], win_type="exponential")
-                .mean(
-                    center=weight_smoothing["window"],
-                    sym=False,
-                    tau=weight_smoothing["win_type_param"],
-                )
-                .bfill()
-                .ffill()
-            )
-
-        elif weight_smoothing.get("win_type") == "gauss":
-            data[weight_name] = (
-                data[weight_name]
-                .rolling(
-                    window=weight_smoothing["window"], center=True, win_type="gaussian"
-                )
-                .mean(std=weight_smoothing["win_type_param"])
-                .bfill()
-                .ffill()
-            )
+        if weight_smoothing:
+            data[weight_name] = data[weight_name]\
+                .rolling(window=weight_smoothing['window'], win_type='exponential')\
+                .mean(center=weight_smoothing['window'], sym=False, tau=weight_smoothing['win_type_param'])\
+                .bfill().ffill()
 
         return data[weight_name]
 
@@ -353,8 +387,9 @@ class Dataset:
         return batches
 
 
-class StrategyModeller(Dataset):
-    ALL_MODELS = ("catboost",)
+class Model(Dataset):
+
+    ALL_MODELS = ('catboost',)
 
     def __init__(
         self,
@@ -363,8 +398,8 @@ class StrategyModeller(Dataset):
         position_rotator_kwargs,
         model_kwargs,
         prob_to_weight=True,
-        logging=True,
-        feature_info=None,
+        trial_name=None,
+        feature_info=None
     ):
         super().__init__(
             splitter_kwargs, sample_weight_kwargs, position_rotator_kwargs, feature_info
@@ -372,11 +407,12 @@ class StrategyModeller(Dataset):
         self.model_kwargs = model_kwargs
         self.prob_to_weight = prob_to_weight
 
-        if logging:
-            self.log_collector = self.__dict__.copy()
-            self.log_collector.pop("feature_info", None)
+        if trial_name:
+            self.logs = self.__dict__.copy()
+            self.logs.pop('feature_info', None)
+            self.logs['trail_name'] = trial_name
         else:
-            self.log_collector = None
+            self.logs = None
 
         self.output = {}
 
@@ -501,88 +537,72 @@ class StrategyModeller(Dataset):
         )
         all_train_info = pd.concat(all_train_info, ignore_index=True)
 
-        self.output["train_info"] = all_train_info.copy()
-        if self.log_collector:
-            all_train_info = all_train_info.drop_duplicates("from_date")
-            all_train_info["from_date"] = all_train_info["from_date"].astype(str)
-            features = all_train_info.set_index("from_date").drop(
-                ["mean_train_target", "mean_test_target", "till_date", "n_model"],
-                axis=1,
-            )
-            features = features.apply(
-                lambda x: list(x[x.notna()].index), axis=1
-            ).to_dict()
-            self.log_collector["features"] = features
+        if self.logs:
+            features = all_train_info.copy()
+            features = features.drop_duplicates('from_date')
+            features['from_date'] = features['from_date'].astype(str)
+            features = features\
+                .set_index('from_date')\
+                .drop(['mean_train_target', 'mean_test_target', 'till_date', 'n_model'], axis=1)
+
+            features = features.apply(lambda x: list(x[x.notna()].index), axis=1).to_dict()
+            self.logs['features'] = features
+            self.logs['random_state'] = self.model_kwargs['random_state']
 
         return all_preds, all_train_info
 
-    def base_strategy_peformance(self, strat_data, preds, plot=False):
+
+class Strategy:
+    def __init__(self, trial_name):
+        self.logs = {'trial_name': trial_name}
+
+    def base_strategy_peformance(self, strat_data, preds, train_info, prob_to_weight=True, plot=False):
         strat_data = strat_data.copy()
 
-        strat_data["preds"] = preds.mean(axis=1)
-        strat_data["turnover"] = abs(
-            strat_data["preds"] - strat_data["preds"].shift()
-        ).cumsum() / (((strat_data.index - strat_data.index[0]).days + 1) / 365)
-        strat_data["preds"] = strat_data["preds"].shift()
-        strat_data["is_bench_long"] = strat_data["preds"] >= 0.5
+        strat_data['preds'] = preds.mean(axis=1)
+        strat_data['preds'] = strat_data['preds'].shift()
+        strat_data['is_bench_long'] = strat_data['preds'] >= 0.5
 
-        cols = [
-            "price",
-            "ruonia",
-            "ruonia_daily",
-            "preds",
-            "is_bench_long",
-            "price_return",
-            "turnover",
-        ]
-        res = strat_data.loc[:, cols].dropna(subset="preds")
+        cols = ['price', 'ruonia', 'ruonia_daily', 'preds', 'is_bench_long', 'price_return']
+        res = strat_data.loc[:, cols].dropna(subset='preds')
 
-        if self.prob_to_weight:
-            res["bench_long_weight"] = res["preds"].apply(
-                lambda x: x if x >= 0.5 else 0
-            )
+        if prob_to_weight:
+            res['bench_long_weight'] = res['preds'].apply(lambda x: x if x >= 0.5 else 0)
         else:
             res["bench_long_weight"] = res["preds"].apply(
                 lambda x: 1 if x >= 0.5 else 0
             )
 
-        res["strat_return"] = (
-            res["bench_long_weight"] * res["price_return"]
-            + (1 - res["bench_long_weight"]) * res["ruonia_daily"]
-        )
-        res.iloc[0, np.where(res.columns == "start_return")[0]] = 0
+        year_fraq = ((res.index - res.index[0]).days + 1) / (res.index.is_leap_year + 365)
+        strat_data['turnover'] = abs(res['bench_long_weight'].diff()).cumsum() / year_fraq
 
-        res.iloc[0, np.where(res.columns.isin(["price_return", "strat_return"]))[0]] = 0
-        res["strategy_perf"] = (res["strat_return"] + 1).cumprod() * 100
-        res["bench_perf"] = (res["price_return"] + 1).cumprod() * 100
-        res["perf_delta"] = res["strategy_perf"] - res["bench_perf"]
+        res['strat_return'] = res['bench_long_weight'] * res['price_return'] + (1 - res['bench_long_weight']) * res['ruonia_daily']
 
-        test_subset_idx = np.where(
-            res.index.isin(self.output["train_info"]["from_date"].unique())
-        )
-        res["test_subset_idx"] = 0
-        res.loc[res.index[test_subset_idx], "test_subset_idx"] = 1
-        res["test_subset_idx"] = res["test_subset_idx"].cumsum()
-        test_subset_pnl = res.groupby(res["test_subset_idx"])[
-            ["price_return", "strat_return"]
-        ].apply(lambda x: (1 + x).prod() - 1)
-        test_subset_outperf = (
-            test_subset_pnl["strat_return"] - test_subset_pnl["price_return"]
-        )
+        res.loc[res.index[0], ['price_return', 'strat_return']] = 0
+        res['strategy_perf'] = (res['strat_return'] + 1).cumprod() * 100
+        res['bench_perf'] = (res['price_return'] + 1).cumprod() * 100
 
-        n_test_subsets = np.array([i for i in range(1, len(test_subset_outperf) + 1)])
-        weight_function_1 = lambda x, power: x**power / sum(x**power)
-        weight_function_2 = (
-            lambda x, base: 1.0
-            / (1.0 + base ** (-x + 36.0))
-            / sum(1.0 / (1.0 + base ** (-x + 36.0)))
-        )
-        weights = weight_function_2(n_test_subsets, 1.1) + weight_function_1(
-            n_test_subsets, 1 / 2
-        ) / sum(
-            weight_function_2(n_test_subsets, 1.1)
-            + weight_function_1(n_test_subsets, 1 / 2)
-        )
+        self.logs['start_date'] = res.index[0].strftime('%Y-%m-%d')
+        self.logs['end_date'] = res.index[-1].strftime('%Y-%m-%d')
+        self.logs['strategy_perf'] = res['strategy_perf'].iloc[-1]
+        self.logs['strategy_outperf'] = res['strategy_perf'].iloc[-1] - res['bench_perf'].iloc[-1]
+
+        self.calculate_strategy_metrics(res, train_info)
+
+        if plot:
+            plot_startegy_performance(res)
+
+        return res
+
+    def calculate_strategy_metrics(self, res):
+        # TODO
+        sharpe_ratio_rf = (res['strat_return'] - res['ruonia_daily']).mean() / res['strat_return'].std()
+        sharpe_ratio_rm = (res['strat_return'] - res['price_return']).mean() / res['strat_return'].std()
+
+        n = np.array([i for i in range(1, len(res) + 1)])
+        weights = pnl_sigmoid_weight_function(n, 1.1) + pnl_power_weight_function(n, 1/2)
+        weights = weights / sum(weights)
+
         mean_test_subset_outperf = 100 * test_subset_outperf.mean()
         weighted_test_subset_outperf = 100 * sum(test_subset_outperf * weights)
         weighted_test_sharpe = weighted_test_subset_outperf / (
@@ -600,21 +620,12 @@ class StrategyModeller(Dataset):
             "Weighted Outperformance Sharpe Metric:", weighted_test_sharpe, end="\n\n"
         )
 
-        if self.log_collector:
-            self.log_collector["start_date"] = res.index[0].strftime("%Y-%m-%d")
-            self.log_collector["random_state"] = self.model_kwargs["random_state"]
-            self.log_collector["strategy_pnl"] = res["strategy_perf"].iloc[-1]
-            self.log_collector["bench_pnl"] = res["bench_perf"].iloc[-1]
-            self.log_collector["median_perf_delta"] = res["perf_delta"].median()
-            self.log_collector["mean_test_subset_outperf"] = mean_test_subset_outperf
-            self.log_collector["weighted_test_subset_outperf"] = (
-                weighted_test_subset_outperf
-            )
-            self.log_collector["weighted_test_sharpe_metric"] = weighted_test_sharpe
-            write_log_file(self.log_collector)
-
-        if plot:
-            plot_startegy_performance(res)
+        self.logs['random_state'] = self.model_kwargs['random_state']
+        self.logs['median_perf_delta'] = res['perf_delta'].median()
+        self.logs['mean_test_subset_outperf'] = mean_test_subset_outperf
+        self.logs['weighted_test_subset_outperf'] = weighted_test_subset_outperf
+        self.logs['weighted_test_sharpe_metric'] = weighted_test_sharpe
+        write_log_file(self.log_collector)
 
         output = {
             "data": strat_data,

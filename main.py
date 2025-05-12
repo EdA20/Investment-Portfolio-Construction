@@ -13,7 +13,9 @@ from utils.feature_generator import (
 )
 
 # from utils.sampler import SampleStrategy
-from utils.model import StrategyModeller, read_logger
+from utils.model import read_logger, Model, Strategy
+from utils.plotter import plot_startegy_performance
+from sklearn.feature_selection import mutual_info_classif
 
 
 def main(parser):
@@ -24,11 +26,11 @@ def main(parser):
     else:
         args = parser.parse_args()
 
-    if "data.csv" in os.listdir("data"):
-        data = pd.read_parquet("data/data.parquet")
+    if 'data.csv' in os.listdir('data'):
+        data = pd.read_csv('data/data.csv', index_col=0, parse_dates=True)
     else:
-        data = data_generator(path="mcftrr.xlsx")
-        data.to_parquet("data/data.parquet")
+        data = data_generator(path='mcftrr.xlsx')
+        data.to_csv('data/data.csv')
 
     if args.features == "all":
         features = list(data.drop(["price", "ruonia_daily"], axis=1).columns)
@@ -59,11 +61,9 @@ def main(parser):
         ].item()
         features = tuple(map(lambda x: replace_old_feature_names(x), features))
 
-    elif args.features == "feature_importance":
-        if "feature_importance.xlsx" not in os.listdir("data"):
-            raise Exception(
-                '"features_importance.xlsx" file is missing in folder "data"'
-            )
+    else:
+        if 'feature_importance.xlsx' not in os.listdir('data'):
+            raise Exception('"features_importance.xlsx" file is missing in folder "data"')
         else:
             feature_importance = pd.read_excel(
                 "data/feature_importance.xlsx", parse_dates=True
@@ -80,11 +80,9 @@ def main(parser):
     if args.filter:
         features = feature_filter(data, var_threshold=0.001, corr_threshold=0.85)
 
-    top_n = 10
-    mutual_info = pd.read_excel(
-        "data/cum_mut_info.xlsx", index_col=[0], parse_dates=True
-    )
-    feature_info = mutual_info.apply(lambda x: list(x.nlargest(top_n).index), axis=1)
+    # top_n = 10
+    # mutual_info = pd.read_excel('data/cum_mut_info.xlsx', index_col=[0], parse_dates=True)
+    # feature_info = mutual_info.apply(lambda x: list(x.nlargest(top_n).index), axis=1)
 
     step = 20
     splitter_kwargs = dict(
@@ -98,6 +96,12 @@ def main(parser):
     position_rotator_kwargs = dict(freq=63, shift_days=0, mode=1)
     sample_weight_kwargs = dict(
         weight_params=dict(
+            time_critical=dict(
+                k=100,
+                q=0.01,
+                jump_coef=20,
+                fading_factor=21
+            ),
             # rotation_event=dict(
             #     imptnt_obs_lag_reaction=5,
             #     imptnt_obs_w=100,
@@ -111,7 +115,11 @@ def main(parser):
             #     sqrt_scale=False,
             # ),
         ),
-        weight_smoothing=dict(win_type="gauss", window=3, win_type_param=1),
+        # weight_smoothing=dict(
+        #     win_type='gauss',
+        #     window=3,
+        #     win_type_param=1
+        # )
     )
     model_kwargs = dict(
         model_name="catboost",
@@ -129,21 +137,21 @@ def main(parser):
     dummy_features = ["normal_dummy", "dummy"]
 
     if not args.sampling:
-        model = StrategyModeller(
+        trial_name = 'trial'
+        model = Model(
             splitter_kwargs,
             sample_weight_kwargs,
             position_rotator_kwargs,
             model_kwargs,
             prob_to_weight=True,
-            logging=True,
-            feature_info=feature_info,
+            trial_name=trial_name,
+            # feature_info=feature_info
         )
+        strategy = Strategy(trial_name=trial_name)
         batches = model.get_batches(data, features)
         preds, train_info = model.get_predictions(batches)
-        strat_data = data.loc[
-            :, ["price", "price_return", "ruonia", "ruonia_daily"]
-        ].copy()
-        output = model.base_strategy_peformance(strat_data, preds, plot=True)
+        strat_data = data.loc[:, ['price', 'price_return', 'ruonia', 'ruonia_daily']].copy()
+        output = strategy.base_strategy_peformance(strat_data, preds, train_info)
     else:
         pass
 
