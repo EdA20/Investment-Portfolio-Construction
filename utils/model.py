@@ -20,6 +20,7 @@ from sktime.split import SlidingWindowSplitter, ExpandingWindowSplitter
 # to plot in debug mode use this
 # import matplotlib as mpl
 # mpl.use('TkAgg')
+# import matplotlib.pyplot as plt
 
 
 def write_log_file(info_to_log: Union[Dict, str] = None):
@@ -131,14 +132,10 @@ def time_critical_weighting(init_w, returns, k=100, q=0.01, jump_coef=20, fading
     return weights
 
 
-def pnl_power_weight_function(x, power):
-    weight = x ** power
-    return weight / sum(weight)
-
-
-def pnl_sigmoid_weight_function(x, k=1, shift=0):
-    weight = 1.0 / (1.0 + k * np.exp(-x + shift))
-    return weight / sum(weight)
+def step_function(x, prob=0.99, convergence_to_prob=100, shift=0):
+    base = (1 / prob - 1) ** (-1 / convergence_to_prob)
+    value = 1.0 / (1.0 + base ** (-x + shift))
+    return value
 
 
 class Dataset:
@@ -556,7 +553,7 @@ class Strategy:
     def __init__(self, trial_name):
         self.logs = {'trial_name': trial_name}
 
-    def base_strategy_peformance(self, strat_data, preds, train_info, prob_to_weight=True, plot=False):
+    def base_strategy_peformance(self, strat_data, preds, prob_to_weight=True, plot=False):
         strat_data = strat_data.copy()
 
         strat_data['preds'] = preds.mean(axis=1)
@@ -587,7 +584,7 @@ class Strategy:
         self.logs['strategy_perf'] = res['strategy_perf'].iloc[-1]
         self.logs['strategy_outperf'] = res['strategy_perf'].iloc[-1] - res['bench_perf'].iloc[-1]
 
-        self.calculate_strategy_metrics(res, train_info)
+        self.calculate_strategy_metrics(res)
 
         if plot:
             plot_startegy_performance(res)
@@ -599,42 +596,14 @@ class Strategy:
         sharpe_ratio_rf = (res['strat_return'] - res['ruonia_daily']).mean() / res['strat_return'].std()
         sharpe_ratio_rm = (res['strat_return'] - res['price_return']).mean() / res['strat_return'].std()
 
+        structural_shift_dates = ['2014-06-01', '2022-02-24']
         n = np.array([i for i in range(1, len(res) + 1)])
-        weights = pnl_sigmoid_weight_function(n, 1.1) + pnl_power_weight_function(n, 1/2)
-        weights = weights / sum(weights)
+        weights = np.ones(len(res))
+        for date in structural_shift_dates:
+            shift = np.where(res.index >= date)[0][0]
+            weights += 0.5 * step_function(n, prob=0.99, convergence_to_prob=100, shift=shift)
 
-        mean_test_subset_outperf = 100 * test_subset_outperf.mean()
-        weighted_test_subset_outperf = 100 * sum(test_subset_outperf * weights)
-        weighted_test_sharpe = weighted_test_subset_outperf / (
-            res["strategy_perf"].std() / 100
-        )
-
-        print(
-            "ML Strategy Outperformance:",
-            res["strategy_perf"].iloc[-1] - res["bench_perf"].iloc[-1],
-        )
-        print("Median Performance Delta:", res["perf_delta"].median())
-        print("Mean Outperformance Test Folds:", mean_test_subset_outperf)
-        print("Weighted Outperformance Test Folds:", weighted_test_subset_outperf)
-        print(
-            "Weighted Outperformance Sharpe Metric:", weighted_test_sharpe, end="\n\n"
-        )
-
-        self.logs['random_state'] = self.model_kwargs['random_state']
-        self.logs['median_perf_delta'] = res['perf_delta'].median()
-        self.logs['mean_test_subset_outperf'] = mean_test_subset_outperf
-        self.logs['weighted_test_subset_outperf'] = weighted_test_subset_outperf
-        self.logs['weighted_test_sharpe_metric'] = weighted_test_sharpe
-        write_log_file(self.log_collector)
-
-        output = {
-            "data": strat_data,
-            "res": res,
-            "weighted_test_sharpe": weighted_test_sharpe,
-        }
-        self.output.update(output)
-
-        return self.output
+        a=1
 
 
 if __name__ == "__main__":

@@ -27,10 +27,10 @@ def main(parser):
         args = parser.parse_args()
 
     if 'data.csv' in os.listdir('data'):
-        data = pd.read_csv('data/data.csv', index_col=0, parse_dates=True)
+        data = pd.read_parquet('data/data.parquet')
     else:
         data = data_generator(path='mcftrr.xlsx')
-        data.to_csv('data/data.csv')
+        data.to_parquet('data/data.parquet')
 
     if args.features == "all":
         features = list(data.drop(["price", "ruonia_daily"], axis=1).columns)
@@ -151,7 +151,7 @@ def main(parser):
         batches = model.get_batches(data, features)
         preds, train_info = model.get_predictions(batches)
         strat_data = data.loc[:, ['price', 'price_return', 'ruonia', 'ruonia_daily']].copy()
-        output = strategy.base_strategy_peformance(strat_data, preds, train_info)
+        output = strategy.base_strategy_peformance(strat_data, preds)
     else:
         pass
 
