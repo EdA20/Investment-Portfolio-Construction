@@ -603,6 +603,12 @@ class Strategy:
             shift = np.where(res.index >= date)[0][0]
             weights += 0.5 * step_function(n, prob=0.99, convergence_to_prob=100, shift=shift)
 
+        drawdown = res['strategy_perf'] / res['strategy_perf'].expanding().max() - 1
+        max_drawdown = drawdown.min()
+        last_argmax = res['strategy_perf'].expanding().apply(lambda x: x.argmax())
+        max_recovery = last_argmax.drop_duplicates().diff().max()
+        beta = res[['strat_return', 'price_return']].cov().iloc[0,1] / res['price_return'].var()
+
         a=1
 
 
