@@ -13,7 +13,7 @@ from utils.feature_generator import (
 )
 
 # from utils.sampler import SampleStrategy
-from utils.model import read_logger, Model, Strategy
+from utils.model import read_logger, strategy_full_cycle
 from utils.plotter import plot_startegy_performance
 from sklearn.feature_selection import mutual_info_classif
 
@@ -106,10 +106,10 @@ def main(parser):
             #     imptnt_obs_lag_reaction=5,
             #     imptnt_obs_w=100,
             # ),
-            dramatic_return_event=dict(
-                return_mult=10,
-                return_thresh=0.02,
-            ),
+            # dramatic_return_event=dict(
+            #     return_mult=10,
+            #     return_thresh=0.02,
+            # ),
             # compare_mean_return=dict(
             #     obs_frac=0.03,
             #     sqrt_scale=False,
@@ -137,21 +137,15 @@ def main(parser):
     dummy_features = ["normal_dummy", "dummy"]
 
     if not args.sampling:
-        trial_name = 'trial'
-        model = Model(
+        output = strategy_full_cycle(
+            data,
+            features,
             splitter_kwargs,
             sample_weight_kwargs,
             position_rotator_kwargs,
             model_kwargs,
-            prob_to_weight=True,
-            trial_name=trial_name,
-            # feature_info=feature_info
+            prob_to_weight=True
         )
-        strategy = Strategy(trial_name=trial_name)
-        batches = model.get_batches(data, features)
-        preds, train_info = model.get_predictions(batches)
-        strat_data = data.loc[:, ['price', 'price_return', 'ruonia', 'ruonia_daily']].copy()
-        output = strategy.base_strategy_peformance(strat_data, preds)
     else:
         pass
 
