@@ -14,7 +14,11 @@ from portfolio_constructor import (
     ENDOG_DATA_FILE,
     PROJECT_ROOT,
 )
+<<<<<<< HEAD
 from portfolio_constructor.model import StrategyModeller, write_log_file
+=======
+from portfolio_constructor.model import write_log_file
+>>>>>>> 0361769 (resolved merge conflict)
 from portfolio_constructor.plotter import *
 
 

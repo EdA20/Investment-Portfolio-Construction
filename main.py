@@ -13,9 +13,8 @@ from portfolio_constructor.feature_generator import (
     replace_old_feature_names,
 )
 
-# from utils.sampler import SampleStrategy
-from portfolio_constructor.model import strategy_full_cycle, read_logger
-
+# from portfolio_constructor.sampler import SampleStrategy
+from portfolio_constructor.model import read_logger, strategy_full_cycle
 
 def main(parser):
     logger.info("Старт")
@@ -141,7 +140,6 @@ def main(parser):
 
     if not args.sampling:
         logger.info("Старт обучения модели")
-
         output = strategy_full_cycle(
             data,
             features,
