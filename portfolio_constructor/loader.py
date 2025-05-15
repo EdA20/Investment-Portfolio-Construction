@@ -1,9 +1,10 @@
-import requests
-import pandas as pd
+from typing import List, Union
 
+import pandas as pd
+import requests
 from tqdm import tqdm
-from typing import Union, List
-from utils import PROJECT_ROOT
+
+from portfolio_constructor import PROJECT_ROOT
 
 RAW_FILES_FOLDER = PROJECT_ROOT / "data/exog_data/raw/"
 PREPROCESSED_FILES_FOLDER = PROJECT_ROOT / "data/exog_data/preprocessed/"

@@ -1,18 +1,25 @@
-from utils import PROJECT_ROOT, ENDOG_DATA_FILE, ALL_DATA_FILES, ALL_DATA_PATH
-
-import os
 import json
-import optuna
-
-import pandas as pd
-import numpy as np
-
+import os
 from random import shuffle
+
+import numpy as np
+import optuna
+import pandas as pd
 from IPython.display import clear_output, display
 from tqdm import tqdm
 
-from utils.model import StrategyModeller, write_log_file
-from utils.plotter import *
+from portfolio_constructor import (
+    ALL_DATA_FILES,
+    ALL_DATA_PATH,
+    ENDOG_DATA_FILE,
+    PROJECT_ROOT,
+)
+<<<<<<< HEAD
+from portfolio_constructor.model import StrategyModeller, write_log_file
+=======
+from portfolio_constructor.model import write_log_file
+>>>>>>> 0361769 (resolved merge conflict)
+from portfolio_constructor.plotter import *
 
 
 def get_json_path():

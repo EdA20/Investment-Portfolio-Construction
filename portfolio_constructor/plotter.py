@@ -1,15 +1,28 @@
-from utils import EXOG_DATA_PRICE_FILES, EXOG_DATA_OTHER_FILES
+<<<<<<< HEAD
+from portfolio_constructor import EXOG_DATA_PRICE_FILES, EXOG_DATA_OTHER_FILES
 
+=======
+>>>>>>> 0361769 (resolved merge conflict)
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+<<<<<<< HEAD
 from IPython.display import display, HTML, clear_output
 from tqdm import tqdm
-from utils.feature_generator import position_rotator
+from portfolio_constructor.feature_generator import position_rotator
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
+=======
+from tqdm import tqdm
+from IPython.display import display, HTML, clear_output
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+
+from portfolio_constructor.feature_generator import position_rotator
+from portfolio_constructor import EXOG_DATA_PRICE_FILES, EXOG_DATA_OTHER_FILES
+
+>>>>>>> 0361769 (resolved merge conflict)
 sns.set_style('darkgrid')
 
 

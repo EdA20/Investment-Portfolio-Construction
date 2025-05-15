@@ -1,21 +1,20 @@
-from utils import PROJECT_ROOT, TQDM_DISABLE
-
-import os
 import json
 import logging
+import os
+from typing import Dict, Union
 
 import numpy as np
 import pandas as pd
 
-from utils.feature_generator import data_generator, position_rotator
-from utils.custom_metrics import *
-from utils.plotter import plot_startegy_performance
-
-from typing import Union, Dict
-from IPython.display import display, clear_output
+from catboost import CatBoostClassifier, Pool
+from IPython.display import clear_output
+from sktime.split import ExpandingWindowSplitter, SlidingWindowSplitter
 from tqdm import tqdm
-from catboost import Pool, CatBoostClassifier
-from sktime.split import SlidingWindowSplitter, ExpandingWindowSplitter
+
+from portfolio_constructor import PROJECT_ROOT, TQDM_DISABLE
+from portfolio_constructor.custom_metrics import *
+from portfolio_constructor.feature_generator import position_rotator
+from portfolio_constructor.plotter import plot_startegy_performance
 
 # to plot in debug mode use this
 # import matplotlib as mpl

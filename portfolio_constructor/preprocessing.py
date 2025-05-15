@@ -1,6 +1,6 @@
-from utils import PROJECT_ROOT
-
 import pandas as pd
+
+from portfolio_constructor import PROJECT_ROOT
 
 RAW_FILES_FOLDER = PROJECT_ROOT / "data/exog_data/raw/"
 PREPROCESSED_FILES_FOLDER = PROJECT_ROOT / "data/exog_data/preprocessed/"
