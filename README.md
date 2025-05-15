@@ -22,7 +22,7 @@ Develop an **automated trading pipeline** using ML/DL models to generate buy/sel
 
 ---
 
-## 📊 Visualizations (Add Screenshots/Plots)
+## 📊 Visualizations
 ...
 
 <!-- | ![IMOEX vs Portfolio](https://via.placeholder.com/400x200.png?text=Portfolio+vs+IMOEX+Returns) | ![Correlation Heatmap](https://via.placeholder.com/400x200.png?text=Asset+Correlation+Heatmap) |
