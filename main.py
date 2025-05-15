@@ -1,4 +1,5 @@
 import argparse
+import logging
 import os
 import sys
 from warnings import simplefilter
@@ -17,6 +18,7 @@ from portfolio_constructor.model import strategy_full_cycle, read_logger
 
 
 def main(parser):
+    logger.info("Старт")
     is_debug_mode = getattr(sys, "gettrace", lambda: None)() is not None
 
     if is_debug_mode:
@@ -24,11 +26,13 @@ def main(parser):
     else:
         args = parser.parse_args()
 
-    if 'data.csv' in os.listdir('data'):
-        data = pd.read_parquet('data/data.parquet')
+    if "data.csv" in os.listdir("data"):
+        logger.info("Загрузка данных из data.parquet")
+        data = pd.read_parquet("data/data.parquet")
     else:
-        data = data_generator(path='mcftrr.xlsx')
-        data.to_parquet('data/data.parquet')
+        logger.warning("Файл data.parquet не найден. Генерация новых данных")
+        data = data_generator(path="mcftrr.xlsx")
+        data.to_parquet("data/data.parquet")
 
     if args.features == "all":
         features = list(data.drop(["price", "ruonia_daily"], axis=1).columns)
@@ -36,6 +40,7 @@ def main(parser):
         features = list(data.drop(["price", "ruonia_daily"], axis=1).columns)
         features = list(np.random.choice(features, 20, replace=False))
     elif args.features == "last_best":
+        logger.info("Использование лучших фичей из предыдущих запусков")
         trials = read_logger()
         trials["features"] = trials["features"].apply(lambda x: tuple(x))
         group_median_perf_delta = (
@@ -135,6 +140,8 @@ def main(parser):
     dummy_features = ["normal_dummy", "dummy"]
 
     if not args.sampling:
+        logger.info("Старт обучения модели")
+
         output = strategy_full_cycle(
             data,
             features,
@@ -144,11 +151,19 @@ def main(parser):
             model_kwargs,
             prob_to_weight=True
         )
+        logger.info("Обучение завершено")
     else:
         pass
 
 
 if __name__ == "__main__":
+    # Добавить в начало файла
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(levelname)s - %(message)s",
+        handlers=[logging.StreamHandler()],
+    )
+    logger = logging.getLogger(__name__)
     parser = argparse.ArgumentParser(description="parser")
     parser.add_argument(
         "--features",

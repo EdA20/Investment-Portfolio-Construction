@@ -1,63 +1,108 @@
-# Investment Portfolio Construction
+# 📈 Investment Portfolio Construction: ML-Driven Strategy to Outperform IMOEX 
 
-## Diploma project on creating an investment strategy to overtake the Moscow Exchange Index (IMOEX)
+[![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)](https://www.python.org/)
+[![Poetry](https://img.shields.io/badge/Packaging-Poetry-cyan.svg)](https://python-poetry.org/)
+[![DVC](https://img.shields.io/badge/Data_Versioning-DVC-yellowgreen)](https://dvc.org/)
 
-## User-guide
+A diploma project building a machine learning-powered investment strategy to **consistently outperform** the Moscow Exchange Index (IMOEX). Combines equity selection with risk-managed portfolio construction using RUONIA rates.
 
-### Dependencies:
+---
 
-#### Python dependencies:
-- `Python>=3.10,<3.12`
-- `Poetry>=2.1.2`
+## 🎯 Project Overview
 
-#### Installing python packages:
+#### Objective
+Develop an **automated trading pipeline** using ML/DL models to generate buy/sell signals, constructing diversified portfolios that:
+1. Outperform IMOEX returns
+2. Mitigate risk through sector diversification and RUONIA rate hedging
+
+#### Key Innovations
+- **Hybrid strategy**: Combines equities with RUONIA deposits for downside protection
+- **Multi-source data**: Integrates endogenous (price data) and exogenous (commodities, FX, bonds) features
+- **Advanced feature engineering**: Technical indicators + macroeconomic derivatives
+
+---
+
+## 📊 Visualizations (Add Screenshots/Plots)
+...
+
+<!-- | ![IMOEX vs Portfolio](https://via.placeholder.com/400x200.png?text=Portfolio+vs+IMOEX+Returns) | ![Correlation Heatmap](https://via.placeholder.com/400x200.png?text=Asset+Correlation+Heatmap) |
+|:--:|:--:|
+| *Portfolio Performance vs Benchmark* | *Sector Correlation Analysis* |
+
+| ![Technical Indicators](https://via.placeholder.com/800x200.png?text=RSI+%26+MACD+Visualization) |
+|:--:|
+| *Feature Engineering: Technical Indicators* | -->
+
+---
+
+## 🏆 Key Results
+
+...
+
+---
+
+## 🧠 Methodology
+
+#### Data Pipeline
+```mermaid
+graph LR
+A[Raw Data] --> B[Feature Engineering]
+B --> C[Model Training]
+C --> D[Signal Generation]
+D --> E[Portfolio Construction]
+E --> F[Performance Analysis]
+```
+
+---
+
+## ⚙️ Installation & Usage
+
+#### Requirements
+- `python >=3.10<3.12`
+- `poetry >= 2.1.3` (dependency management)
+- `dvc` (data version control)
+
+#### Data Management (DVC)
+
+```bash
+# Configure DVC
+poetry run dvc remote modify s3-portfolio-construction --local access_key_id $DVC_ACCESS_KEY_ID
+poetry run dvc remote modify s3-portfolio-construction --local secret_access_key $DVC_SECRET_ACCESS_KEY
+
+# Pull/Push data
+poetry run dvc pull
+poetry run dvc push
+```
+
+#### Installation
+
 ```bash
 poetry install
 ```
 
-#### Run project:
+---
+
+## 📂 Project Structure
+...
+
+
+## 🤝 Contribution Guidelines
+
+#### Setup pre-commit hooks:
 
 ```bash
-poetry run python3 main.py
+poetry run pre-commit install
 ```
 
-## Examples
-
-To be continued...
-
-## Stats
-
-To be continued...
-
-
-## Project structure
-
-To be continued...
-
-
-## Contribution tips:
-
-- Data DVC sync - set env variables `$DVC_ACCESS_KEY_ID` and `$DVC_SECRET_ACCESS_KEY`
-
-```bash
-poetry run dvc remote modify s3-portfolio-construction --local access_key_id $(DVC_ACCESS_KEY_ID)
-poetry run dvc remote modify s3-portfolio-construction --local secret_access_key $(DVC_SECRET_ACCESS_KEY)
-poetry run dvc pull # for pulling data
-poetry run dvc add data && poetry run dvc push # for updating data
-```
-
-
-- Formatting:
+#### Format code:
 
 ```bash
 poetry run ruff format .
 ```
 
-- Add new package:
+#### Add new dependencies:
 
 ```bash
-poetry add <<package-name>>
+poetry add <package> --group dev  # For development tools
+poetry add <package> --group main # For core dependencies
 ```
-
-
-
