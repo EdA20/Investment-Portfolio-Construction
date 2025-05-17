@@ -14,7 +14,7 @@ from tqdm import tqdm
 from portfolio_constructor import PROJECT_ROOT, TQDM_DISABLE
 from portfolio_constructor.custom_metrics import *
 from portfolio_constructor.feature_generator import position_rotator
-from portfolio_constructor.plotter import plot_startegy_performance
+from portfolio_constructor.plotter import plot_strategy_performance
 
 # to plot in debug mode use this
 # import matplotlib as mpl
@@ -68,9 +68,13 @@ def read_logger(path: str = None):
     return df_logs
 
 
-def open_random_features_pnl_file(path=None):
+def open_random_features_perf_file(path=None):
     if not path:
-        path = f"jsons/random_features_pnl_{pd.Timestamp.now().strftime('%Y%m%d')}.json"
+        json_dir = PROJECT_ROOT / "jsons"
+        files = sorted(json_dir.glob("random_features_pnl_*.json"), reverse=True)
+        if not files:
+            raise FileNotFoundError('В папке jsons нет файлов с результатами')
+        path = files[0]
 
     with open(path, "r") as file:
         random_features_pnl = json.load(file)
@@ -78,17 +82,17 @@ def open_random_features_pnl_file(path=None):
     random_features_pnl = pd.DataFrame.from_dict(random_features_pnl, orient="index")
     if random_features_pnl.shape[1] > 1:
         if random_features_pnl.shape[1] == 2:
-            cols = ["pnl_mean", "pnl_std"]
+            cols = ["mean_strategy_perf", "std_strategy_perf"]
         else:
             cols = [
-                "pnl_mean",
-                "pnl_std",
-                "mean_median_perf_delta",
-                "mean_std_perf_delta",
+                "mean_strategy_perf",
+                "std_strategy_perf",
+                "mean_mean_outperf",
+                "std_mean_outperf",
             ]
 
         random_features_pnl = random_features_pnl.set_axis(cols, axis=1).sort_values(
-            "pnl_mean", ascending=False
+            "mean_strategy_perf", ascending=False
         )
 
     return random_features_pnl
@@ -546,7 +550,7 @@ class Strategy:
         self.logs['metrics'] = metrics
 
         if plot:
-            plot_startegy_performance(res)
+            plot_strategy_performance(res)
 
         write_log_file(self.logs)
         output = {

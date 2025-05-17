@@ -8,20 +8,17 @@ import numpy as np
 import pandas as pd
 
 from portfolio_constructor.feature_filter import feature_filter
-from portfolio_constructor.feature_generator import (
-    data_generator,
-    replace_old_feature_names,
-)
-
-# from portfolio_constructor.sampler import SampleStrategy
+from portfolio_constructor.feature_generator import data_generator, replace_old_feature_names
+from portfolio_constructor.sampler import SampleStrategy
 from portfolio_constructor.model import read_logger, strategy_full_cycle
+
 
 def main(parser):
     logger.info("Старт")
     is_debug_mode = getattr(sys, "gettrace", lambda: None)() is not None
 
     if is_debug_mode:
-        args = argparse.Namespace(features="random", filter=False, sampling=False)
+        args = argparse.Namespace(features="all", filter=False, sampling=False)
     else:
         args = parser.parse_args()
 
@@ -103,29 +100,12 @@ def main(parser):
                 q=0.01,
                 jump_coef=20,
                 fading_factor=21
-            ),
-            # rotation_event=dict(
-            #     imptnt_obs_lag_reaction=5,
-            #     imptnt_obs_w=100,
-            # ),
-            # dramatic_return_event=dict(
-            #     return_mult=10,
-            #     return_thresh=0.02,
-            # ),
-            # compare_mean_return=dict(
-            #     obs_frac=0.03,
-            #     sqrt_scale=False,
-            # ),
-        ),
-        # weight_smoothing=dict(
-        #     win_type='gauss',
-        #     window=3,
-        #     win_type_param=1
-        # )
+            )
+        )
     )
     model_kwargs = dict(
         model_name="catboost",
-        n_models=2,
+        n_models=1,
         iterations=10,
         subsample=0.8,
         random_state=2,
@@ -151,7 +131,17 @@ def main(parser):
         )
         logger.info("Обучение завершено")
     else:
-        pass
+        sampler = SampleStrategy(
+            data,
+            features,
+            splitter_kwargs,
+            sample_weight_kwargs,
+            position_rotator_kwargs,
+            model_kwargs,
+            prob_to_weight=True
+        )
+        random_seed_res = sampler.random_features_sampling(features, n_trials=5)
+        a=1
 
 
 if __name__ == "__main__":
