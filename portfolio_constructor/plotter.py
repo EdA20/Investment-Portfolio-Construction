@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+import plotly.graph_objects as go
 
 from IPython.display import clear_output
 from mpl_toolkits.axes_grid1 import make_axes_locatable
@@ -214,57 +215,108 @@ def plot_sliding_start_pnl(res, days=365 * 3, plot=None):
     return res
 
 
-def plot_startegy_performance(res):
+def plot_strategy_performance(res):
     cols = res.columns
     if "strategy_perf" not in cols:
         raise Exception('input dataframe must contain "strategy_perf" column')
     if "bench_perf" not in cols:
         raise Exception('input dataframe must contain "bench_perf" column')
 
-    plt.figure(figsize=(15, 8), dpi=100)
-    plt.plot(res["strategy_perf"], label="Strategy Performance")
-    plt.plot(res["bench_perf"], label="Benchmark Performance")
+    fig = go.Figure()
 
-    plt.legend()
-    plt.title("Performance Comparison")
-    plt.xlabel("Date")
-    plt.ylabel("Performance")
-    plt.grid(True)
+    # Добавляем стратегию
+    fig.add_trace(go.Scatter(
+        x=res.index,
+        y=res["strategy_perf"],
+        name="Strategy Performance",
+        line=dict(color='blue', width=2)
+    ))
 
-    plt.show()
+    # Добавляем бенчмарк
+    fig.add_trace(go.Scatter(
+        x=res.index,
+        y=res["bench_perf"],
+        name="Benchmark Performance",
+        line=dict(color='red', width=2)
+    ))
+
+    # Настраиваем layout
+    fig.update_layout(
+        title="Performance Comparison",
+        xaxis_title="Date",
+        yaxis_title="Performance",
+        legend_title="Legend",
+        hovermode="x unified",
+        autosize=True,
+        template="plotly_white",
+        showlegend=True
+    )
+
+    # Добавляем сетку
+    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='LightGray')
+    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='LightGray')
+
+    fig.show()
 
 
-def plot_shifted_strategy_with_benchmark(data, sample_strategy_returns):
-    sample_strategy_returns = sample_strategy_returns.copy()
-    sample_strategy_returns.iloc[0] = 0
-    sample_strategy_returns = (sample_strategy_returns + 1).cumprod() * 100
+def plot_shifted_strategy_with_benchmark(data, random_start_returns):
 
-    moex_perf = data.loc[sample_strategy_returns.index, "price_return"]
-    moex_perf.iloc[0] = 0
-    moex_perf = (1 + moex_perf).cumprod() * 100
+    strats_perf = random_start_returns.copy()
+    moex_perf = data.loc[strats_perf.index, 'price'].pct_change()
 
-    pnls = sample_strategy_returns.iloc[-1].sort_values()
+    perfs = {
+        'strats_perf': strats_perf,
+        'moex_perf': moex_perf
+    }
+    for name, df in perfs.items():
+        df.iloc[0] = 0
+        df = (df + 1).cumprod() * 100
+        perfs[name] = df
+
+    perf_distribution = perfs['strats_perf'].iloc[-1].sort_values()
 
     quantiles = [0.05, 0.5, 0.95]
-    compare_pnl = {"bench": moex_perf}
+    compare_perfs = {'bench_perf': perfs['moex_perf']}
     for q in quantiles:
-        q_iloc = [int(len(pnls) * q)]
-        col_name = pnls.iloc[q_iloc].index[0]
-        compare_pnl[q] = sample_strategy_returns[col_name]
-    compare_pnl = pd.DataFrame(compare_pnl)
+        q_iloc = [int(len(perf_distribution) * q)]
+        col_name = perf_distribution.iloc[q_iloc].index[0]
+        compare_perfs[q] = perfs['strats_perf'][col_name]
+    compare_perfs = pd.DataFrame(compare_perfs)
 
-    plt.figure(figsize=(15, 8), dpi=100)
+    fig = go.Figure()
+
+    # Добавляем линии для квантилей
     for q in quantiles:
-        plt.plot(
-            compare_pnl[q],
-            label=f"{q} квантиль распределения PnL",
-            alpha=1 if q == 0.5 else 0.5,
-            ls="-" if q == 0.5 else "--",
-        )
-    plt.plot(compare_pnl["bench"], label="bench")
-    plt.legend(fontsize=12)
-    plt.title("PnL стратегий", fontsize=15)
-    plt.show()
+        fig.add_trace(go.Scatter(
+            x=compare_perfs.index,
+            y=compare_perfs[q],
+            name=f"{q} quantile of performance distribution",
+            line=dict(
+                dash="solid" if q == 0.5 else "dash",
+                width=2.5 if q == 0.5 else 1.5
+            ),
+            opacity=1 if q == 0.5 else 0.7
+        ))
+
+    # Добавляем линию бенчмарка
+    fig.add_trace(go.Scatter(
+        x=compare_perfs.index,
+        y=compare_perfs["bench_perf"],
+        name="benchmark performance",
+        line=dict(color='black', width=2)
+    ))
+
+    # Настраиваем layout
+    fig.update_layout(
+        title="Strategy Performace Distribution",
+        title_font_size=20,
+        xaxis_title="Date",
+        yaxis_title="Performance",
+        legend_font_size=12,
+        hovermode="x unified",
+        autosize=True,
+    )
+    fig.show()
 
 
 def plot_random_features_pnl(random_features_pnl):
