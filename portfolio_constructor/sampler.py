@@ -7,6 +7,7 @@ import optuna
 import pandas as pd
 from IPython.display import clear_output, display
 from tqdm import tqdm
+from typing import List, Dict
 
 from portfolio_constructor import (
     ALL_DATA_FILES,
@@ -14,12 +15,8 @@ from portfolio_constructor import (
     ENDOG_DATA_FILE,
     PROJECT_ROOT,
 )
-<<<<<<< HEAD
-from portfolio_constructor.model import StrategyModeller, write_log_file
-=======
-from portfolio_constructor.model import write_log_file
->>>>>>> 0361769 (resolved merge conflict)
-from portfolio_constructor.plotter import *
+from portfolio_constructor.model import strategy_full_cycle
+from portfolio_constructor.plotter import plot_shifted_strategy_with_benchmark
 
 
 def get_json_path():
@@ -36,167 +33,168 @@ def get_json_path():
     return str(file_path)
 
 
-class SampleStrategy(StrategyModeller):
+class SampleStrategy:
     def __init__(
         self,
-        splitter_kwargs,
-        sample_weight_kwargs,
-        position_rotator_kwargs,
-        model_kwargs,
-        prob_to_weight=True,
-        logging=True,
-        feature_importance_info=None,
+        data: pd.DataFrame,
+        features: List[str],
+        splitter_kwargs: Dict,
+        sample_weight_kwargs: Dict,
+        position_rotator_kwargs: Dict,
+        model_kwargs: Dict,
+        prob_to_weight: bool = True
     ):
-        super().__init__(
-            splitter_kwargs,
-            sample_weight_kwargs,
-            position_rotator_kwargs,
-            model_kwargs,
-            prob_to_weight,
-            logging,
-            feature_importance_info,
-        )
+        self.data = data
+        self.features = features
+        self.splitter_kwargs = splitter_kwargs
+        self.sample_weight_kwargs = sample_weight_kwargs
+        self.position_rotator_kwargs = position_rotator_kwargs
+        self.model_kwargs = model_kwargs
+        self.prob_to_weight = prob_to_weight
 
     # перебор по сиду
     def sample_random_seed_strategy(self, size=100):
-        random_seed_pnls = {0: 0}
+        kwargs = self.__dict__.copy()
 
-        for i in tqdm(range(size)):
-            df_random_seed_pnls = (
-                pd.DataFrame.from_dict(random_seed_pnls, orient="index")
-                .reset_index()
-                .set_axis(["seed", "PnL"], axis=1)
-            )
-            display(df_random_seed_pnls)
+        random_seed_results = []
+        for i in tqdm(range(size), desc='n_seed'):
 
-            output = self.startegy_performance(seed=i)
-            res = output["res"].copy()
+            kwargs['model_kwargs']['random_state'] = i
+            strategy_output = strategy_full_cycle(**kwargs)
 
-            random_seed_pnls[i] = res["strategy_perf"].iloc[-1]
+            strat_res = strategy_output['res'].copy()
+            metrics = strategy_output['metrics'].copy()
+            pnl_strat = strat_res['strategy_perf'].iloc[-1] - 100
+            pnl_bench = strat_res['bench_perf'].iloc[-1] - 100
 
-            clear_output(wait=True)
+            random_seed_result = {
+                'n_seed': i,
+                'pnl_strat': pnl_strat,
+                'pnl_bench': pnl_bench,
+                **metrics
+            }
+            random_seed_results.append(random_seed_result)
 
-        df_random_seed_pnls = (
-            pd.DataFrame.from_dict(random_seed_pnls, orient="index")
-            .reset_index()
-            .set_axis(["seed", "PnL"], axis=1)
-        )
+        random_seed_results = pd.DataFrame(random_seed_results)
 
-        return df_random_seed_pnls
+        return random_seed_results
 
     # перебор по дате начала
     def sample_shifted_strategy(
         self,
-        choose_before="2014-01-01",
-        init_window_resize=0,
-        size=100,
-        plot_with_date_normalization=True,
+        start_date: str = "2014-01-01",
+        init_window_resize: int = 0,
+        size: int = 100,
+        plot_with_date_normalization: bool = True,
     ):
-        dates_before = self.data.index[self.data.index < choose_before]
+        kwargs = self.__dict__.copy()
+        data = kwargs['data'].copy()
+        splitter_kwargs = kwargs['splitter_kwargs'].copy()
+
+        dates_before = data.index[data.index < start_date]
         dates_idx = np.linspace(0, len(dates_before) - 1, size, dtype=int)
         from_dates = dates_before[dates_idx]
 
-        init_w = self.splitter_kwargs["initial_window"]
+        initial_window = splitter_kwargs["initial_window"]
         if init_window_resize > 0:
-            new_init_windows = init_window_resize - dates_idx
+            initial_windows = init_window_resize - dates_idx
         else:
-            new_init_windows = np.ones(len(dates_idx), dtype=int) * init_w
+            initial_windows = np.ones(len(dates_idx), dtype=int) * initial_window
 
-        dates_windows = list(zip(from_dates, new_init_windows))
-        sample_strategy_returns = {}
-        pnl = {from_dates[0]: (0, 0)}
-        for from_date, new_init_w in tqdm(dates_windows):
-            df_pnl = (
-                pd.DataFrame.from_dict(pnl, orient="index")
-                .reset_index()
-                .set_axis(["start_date", "PnL", "median_perf_delta"], axis=1)
-            )
-            display(df_pnl)
+        dates_windows = list(zip(from_dates, initial_windows))
+        random_start_returns = {}
+        random_start_results = []
+        for from_date, initial_window in tqdm(dates_windows, desc='n_dates'):
 
-            self.splitter_kwargs["initial_window"] = int(new_init_w)
-            output = self.startegy_performance(data=self.data.loc[from_date:])
-            res = output["res"].copy()
-            sample_strategy_returns[from_date] = res["strat_return"].copy()
-            pnl[from_date] = (res["strategy_perf"].iloc[-1], res["perf_delta"].median())
+            kwargs['splitter_kwargs']['initial_window'] = int(initial_window)
+            kwargs['data'] = data.loc[from_date:].copy()
+            output = strategy_full_cycle(**kwargs)
 
-            clear_output(wait=True)
+            strat_res = output['res'].copy()
+            metrics = output['metrics'].copy()
+            pnl_strat = strat_res['strategy_perf'].iloc[-1] - 100
+            pnl_bench = strat_res['bench_perf'].iloc[-1] - 100
 
-        sample_strategy_returns = pd.DataFrame(sample_strategy_returns)
+            random_start_returns[from_date] = strat_res['strat_return'].copy()
+            random_start_result = {
+                'from_date': from_date,
+                'pnl_strat': pnl_strat,
+                'pnl_bench': pnl_bench,
+                **metrics
+            }
+            random_start_results.append(random_start_result)
+
+        random_start_results = pd.DataFrame(random_start_results)
+        random_start_returns = pd.DataFrame(random_start_returns)
+
         if plot_with_date_normalization:
-            begin_date = (
-                sample_strategy_returns.loc[:, sample_strategy_returns.columns.max()]
-                .notna()
-                .idxmax()
-            )
-            sample_strategy_returns = sample_strategy_returns.loc[begin_date:].copy()
-            plot_shifted_strategy_with_benchmark(self.data, sample_strategy_returns)
+            max_date = random_start_returns.columns.max()
+            begin_date = random_start_returns.loc[:, max_date].notna().idxmax()
 
-        return sample_strategy_returns, pnl
+            random_start_returns = random_start_returns.loc[begin_date:].copy()
+            plot_shifted_strategy_with_benchmark(self.data, random_start_returns)
+
+        return random_start_results, random_start_returns
 
     # перебор по переменным
     def random_features_sampling(
         self,
-        all_features,
-        min_amount_features=7,
-        max_amount_features=15,
-        pnl_threshold=300,
-        n_trials=1000,
-        seed_sampling=None,
-        path=None,
+        feature_space: List[str],
+        min_amount_features: int = 7,
+        max_amount_features: int = 15,
+        pnl_threshold: int = 300,
+        n_trials: int = 1000,
+        seed_sampling: int = 1,
+        path: str = None,
     ):
+        kwargs = self.__dict__.copy()
         if not path:
-            path = f"jsons/random_features_pnl_{pd.Timestamp.now().strftime('%Y%m%d')}.json"
-            is_file = list(map(lambda x: x == path, os.listdir("../jsons")))
-            i = 1
-            while any(is_file):
-                path = f"jsons/random_features_pnl_{pd.Timestamp.now().strftime('%Y%m%d')}_{i}.json"
-                is_file = list(map(lambda x: x == path, os.listdir("../jsons")))
-                i += 1
+            path = get_json_path()
 
-        ns_features_to_select = np.random.choice(
+        feature_space = list(feature_space)
+        shuffle(feature_space)
+
+        range_features_to_select = np.random.choice(
             range(min_amount_features, max_amount_features + 1), size=n_trials
         )
-        random_features_pnl = {}
-        counter = dict(zip(all_features, np.zeros(len(all_features))))
+        random_features_perf = {}
 
-        for n_features_to_select in tqdm(ns_features_to_select):
+        for n_features_to_select in tqdm(range_features_to_select):
             features = list(
-                np.random.choice(all_features, replace=False, size=n_features_to_select)
+                np.random.choice(feature_space, replace=False, size=n_features_to_select)
             )
+            kwargs['features'] = features
 
-            res_seed = []
-            median_perf_delta_seed = []
-            std_perf_delta_seed = []
-            for i in range(1, seed_sampling + 1):
-                output = self.startegy_performance(features=features, seed=i)
-                res = output["res"].copy()
-                if res["strategy_perf"].iloc[-1] < pnl_threshold:
+            strategy_perf_seed = []
+            mean_outperf_seed = []
+            seed = self.model_kwargs["random_state"]
+            for i in range(seed, seed_sampling + seed):
+                kwargs['model_kwargs']['random_state'] = i
+                output = strategy_full_cycle(**kwargs)
+                res = output['res'].copy()
+                if res['strategy_perf'].iloc[-1] < pnl_threshold:
                     break
 
-                res_seed.append(res["strategy_perf"].iloc[-1])
-                median_perf_delta_seed.append(res["perf_delta"].median())
-                std_perf_delta_seed.append(res["perf_delta"].std())
+                strategy_perf_seed.append(res['strategy_perf'].iloc[-1])
+                mean_outperf_seed.append(res['outperf'].mean())
 
-            if len(res_seed) < seed_sampling:
+            if len(strategy_perf_seed) < seed_sampling:
                 continue
 
-            random_features_pnl[f"{tuple(features)}"] = (
-                np.mean(res_seed),
-                np.std(res_seed),
-                np.mean(median_perf_delta_seed),
-                np.mean(std_perf_delta_seed),
+            random_features_perf[f"{tuple(features)}"] = (
+                np.mean(strategy_perf_seed),
+                np.std(strategy_perf_seed),
+                np.mean(mean_outperf_seed),
+                np.std(mean_outperf_seed),
             )
-            for feature in features:
-                counter[feature] += 1
-                write_log_file(counter)
 
-            json_data = json.dumps(random_features_pnl, indent=4)
+            json_data = json.dumps(random_features_perf, indent=4)
             with open(path, "w") as file:
                 file.write(json_data)
 
             clear_output(wait=True)
 
-        return random_features_pnl
+        return random_features_perf
 
     @staticmethod
     def get_good_features(counter, max_amount_features, fraction=0.1):
@@ -224,24 +222,18 @@ class SampleStrategy(StrategyModeller):
         path=None,
     ):
         if not path:
-            path = f"jsons/random_features_pnl_{pd.Timestamp.now().strftime('%Y%m%d')}.json"
-            is_file = list(map(lambda x: x == path, os.listdir(PROJECT_ROOT / "jsons")))
-            i = 1
-            while any(is_file):
-                path = path.split(".")[0] + f"_{i}.json"
-                is_file = list(
-                    map(lambda x: x == path, os.listdir(PROJECT_ROOT / "jsons"))
-                )
-                i += 1
+            path = get_json_path()
 
         all_features = list(all_features)
         shuffle(all_features)
 
-        ns_features_to_select = np.random.choice(
+        range_features_to_select = np.random.choice(
             range(min_amount_features, max_amount_features + 1), size=n_trials
         )
         random_features_pnl = {}
-        feature_metric_accum = dict(zip(all_features, np.zeros(len(all_features))))
+
+        zeros = np.zeros(len(all_features))
+        feature_metric_accum = dict(zip(all_features, zeros))
         exp_feature_metric_accum = {
             key: np.exp(value) for key, value in feature_metric_accum.items()
         }
@@ -250,7 +242,7 @@ class SampleStrategy(StrategyModeller):
             for key, value in exp_feature_metric_accum.items()
         }
 
-        for n_features_to_select in tqdm(ns_features_to_select, desc="n_trials"):
+        for n_features_to_select in tqdm(range_features_to_select, desc="n_trials"):
             features = np.random.choice(
                 list(feature_softmax.keys()),
                 replace=False,
