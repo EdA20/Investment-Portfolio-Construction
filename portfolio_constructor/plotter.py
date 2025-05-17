@@ -1,7 +1,8 @@
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+import matplotlib.pyplot as plt
+
 from IPython.display import clear_output
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from tqdm import tqdm
@@ -314,8 +315,8 @@ def plot_losses(train_losses, test_losses):
     return fig
 
 
-if __name__ == "__main__":
-    from utils import PROJECT_ROOT
+if __name__ == '__main__':
+    from portfolio_constructor import PROJECT_ROOT
 
     data = pd.read_excel(
         PROJECT_ROOT / "data/mcftrr.xlsx", index_col=[0], parse_dates=True
