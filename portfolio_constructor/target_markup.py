@@ -6,9 +6,9 @@ import numpy as np
 import pandas as pd
 
 
-class TradingStrategyAnalyzer:
+class TargetMarkup:
     """
-    Класс для анализа торговых стратегий с использованием:
+    Класс для разметки целевой переменной и ее визуализации
     - CUSUM-фильтра для обнаружения событий
     - Динамических ценовых барьеров
     - Генерации торговых меток
@@ -243,7 +243,7 @@ class TradingStrategyAnalyzer:
 def main():
     price_data = pd.read_excel("data/endog_data/mcftrr.xlsx", index_col="date")
     # Инициализация анализатора
-    analyzer = TradingStrategyAnalyzer(price_data)
+    analyzer = TargetMarkup(price_data)
 
     # Расчет событий и барьеров
     events = analyzer.calculate_cusum_events(h=100)
