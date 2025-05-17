@@ -160,7 +160,7 @@ class TargetMarkup:
         )
         return self.labels
 
-    def visualize_strategy(self, last_n_days: int = 365) -> None:
+    def visualize(self, last_n_days: int = 365) -> None:
         """
         Визуализирует ценовой ряд с торговыми сигналами с обработкой временных меток.
         """
@@ -220,7 +220,7 @@ class TargetMarkup:
         plt.tight_layout()
         plt.show()
 
-    def get_analysis_report(self) -> dict:
+    def get_report(self) -> dict:
         """
         Формирует отчет о результатах анализа.
 
@@ -256,8 +256,8 @@ def main():
     # labels = analyzer.generate_trading_labels(events=None)
 
     # Визуализация и отчет
-    analyzer.visualize_strategy()
-    print(analyzer.get_analysis_report())
+    analyzer.visualize()
+    print(analyzer.get_report())
 
 
 if __name__ == "__main__":
