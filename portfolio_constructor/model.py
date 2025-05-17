@@ -516,7 +516,9 @@ class Strategy:
         res = strat_data.loc[:, cols].dropna(subset='preds')
 
         if self.prob_to_weight:
-            res['bench_long_weight'] = res['preds'].apply(lambda x: x if x >= 0.5 else 0)
+            res['bench_long_weight'] = res['preds'].apply(
+                lambda x: x if x >= 0.5 else 0
+            )
         else:
             res["bench_long_weight"] = res["preds"].apply(
                 lambda x: 1 if x >= 0.5 else 0
@@ -525,25 +527,33 @@ class Strategy:
         year_fraq = ((res.index - res.index[0]).days + 1) / (res.index.is_leap_year + 365)
         strat_data['turnover'] = abs(res['bench_long_weight'].diff()).cumsum() / year_fraq
 
-        res['strat_return'] = res['bench_long_weight'] * res['price_return'] + (1 - res['bench_long_weight']) * res['ruonia_daily']
-
+        res['strat_return'] = (
+            res['bench_long_weight'] * res['price_return'] +
+            (1 - res['bench_long_weight']) * res['ruonia_daily']
+        )
         res.loc[res.index[0], ['price_return', 'strat_return']] = 0
         res['strategy_perf'] = (res['strat_return'] + 1).cumprod() * 100
         res['bench_perf'] = (res['price_return'] + 1).cumprod() * 100
+        res['outperf'] = res['strategy_perf'] - res['bench_perf']
 
         self.logs['start_date'] = res.index[0].strftime('%Y-%m-%d')
         self.logs['end_date'] = res.index[-1].strftime('%Y-%m-%d')
         self.logs['strategy_perf'] = res['strategy_perf'].iloc[-1]
-        self.logs['strategy_outperf'] = res['strategy_perf'].iloc[-1] - res['bench_perf'].iloc[-1]
+        self.logs['bench_perf'] = res['bench_perf'].iloc[-1]
+        self.logs['mean_outperf'] = res['outperf'].mean()
 
         metrics = self.calculate_strategy_metrics(res)
         self.logs['metrics'] = metrics
 
         if plot:
             plot_startegy_performance(res)
-        write_log_file(self.logs)
 
-        return res
+        write_log_file(self.logs)
+        output = {
+            'res': res,
+            'metrics': metrics
+        }
+        return output
 
     @staticmethod
     def calculate_strategy_metrics(res):
@@ -585,7 +595,6 @@ class Strategy:
             'var': var,
             'cvar': cvar
         }
-
         return metrics
 
 
