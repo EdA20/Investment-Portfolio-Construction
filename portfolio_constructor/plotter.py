@@ -3,9 +3,10 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
+import plotly.express as px
 
 from IPython.display import clear_output
-from mpl_toolkits.axes_grid1 import make_axes_locatable
+from plotly.subplots import make_subplots
 from tqdm import tqdm
 
 from portfolio_constructor import EXOG_DATA_OTHER_FILES, EXOG_DATA_PRICE_FILES
@@ -215,8 +216,8 @@ def plot_sliding_start_pnl(res, days=365 * 3, plot=None):
     return res
 
 
-def plot_strategy_performance(res):
-    cols = res.columns
+def plot_strategy_performance(strategy_res):
+    cols = strategy_res.columns
     if "strategy_perf" not in cols:
         raise Exception('input dataframe must contain "strategy_perf" column')
     if "bench_perf" not in cols:
@@ -226,16 +227,16 @@ def plot_strategy_performance(res):
 
     # Добавляем стратегию
     fig.add_trace(go.Scatter(
-        x=res.index,
-        y=res["strategy_perf"],
+        x=strategy_res.index,
+        y=strategy_res["strategy_perf"],
         name="Strategy Performance",
         line=dict(color='blue', width=2)
     ))
 
     # Добавляем бенчмарк
     fig.add_trace(go.Scatter(
-        x=res.index,
-        y=res["bench_perf"],
+        x=strategy_res.index,
+        y=strategy_res["bench_perf"],
         name="Benchmark Performance",
         line=dict(color='red', width=2)
     ))
@@ -319,40 +320,88 @@ def plot_shifted_strategy_with_benchmark(data, random_start_returns):
     fig.show()
 
 
-def plot_random_features_pnl(random_features_pnl):
-    cols = random_features_pnl.columns
-    if len(cols) == 4:
-        fig, axes = plt.subplots(2, figsize=(8, 10), dpi=100)
+def plot_bootstrap_features_performance(random_features_perf, outperf_info=True):
+    if outperf_info:
+        # Создаем фигуру с двумя горизонтальными субплoтами
+        fig = make_subplots(
+            rows=1, cols=2,
+            horizontal_spacing=0.25
+        )
+
+        # Цветовая схема с хорошей различимостью
+        color_scale = px.colors.sequential.Plasma
+
+        # Добавляем оба графика
+        for i, col in enumerate(["mean_mean_outperf", "std_mean_outperf"], 1):
+            fig.add_trace(
+                go.Scatter(
+                    x=random_features_perf["std_strategy_perf"],
+                    y=random_features_perf["mean_strategy_perf"],
+                    mode='markers',
+                    marker=dict(
+                        color=random_features_perf[col],
+                        colorscale=color_scale,
+                        showscale=True,
+                        colorbar=dict(
+                            title=f"{col.split('_')[0].title()} Mean Outperformance<br>&nbsp;",
+                            len=0.5,
+                            y=0.5,
+                            x=0.4 if i == 1 else 1.05,  # Размещаем цветовые бары справа от каждого графика
+                            orientation='v'
+                        ),
+                        size=12,
+                        opacity=0.9,
+                        line=dict(width=1, color='black')
+                    ),
+                    hovertext=random_features_perf[col].round(2),
+                    hoverinfo="x+y+text",
+                    name=col.replace('_', ' ').title()
+                ),
+                row=1, col=i
+            )
+
+            # Обновляем оси
+            fig.update_xaxes(title_text="Std Performance", row=1, col=i)
+            fig.update_yaxes(title_text="Mean Performance", row=1, col=i)
+
+        # Общие настройки
+        fig.update_layout(
+            title_text="Strategy exploration via seed and feature space sampling",
+            title_x=0.5,
+            height=850,
+            width=1900,
+            template="plotly_white",
+            hovermode="closest",
+            margin=dict(l=50, r=150, b=80, t=80, pad=10),
+            showlegend=False
+        )
     else:
-        fig, axes = plt.subplots(1, dpi=100)
-        axes = [axes]
-
-    for i, col in enumerate(
-        ["mean_median_perf_delta", "mean_std_perf_delta"][: len(axes)]
-    ):
-        ax = axes[i]
-        sc = ax.scatter(
-            random_features_pnl["pnl_std"],
-            random_features_pnl["pnl_mean"],
-            c=random_features_pnl[col],
-            cmap="inferno",
+        # Упрощенная версия с одним графиком
+        fig = px.scatter(
+            random_features_perf,
+            x="std_strategy_perf",
+            y="mean_strategy_perf",
+            title="Strategy exploration via seed and feature space sampling"
         )
-        divider = make_axes_locatable(ax)
-        cax = divider.append_axes("right", size="5%", pad=0.05)
-        plt.colorbar(
-            sc, cax=cax, label=f"Mean {col.split('_')[1].title()} Performance Delta"
-        ).set_label(
-            f"Mean {col.split('_')[1].title()} Performance Delta",
-            rotation=270,
-            labelpad=25,
+        fig.update_traces(
+            marker=dict(size=12, opacity=0.9, line=dict(width=1, color='black'))
+        )
+        fig.update_layout(
+            autosize=True,
+            title_x=0.5,
+            template="plotly_white",
+            xaxis_title="Std Performance",
+            yaxis_title="Mean Performance"
         )
 
-        ax.set_xlabel("std PnL")
-        ax.set_ylabel("mean PnL")
-        ax.set_title("PnL sample with different seeds and random features")
+    # Улучшаем видимость маркеров
+    fig.update_traces(
+        marker=dict(opacity=0.9),
+        selector=dict(mode='markers')
+    )
 
-    plt.tight_layout()
-    plt.show()
+    # Настройка отображения в браузере
+    fig.show(config={'responsive': True})
 
 
 def plot_losses(train_losses, test_losses):
@@ -368,12 +417,21 @@ def plot_losses(train_losses, test_losses):
 
 
 if __name__ == '__main__':
-    from portfolio_constructor import PROJECT_ROOT
+    # # case 1
+    # from portfolio_constructor import PROJECT_ROOT
+    #
+    # data = pd.read_excel(
+    #     PROJECT_ROOT / "data/mcftrr.xlsx", index_col=[0], parse_dates=True
+    # )
+    # price = data["price"].copy()
+    # # plot_train_position_rotator(price, [42])
+    # plot_position_rotator(price, freqs=[42])
 
-    data = pd.read_excel(
-        PROJECT_ROOT / "data/mcftrr.xlsx", index_col=[0], parse_dates=True
-    )
-    price = data["price"].copy()
-    # plot_train_position_rotator(price, [42])
-    plot_position_rotator(price, freqs=[42])
-    a = 1
+    # case 2
+    from portfolio_constructor.model import open_random_features_perf_file
+    df = open_random_features_perf_file()
+    df.iloc[:, 1] = np.random.uniform(10, 20, size=3)
+    df.iloc[:, 3] = np.random.uniform(1, 10, size=3)
+    plot_bootstrap_features_performance(df, outperf_info=False)
+    a=1
+
