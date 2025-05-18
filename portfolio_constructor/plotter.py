@@ -10,7 +10,7 @@ from plotly.subplots import make_subplots
 from tqdm import tqdm
 
 from portfolio_constructor import EXOG_DATA_OTHER_FILES, EXOG_DATA_PRICE_FILES
-from portfolio_constructor.feature_generator import position_rotator
+from portfolio_constructor.target_markup import position_rotator
 
 sns.set_style("darkgrid")
 

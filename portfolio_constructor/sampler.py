@@ -20,7 +20,7 @@ from portfolio_constructor.plotter import plot_shifted_strategy_with_benchmark
 
 
 def get_json_path():
-    base_name = f"jsons/random_features_pnl_{pd.Timestamp.now().strftime('%Y%m%d')}"
+    base_name = f"jsons/random_features_perf_{pd.Timestamp.now().strftime('%Y%m%d')}"
     suffix = ""
     i = 1
     while True:

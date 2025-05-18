@@ -7,7 +7,7 @@ from sklearn.feature_selection import VarianceThreshold, mutual_info_classif
 from tqdm import tqdm
 
 from portfolio_constructor import ALL_DATA_FILES, ALL_DATA_PATH, PROJECT_ROOT
-from portfolio_constructor.feature_generator import position_rotator
+from portfolio_constructor.target_markup import position_rotator
 
 
 def group_features(features_to_group: List[str], grouping_lvl: str = "base_cols"):
