@@ -93,7 +93,7 @@ class TargetMarkup:
         return self.barriers_df
 
     def generate_trading_labels(
-        self, events: Optional[pd.DatetimeIndex] = None
+        self, events: Optional[pd.DatetimeIndex] = None, inplace: Optional[bool] = True
     ) -> pd.Series:
         """
         Генерирует торговые метки на основе ценовых барьеров.
@@ -102,10 +102,13 @@ class TargetMarkup:
         ----------
         events : pd.DatetimeIndex, optional
             Даты для анализа. Если не указаны - используются все данные
+        inplace : bool, optional
+            Если True, то функция возьмет все возможные даты из self.stock_price
+            и использует frontfill, backfill для заполнения Nan значений в метках
 
         Returns
         -------
-        pd.Series
+        pd.DataFrame с колонками: price, labels
             Торговые метки (1 - покупка, -1 - продажа)
         """
         if self.barriers_df is None:
@@ -158,9 +161,18 @@ class TargetMarkup:
         self.labels = pd.Series(
             labels, index=pd.DatetimeIndex(valid_indices), name="labels"
         )
+
+        tmp = pd.DataFrame(self.price_series)
+        tmp["labels"] = tmp.index.map(self.labels)
+
+        if inplace:
+            tmp["labels"] = tmp["labels"].ffill().bfill()
+
+        self.labels = tmp
+
         return self.labels
 
-    def visualize(self, last_n_days: int = 365) -> None:
+    def visualize(self, last_n_days: Optional[int] = None) -> None:
         """
         Визуализирует ценовой ряд с торговыми сигналами с обработкой временных меток.
         """
@@ -171,11 +183,14 @@ class TargetMarkup:
 
         # Получаем последние N дней через .loc
         end_date = self.barriers_df.index.max()
-        start_date = end_date - pd.DateOffset(days=last_n_days)
+        start_date = self.barriers_df.index.min()
+        if last_n_days:
+            start_date = end_date - pd.DateOffset(days=last_n_days)
+
         plot_data = self.barriers_df.loc[start_date:end_date]
 
         # Фильтруем метки, оставляя только существующие в plot_data
-        valid_labels = self.labels[self.labels.index.isin(plot_data.index)]
+        valid_labels = self.labels.loc[plot_data.index]
 
         # Проверяем наличие данных для отображения
         if plot_data.empty or valid_labels.empty:
@@ -186,8 +201,8 @@ class TargetMarkup:
         plt.plot(plot_data.index, plot_data["price"], label="Price", alpha=0.7)
 
         # Разделяем сигналы с проверкой наличия в данных
-        buy_signals = valid_labels[valid_labels == 1]
-        sell_signals = valid_labels[valid_labels == -1]
+        buy_signals = valid_labels.loc[valid_labels["labels"] == 1]
+        sell_signals = valid_labels.loc[valid_labels["labels"] == -1]
 
         if not buy_signals.empty:
             plt.scatter(
@@ -234,9 +249,10 @@ class TargetMarkup:
 
         return {
             "total_signals": len(self.labels),
-            "buy_signals": sum(self.labels == 1),
-            "sell_signals": sum(self.labels == -1),
-            "signal_frequency": len(self.labels) / len(self.price_series),
+            "buy_signals": sum(self.labels["labels"] == 1),
+            "sell_signals": sum(self.labels["labels"] == -1),
+            "signal_frequency": len(~(self.labels["labels"].isna()))
+            / len(self.price_series),
         }
 
 
@@ -246,13 +262,14 @@ def main():
     analyzer = TargetMarkup(price_data)
 
     # Расчет событий и барьеров
-    events = analyzer.calculate_cusum_events(h=100)
+    events = analyzer.calculate_cusum_events(h=250)
     barriers = analyzer.calculate_price_barriers(
-        shift_days=10, vol_span=20, volatility_multiplier=2
+        shift_days=63, vol_span=20, volatility_multiplier=2
     )
 
     # Генерация меток
     labels = analyzer.generate_trading_labels(events=events)
+    print(labels)
     # labels = analyzer.generate_trading_labels(events=None)
 
     # Визуализация и отчет
