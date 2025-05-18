@@ -109,7 +109,7 @@ class TargetMarkup:
         Returns
         -------
         pd.DataFrame с колонками: price, labels
-            Торговые метки (1 - покупка, -1 - продажа)
+            Торговые метки (1 - покупка, 0 - продажа)
         """
         if self.barriers_df is None:
             raise ValueError("Сначала вызовите calculate_price_barriers()")
@@ -151,7 +151,7 @@ class TargetMarkup:
                         self.barriers_df.at[first_touch, "price"]
                         > self.barriers_df.at[idx, "price"]
                     )
-                    else -1
+                    else 0
                 )
                 labels.append(label)
                 valid_indices.append(idx)
@@ -202,7 +202,7 @@ class TargetMarkup:
 
         # Разделяем сигналы с проверкой наличия в данных
         buy_signals = valid_labels.loc[valid_labels["labels"] == 1]
-        sell_signals = valid_labels.loc[valid_labels["labels"] == -1]
+        sell_signals = valid_labels.loc[valid_labels["labels"] == 0]
 
         if not buy_signals.empty:
             plt.scatter(
@@ -250,14 +250,112 @@ class TargetMarkup:
         return {
             "total_signals": len(self.labels),
             "buy_signals": sum(self.labels["labels"] == 1),
-            "sell_signals": sum(self.labels["labels"] == -1),
+            "sell_signals": sum(self.labels["labels"] == 0),
             "signal_frequency": len(~(self.labels["labels"].isna()))
             / len(self.price_series),
         }
 
 
+def triple_barrier_markup(price, h=250, shift_days=63, vol_span=20, volatility_multiplier=2):
+    analyzer = TargetMarkup(price)
+    events = analyzer.calculate_cusum_events(h=h)
+    barriers = analyzer.calculate_price_barriers(
+        shift_days=shift_days, vol_span=vol_span, volatility_multiplier=volatility_multiplier
+    )
+    labels = analyzer.generate_trading_labels(events=events)
+    labels = labels.rename({'labels': 'target'}, axis=1)
+
+    return labels
+
+
+def min_max_markup(price, freq=63, rotator_type=1, inplace=False, **kwargs):
+    price = price.copy()
+
+    if isinstance(freq, str):
+        mins = price.loc[
+            price.groupby(pd.Grouper(level=0, freq=freq)).idxmin()
+        ]
+        maxs = price.loc[
+            price.groupby(pd.Grouper(level=0, freq=freq)).idxmax()
+        ]
+    else:
+        price = price.reset_index()
+        price['index_group'] = price.index // (freq + 1)
+        price = price.set_index('date')
+        mins = price.loc[
+            price.groupby('index_group')['price'].idxmin(), 'price'
+        ]
+        maxs = price.loc[
+            price.groupby('index_group')['price'].idxmax(), 'price'
+        ]
+        price = price.drop('index_group', axis=1).squeeze()
+
+    dct_df = {'min': mins, 'max': maxs}
+    exts = []
+    for ext_type, df in dct_df.items():
+        attr = 'gt' if ext_type == 'max' else 'lt'
+        action = 'max' if ext_type == 'max' else 'min'
+
+        ext = pd.concat([df.shift(), df, df.shift(-1)], axis=1).set_axis(['value_f', 'value', 'value_b'], axis=1)
+        ext['action'] = action
+
+        global_flag = (
+            getattr(ext['value'], attr)(ext['value_f']) &
+            getattr(ext['value'], attr)(ext['value_b'])
+        )
+        ext['global'] = global_flag
+
+        edge_dates = [df.index[0], df.index[-1]]
+        edge_global_flag = (
+            getattr(ext['value'], attr)(ext['value_f']) |
+            getattr(ext['value'], attr)(ext['value_b'])
+        )
+        ext.loc[edge_dates, 'global'] = edge_global_flag.loc[edge_dates]
+        exts.append(ext)
+
+    exts = pd.concat(exts).sort_index()
+    exts = exts.loc[exts['global'], ['value', 'action']]
+
+    exts['group'] = (exts['action'] != exts['action'].shift()).cumsum()
+    dates = exts.groupby('group').apply(
+        lambda x: x['value'].idxmax() if x['action'].iloc[0] == 'max' else x['value'].idxmin(),
+        include_groups=False
+    )
+    exts = exts.loc[dates].copy()
+
+    if not price.index[0] == exts.index[0]:
+        exts.loc[price.index[0]] = [price[price.index[0]], exts.iloc[1, 1], 0]
+        exts = exts.sort_index()
+
+    if rotator_type == 2:
+        exts['group'] = (exts['action'] == 'max').cumsum()
+        exts_pivot = exts.pivot_table(index='group', columns='action', values='value')
+        retracement = (exts_pivot['max'] - exts_pivot['min']) / (exts_pivot['max'] - exts_pivot['min'].shift())
+        exts_pivot['uptrend'] = retracement < kwargs['alpha']
+        exts_pivot['downtrend'] = retracement > 1 + kwargs['beta']
+        exts_pivot['trend'] = exts_pivot['uptrend'] * 1 + exts_pivot['downtrend'] * -1
+        exts = pd.merge(exts, exts_pivot['trend'], how='left', left_on='group', right_index=True)
+
+    if inplace:
+        exts = pd.merge(price, exts['action'], how='left', left_index=True, right_index=True)
+        exts['action'] = (exts['action'].ffill() == 'min').astype(int)
+        exts = exts.rename({'action': 'target'}, axis=1)
+
+    return exts
+
+
+def position_rotator(price, markup_name, markup_kwargs):
+    if markup_name == 'min_max':
+        target = min_max_markup(price, **markup_kwargs)
+    else:
+        target = triple_barrier_markup(price, **markup_kwargs)
+
+    return target
+
+
 def main():
-    price_data = pd.read_excel("data/endog_data/mcftrr.xlsx", index_col="date")
+    from portfolio_constructor import PROJECT_ROOT
+    price_data = pd.read_excel(PROJECT_ROOT / "data/endog_data/mcftrr.xlsx", index_col="date")
     # Инициализация анализатора
     analyzer = TargetMarkup(price_data)
 
@@ -266,7 +364,6 @@ def main():
     barriers = analyzer.calculate_price_barriers(
         shift_days=63, vol_span=20, volatility_multiplier=2
     )
-
     # Генерация меток
     labels = analyzer.generate_trading_labels(events=events)
     print(labels)
