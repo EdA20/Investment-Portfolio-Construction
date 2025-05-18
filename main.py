@@ -13,20 +13,42 @@ from portfolio_constructor.sampler import SampleStrategy
 from portfolio_constructor.model import read_logger, strategy_full_cycle
 
 
+def setup_main_logger():
+    # Создаём логгер (не используем basicConfig!)
+    logger = logging.getLogger("main")  # Уникальное имя
+    logger.setLevel(logging.INFO)
+
+    # Удаляем старые обработчики (если были)
+    for handler in logger.handlers[:]:
+        logger.removeHandler(handler)
+
+    # Настройка консольного вывода
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.INFO)
+    console_handler.setFormatter(
+        logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+    )
+
+    logger.addHandler(console_handler)
+    logger.propagate = False  # Чтобы не дублировалось в корневой логгер
+
+    return logger
+
+
 def main(parser):
-    logger.info("Старт")
+    main_logger.info("Старт")
     is_debug_mode = getattr(sys, "gettrace", lambda: None)() is not None
 
     if is_debug_mode:
-        args = argparse.Namespace(features="all", filter=False, sampling=False)
+        args = argparse.Namespace(features="noise", filter=False, sampling=True)
     else:
         args = parser.parse_args()
 
     if "data.csv" in os.listdir("data"):
-        logger.info("Загрузка данных из data.parquet")
+        main_logger.info("Загрузка данных из data.parquet")
         data = pd.read_parquet("data/data.parquet")
     else:
-        logger.warning("Файл data.parquet не найден. Генерация новых данных")
+        main_logger.warning("Файл data.parquet не найден. Генерация новых данных")
         data = data_generator(path="mcftrr.xlsx")
         data.to_parquet("data/data.parquet")
 
@@ -35,8 +57,20 @@ def main(parser):
     elif args.features == "random":
         features = list(data.drop(["price", "ruonia_daily"], axis=1).columns)
         features = list(np.random.choice(features, 20, replace=False))
+    elif 'noise' in args.features:
+        if args.features == 'normal_noise':
+            data['normal_noise'] = np.random.normal(size=len(data))
+            features = ['normal_noise']
+        elif args.features == 'linear_noise':
+            data['linear_noise'] = np.arange(len(data))
+            features = ['linear_noise']
+        else:
+            data['normal_noise'] = np.random.normal(size=len(data))
+            data['linear_noise'] = np.arange(len(data))
+            features = ['normal_noise', 'linear_noise']
+
     elif args.features == "last_best":
-        logger.info("Использование лучших фичей из предыдущих запусков")
+        main_logger.info("Использование лучших фичей из предыдущих запусков")
         trials = read_logger()
         trials["features"] = trials["features"].apply(lambda x: tuple(x))
         group_median_perf_delta = (
@@ -92,7 +126,16 @@ def main(parser):
         eval_obs=0,
         set_sample_weights=True,
     )
-    position_rotator_kwargs = dict(freq=63, shift_days=0, mode=1)
+    position_rotator_kwargs = dict(
+        markup_name='triple_barrier',
+        markup_kwargs=dict(
+            h=250, shift_days=63, vol_span=20, volatility_multiplier=2
+        ),
+        # markup_name='min_max',
+        # markup_kwargs=dict(
+        #     freq=63, rotator_type=1, inplace=True
+        # )
+    )
     sample_weight_kwargs = dict(
         weight_params=dict(
             time_critical=dict(
@@ -116,10 +159,8 @@ def main(parser):
         # thread_count=-1,
     )
 
-    dummy_features = ["normal_dummy", "dummy"]
-
     if not args.sampling:
-        logger.info("Старт обучения модели")
+        main_logger.info("Старт обучения модели")
         output = strategy_full_cycle(
             data,
             features,
@@ -129,7 +170,7 @@ def main(parser):
             model_kwargs,
             prob_to_weight=True
         )
-        logger.info("Обучение завершено")
+        main_logger.info("Обучение завершено")
     else:
         sampler = SampleStrategy(
             data,
@@ -140,18 +181,13 @@ def main(parser):
             model_kwargs,
             prob_to_weight=True
         )
-        random_seed_res = sampler.random_features_sampling(features, n_trials=5)
+        random_seed_res = sampler.sample_random_seed_strategy(size=50)
         a=1
 
 
 if __name__ == "__main__":
     # Добавить в начало файла
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s - %(levelname)s - %(message)s",
-        handlers=[logging.StreamHandler()],
-    )
-    logger = logging.getLogger(__name__)
+    main_logger = setup_main_logger()
     parser = argparse.ArgumentParser(description="parser")
     parser.add_argument(
         "--features",
