@@ -13,7 +13,7 @@ from tqdm import tqdm
 
 from portfolio_constructor import PROJECT_ROOT, TQDM_DISABLE
 from portfolio_constructor.custom_metrics import *
-from portfolio_constructor.feature_generator import position_rotator
+from portfolio_constructor.target_markup import position_rotator
 from portfolio_constructor.plotter import plot_strategy_performance
 
 # to plot in debug mode use this
@@ -23,27 +23,28 @@ from portfolio_constructor.plotter import plot_strategy_performance
 
 
 def write_log_file(info_to_log: Union[Dict, str] = None):
+    logger = logging.getLogger("strategy_logs")
+    logger.setLevel(logging.INFO)
+
+    for handler in logger.handlers[:]:
+        logger.removeHandler(handler)
+
     file_name = f"trial_{pd.Timestamp.now().strftime('%Y%m%d')}.log"
-    is_file_name = list(
-        map(lambda x: x == file_name, os.listdir(PROJECT_ROOT / "logs"))
-    )
-    if any(is_file_name):
-        filemode = "a"
-    else:
-        filemode = "w"
+    log_file = PROJECT_ROOT / f"logs/{file_name}"
 
-    logging.basicConfig(
-        filename=PROJECT_ROOT / f"logs/{file_name}",
-        level=logging.INFO,
-        datefmt="%Y-%m-%d",
-        filemode=filemode,
-        format="%(asctime)s - %(message)s",
+    filemode = "a" if log_file.exists() else "w"
+    file_handler = logging.FileHandler(log_file, mode=filemode, encoding="utf-8")
+    file_handler.setLevel(logging.INFO)
+    file_handler.setFormatter(
+        logging.Formatter("%(asctime)s - %(message)s", datefmt="%Y-%m-%d")
     )
+    logger.addHandler(file_handler)
+    logger.propagate = False
+
     if isinstance(info_to_log, dict):
-        logging.info(json.dumps(info_to_log))
-
-    for handler in logging.root.handlers:
-        logging.getLogger().removeHandler(handler)
+        logger.info(json.dumps(info_to_log))
+    elif isinstance(info_to_log, str):
+        logger.info(info_to_log)
 
 
 def read_logger(path: str = None):
@@ -176,7 +177,8 @@ class Dataset:
 
             data[weight_name] = pd.concat([time_weighting, critical_weighting], axis=1).fillna(0).sum(axis=1)
 
-        if mode == 'rotation_event':
+        elif mode == 'rotation_event':
+            # пока что не работает
             if weight_params.get('imptnt_obs_lag_reaction') is None:
                 raise Exception('pass "imptnt_obs_lag_reaction" arg in "weight_sample_kwargs"')
             if weight_params.get('imptnt_obs_w') is None:
@@ -296,10 +298,8 @@ class Dataset:
 
         batches = []
         names = ('train', 'test') if self.splitter_kwargs["eval_obs"] <= 0 else ('train', 'val', 'test')
-        for splitted_dates in tqdm(
-                dates, desc='position_rotator', disable=TQDM_DISABLE
-        ):
-            zip_names_dates = zip(names, splitted_dates)
+        for chunk_dates in tqdm(dates, desc='position_rotator', disable=TQDM_DISABLE):
+            zip_names_dates = zip(names, chunk_dates)
 
             cum_dates = pd.DatetimeIndex([])
             train_val_test_dates = {}
@@ -314,34 +314,30 @@ class Dataset:
             pools = {}
             subset_dates = {}
 
-            for subset, (splitted_dts, united_dts) in train_val_test_dates.items():
-                data[f"{subset}_target"] = np.nan
-                rotator = position_rotator(
-                    data.loc[united_dts.values, "price"], **self.position_rotator_kwargs
-                )
-                rotator = rotator.rename({"action": f"{subset}_target"}, axis=1)
-                data[f"{subset}_target"] = rotator[f"{subset}_target"].copy()
+            for subset, (split_dates, united_dates) in train_val_test_dates.items():
+                target_col = f"{subset}_target"
+                weight_col = f"{subset}_weight"
+                data_united = data.loc[united_dates.values]
 
-                data[f"{subset}_weight"] = np.nan
-                if self.sample_weight_kwargs:
+                rotator = position_rotator(data_united["price"], **self.position_rotator_kwargs)
+                data_united[target_col] = rotator['target'].copy()
+
+                if subset == 'train' and self.sample_weight_kwargs:
                     obs_weights = self.get_sample_weights(
-                        data.loc[united_dts],
-                        f"{subset}_target",
-                        f"{subset}_weight",
+                        data_united,
+                        target_col,
+                        weight_col,
                         **self.sample_weight_kwargs,
                     )
-                    data[f"{subset}_weight"] = obs_weights
+                    data_united[weight_col] = obs_weights
                 else:
-                    data[f"{subset}_weight"] = 1
-                data[f"{subset}_target"] = (
-                    data[f"{subset}_target"].ffill() == "buy"
-                ).astype(int)
+                    data_united[weight_col] = 1
 
-                X = data.loc[splitted_dts, features]
-                y = data.loc[splitted_dts, f"{subset}_target"]
-                obs_weights = data.loc[splitted_dts, f"{subset}_weight"]
+                X = data_united.loc[split_dates, features]
+                y = data_united.loc[split_dates, target_col]
+                obs_weights = data_united.loc[split_dates, weight_col]
                 pools[subset] = dict(data=X, label=y, weight=obs_weights)
-                subset_dates[subset] = splitted_dts
+                subset_dates[subset] = split_dates
 
             batches.append((pools, subset_dates))
 
@@ -496,7 +492,8 @@ class Model:
                 .set_index('from_date')\
                 .drop(['mean_train_target', 'mean_test_target', 'till_date', 'n_model'], axis=1)
 
-            features = features.apply(lambda x: list(x[x.notna()].index), axis=1).to_dict()
+            features = features.apply(lambda x: list(x[x.notna()].index), axis=1)
+            features = features.drop_duplicates().to_dict()
             self.logs['features'] = features
 
         return all_preds, all_train_info
@@ -636,19 +633,4 @@ def strategy_full_cycle(
 
 if __name__ == "__main__":
     df = read_logger()
-    df["features"] = df["features"].apply(lambda x: tuple(x))
-    group_median_perf_delta = (
-        df.groupby(["run_date", "features"])["median_perf_delta"].mean().reset_index()
-    )
-    df = pd.merge(
-        df,
-        group_median_perf_delta,
-        how="left",
-        on=["run_date", "features"],
-        suffixes=("", "_mean"),
-    )
-    max_median_perf_delta = df.loc[
-        df.groupby("run_date")["median_perf_delta_mean"].idxmax()
-    ].sort_values("run_date", ascending=False)
-    last_trial_best_features = max_median_perf_delta["features"].iloc[0]
-    a = 1
+    a=1
