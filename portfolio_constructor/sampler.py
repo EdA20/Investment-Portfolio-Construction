@@ -1,5 +1,6 @@
 import json
 import os
+import copy
 from random import shuffle
 
 import numpy as np
@@ -15,7 +16,7 @@ from portfolio_constructor import (
     ENDOG_DATA_FILE,
     PROJECT_ROOT,
 )
-from portfolio_constructor.model import strategy_full_cycle
+from portfolio_constructor.model import strategy_full_cycle, Dataset, Model, Strategy
 from portfolio_constructor.plotter import plot_shifted_strategy_with_benchmark
 
 
@@ -142,57 +143,94 @@ class SampleStrategy:
         feature_space: List[str],
         min_amount_features: int = 7,
         max_amount_features: int = 15,
-        pnl_threshold: int = 300,
         n_trials: int = 1000,
         seed_sampling: int = 1,
+        val_date_breakpoint: str = '2024-01-01',
         path: str = None,
     ):
-        kwargs = self.__dict__.copy()
         if not path:
             path = get_json_path()
 
+        val_date_breakpoint = pd.Timestamp(val_date_breakpoint)
         feature_space = list(feature_space)
         shuffle(feature_space)
 
         range_features_to_select = np.random.choice(
             range(min_amount_features, max_amount_features + 1), size=n_trials
         )
-        random_features_perf = {}
+        random_features_perf = []
 
+        dataset = Dataset(
+            self.splitter_kwargs,
+            self.sample_weight_kwargs,
+            self.position_rotator_kwargs,
+        )
+        split_states = ['val', 'test']
+        n_group = 0
         for n_features_to_select in tqdm(range_features_to_select):
+            model_kwargs = self.model_kwargs.copy()
             features = list(
                 np.random.choice(feature_space, replace=False, size=n_features_to_select)
             )
-            kwargs['features'] = features
+            batches = dataset.get_batches(self.data, features)
 
-            strategy_perf_seed = []
-            mean_outperf_seed = []
-            seed = self.model_kwargs["random_state"]
+            res_per_seed = []
+            metrics_per_seed = []
+            seed = model_kwargs["random_state"]
             for i in range(seed, seed_sampling + seed):
-                kwargs['model_kwargs']['random_state'] = i
-                output = strategy_full_cycle(**kwargs)
-                res = output['res'].copy()
-                if res['strategy_perf'].iloc[-1] < pnl_threshold:
-                    break
+                model_kwargs['random_state'] = i
 
-                strategy_perf_seed.append(res['strategy_perf'].iloc[-1])
-                mean_outperf_seed.append(res['outperf'].mean())
+                model = Model(
+                    dataset,
+                    model_kwargs,
+                )
+                preds, train_info = model.get_predictions(batches)
 
-            if len(strategy_perf_seed) < seed_sampling:
-                continue
+                strategy = Strategy(
+                    model,
+                    prob_to_weight=self.prob_to_weight
+                )
 
-            random_features_perf[f"{tuple(features)}"] = (
-                np.mean(strategy_perf_seed),
-                np.std(strategy_perf_seed),
-                np.mean(mean_outperf_seed),
-                np.std(mean_outperf_seed),
-            )
+                cols = ['price', 'price_return', 'ruonia', 'ruonia_daily']
 
-            json_data = json.dumps(random_features_perf, indent=4)
-            with open(path, "w") as file:
-                file.write(json_data)
+                res = {}
+                metrics = {}
+                for split_state in split_states:
+                    idx = preds.index < val_date_breakpoint
+                    idx = idx if split_state == 'val' else ~idx
+
+                    split_preds = preds.loc[idx].copy()
+                    output = strategy.base_strategy_peformance(self.data[cols], split_preds)
+
+                    res[split_state] = output['res']
+                    metrics[split_state] = output['metrics']
+
+                # if res['val']['strategy_perf'].iloc[-1] < res['val']['bench_perf'].iloc[-1]:
+                #     break
+
+                res_per_seed.append(copy.deepcopy(res))
+                metrics_per_seed.append(copy.deepcopy(metrics))
+
+            # if len(res_per_seed) < seed_sampling:
+            #     continue
+
+            metrics_per_seed = [
+                {(outer_key, inner_key): inner_value
+                    for outer_key, inner_dict in metrics.items()
+                    for inner_key, inner_value in inner_dict.items()}
+                for metrics in metrics_per_seed
+            ]
+            df_metrics_per_seed = pd.DataFrame(metrics_per_seed)
+            df_metrics_per_seed['n_group'] = n_group
+            n_group += 1
+
+            random_features_perf.append(df_metrics_per_seed)
+            to_save = pd.concat(random_features_perf, ignore_index=True)
+            to_save.to_csv(path.split('.')[0]+'.csv', index=False)
 
             clear_output(wait=True)
+
+        random_features_perf = pd.concat(random_features_perf, ignore_index=True)
 
         return random_features_perf
 
