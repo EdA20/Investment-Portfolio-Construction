@@ -40,7 +40,7 @@ def main(parser):
     is_debug_mode = getattr(sys, "gettrace", lambda: None)() is not None
 
     if is_debug_mode:
-        args = argparse.Namespace(features="noise", filter=False, sampling=True)
+        args = argparse.Namespace(features="all", filter=False, sampling=True)
     else:
         args = parser.parse_args()
 
@@ -181,7 +181,9 @@ def main(parser):
             model_kwargs,
             prob_to_weight=True
         )
-        random_seed_res = sampler.sample_random_seed_strategy(size=50)
+        random_seed_res = sampler.random_features_sampling(
+            features, max_amount_features=30, n_trials=2, seed_sampling=2
+        )
         a=1
 
 

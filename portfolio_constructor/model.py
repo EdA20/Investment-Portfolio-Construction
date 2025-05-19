@@ -72,7 +72,7 @@ def read_logger(path: str = None):
 def open_random_features_perf_file(path=None):
     if not path:
         json_dir = PROJECT_ROOT / "jsons"
-        files = sorted(json_dir.glob("random_features_pnl_*.json"), reverse=True)
+        files = sorted(json_dir.glob("random_features_perf_*.json"), reverse=True)
         if not files:
             raise FileNotFoundError('В папке jsons нет файлов с результатами')
         path = files[0]
@@ -586,6 +586,9 @@ class Strategy:
         cvar = res.loc[res['strat_return'] < var, 'strat_return'].mean()
 
         metrics = {
+            'strategy_perf':  res['strategy_perf'].iloc[-1],
+            'bench_perf': res['bench_perf'].iloc[-1],
+            'mean_outperf':  res['outperf'].mean(),
             'sharpe_ratio_rf': sharpe_ratio_rf,
             'sharpe_ratio_rm': sharpe_ratio_rm,
             'weighted_sharpe_ratio_rf': weighted_sharpe_ratio_rf,

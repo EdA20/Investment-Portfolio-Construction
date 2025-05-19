@@ -430,8 +430,6 @@ if __name__ == '__main__':
     # case 2
     from portfolio_constructor.model import open_random_features_perf_file
     df = open_random_features_perf_file()
-    df.iloc[:, 1] = np.random.uniform(10, 20, size=3)
-    df.iloc[:, 3] = np.random.uniform(1, 10, size=3)
-    plot_bootstrap_features_performance(df, outperf_info=False)
+    plot_bootstrap_features_performance(df)
     a=1
 
