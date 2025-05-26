@@ -80,6 +80,14 @@ poetry run dvc push
 poetry install
 ```
 
+
+#### Running service locally
+
+```bash
+cd webservice
+poetry run uvicorn main:app --reload
+```
+
 ---
 
 ## 📂 Project Structure
