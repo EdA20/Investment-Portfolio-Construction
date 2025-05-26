@@ -1,0 +1,56 @@
+<div class="container">
+    <div class="step-indicator">
+        <div class="step">1</div>
+        <div class="step">2</div>
+        <div class="step">3</div>
+        <div class="step active">4</div>
+        <div class="step">5</div>
+    </div>
+    <link rel="stylesheet" href="/static/style.css">
+
+    <h2>🛡️ Выберите ваш риск-профиль</h2>
+    
+    <form method="post" action="/select-risk-profile/">
+        <div class="risk-profiles">
+            <label class="risk-card">
+                <input type="radio" name="risk_profile" value="low" required>
+                <div class="risk-content">
+                    <h3>Консервативный долгосрочный</h3>
+                    <ul>
+                        <li>📉 Риск-профиль: Низкий</li>
+                        <li>📅 Горизонт: 6–12+ месяцев</li>
+                        <li>🎯 Take-profit/Stop-loss: 5-10%</li>
+                    </ul>
+                </div>
+            </label>
+
+            <label class="risk-card">
+                <input type="radio" name="risk_profile" value="medium">
+                <div class="risk-content">
+                    <h3>Умеренный среднесрочный</h3>
+                    <ul>
+                        <li>📉 Риск-профиль: Средний</li>
+                        <li>📅 Горизонт: 3–6 месяцев</li>
+                        <li>🎯 Take-profit/Stop-loss: 10-15%</li>
+                    </ul>
+                </div>
+            </label>
+
+            <label class="risk-card">
+                <input type="radio" name="risk_profile" value="high">
+                <div class="risk-content">
+                    <h3>Агрессивный краткосрочный</h3>
+                    <ul>
+                        <li>📉 Риск-профиль: Высокий</li>
+                        <li>📅 Горизонт: 1 день – 3 месяца</li>
+                        <li>🎯 Take-profit/Stop-loss: 15-25%</li>
+                    </ul>
+                </div>
+            </label>
+        </div>
+        
+        <div style="margin-top: 25px; text-align: right;">
+            <button type="submit" class="btn">Запустить обучение модели →</button>
+        </div>
+    </form>
+</div>

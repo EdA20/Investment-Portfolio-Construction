@@ -1,0 +1,307 @@
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+:root {
+  --primary: #2196f3;
+  --secondary: #03a9f4;
+  --accent: #4caf50;
+  --background: #f8f9ff;
+  --text: #2c3e50;
+}
+body {
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  margin: 0;
+  padding: 30px;
+  background: var(--background);
+  color: var(--text);
+  line-height: 1.6;
+}
+.container {
+  max-width: 800px;
+  margin: 20px auto;
+  background: #fff;
+  padding: 30px 40px;
+  border-radius: 18px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+}
+h1,
+h2,
+h3 {
+  color: var(--primary);
+  margin: 0 0 25px;
+}
+h1 {
+  font-size: 28px;
+  font-weight: 600;
+}
+h2 {
+  font-size: 22px;
+  margin-bottom: 20px;
+}
+.btn,
+.input-group label {
+  font-weight: 500;
+  font-size: 14px;
+}
+.btn {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: #fff;
+  padding: 10px 22px;
+  border: 0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+}
+.feature-box {
+  background: #f8f9fa;
+  padding: 12px 18px;
+  margin: 8px 0;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  transition: transform 0.2s;
+  border: 1px solid #e9ecef;
+}
+.feature-box:hover {
+  transform: translateX(5px);
+  border-color: var(--primary);
+}
+.checkbox-group {
+  display: grid;
+  gap: 10px;
+}
+.input-group {
+  margin-bottom: 20px;
+}
+.input-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+.input-group input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+.input-group input:focus {
+  outline: 0;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+}
+input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+.loader {
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid var(--primary);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+  margin: 30px auto;
+}
+.progress-bar {
+  height: 8px;
+  background: #eee;
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 20px 0;
+}
+.progress {
+  width: 45%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  transition: width 0.3s ease;
+}
+.step-indicator {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+.step {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #e9ecef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  color: #666;
+}
+.step.active {
+  background: var(--primary);
+  color: #fff;
+}
+.btn {
+  display: inline-block;
+  text-decoration: none;
+  text-align: center;
+  min-width: 120px;
+  margin: 10px 0;
+}
+.error-message {
+  padding: 12px;
+  background: #ffebee;
+  color: #c62828;
+  border-radius: 8px;
+  margin: 15px 0;
+  border: 1px solid #ffcdd2;
+  font-size: 14px;
+}
+.chart-container {
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 25px 0;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.plotly-graph-div {
+  margin: 15px 0;
+}
+.feature-chart {
+  margin: 30px 0;
+  padding: 20px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.feature-chart h3 {
+  color: var(--secondary);
+  font-size: 18px;
+  margin-bottom: 15px;
+}
+
+.feature-block {
+  margin: 40px 0;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+}
+
+.derivatives-selection {
+  margin-top: 20px;
+  padding: 15px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.feature-block h3 {
+  color: var(--primary);
+  font-size: 18px;
+  margin-bottom: 15px;
+}
+
+.plotly-graph-div {
+  width: 100% !important;
+  margin: 5px 0;
+}
+
+.chart-container {
+  overflow-x: auto;
+}
+
+.updatemenu {
+  padding: 8px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.updatemenu button {
+  background: white !important;
+  border: 1px solid #dee2e6 !important;
+  margin: 4px !important;
+  border-radius: 6px !important;
+  transition: all 0.2s !important;
+}
+
+.updatemenu button:hover {
+  background: #f8f9fa !important;
+  transform: translateY(-1px);
+}
+/* Обновленные стили для risk-card */
+.risk-card {
+    display: flex;
+    align-items: center; /* Вертикальное выравнивание */
+    gap: 15px; /* Расстояние между радио-кнопкой и контентом */
+    background: #fff;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* Псевдо-радиокнопка для визуального выравнивания */
+.risk-card input[type="radio"] {
+    display: none;
+}
+
+.risk-card::before {
+    content: "";
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #dee2e6;
+    border-radius: 50%;
+    margin-right: 12px;
+    flex-shrink: 0;
+    transition: all 0.2s;
+}
+
+/* Стили для выбранной карточки */
+.risk-card input:checked + .risk-content::before {
+    border-color: var(--primary);
+    background: var(--primary);
+}
+
+.risk-card input:checked + .risk-content::after {
+    content: "";
+    display: block;
+    width: 12px;
+    height: 12px;
+    background: var(--primary);
+    border-radius: 50%;
+    position: absolute;
+    left: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.risk-content {
+    flex-grow: 1;
+    position: relative; /* Для позиционирования псевдоэлементов */
+}
+
+/* Выравнивание текста */
+.risk-content h3 {
+    margin-top: 0;
+    padding-top: 0;
+}
+
+.risk-content ul {
+    margin: 10px 0 0 0;
+}

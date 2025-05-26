@@ -1,0 +1,45 @@
+<div class="container">
+    <div class="step-indicator">
+        <div class="step">1</div>
+        <div class="step">2</div>
+        <div class="step active">3</div>
+        <div class="step">4</div>
+        <div class="step">5</div>
+    </div>
+    <link rel="stylesheet" href="/static/style.css">
+
+    <h2>📈 Графики экзогенных данных</h2>
+    
+    <form method="post" action="/select-derivatives/" id="derivativesForm">
+        {% for feature in features %}
+        <div class="feature-block">
+            <div class="chart-container">
+                {{ feature_charts[feature]|safe }}
+            </div>
+            <input type="hidden" name="{{ feature }}" value="">
+        </div>
+        {% endfor %}
+        <div style="margin-top: 10px; text-align: right;">
+            <button type="submit" class="btn">Перейти к выбору риск-профиля</button>
+        </div>
+    </form>
+</div>
+
+<script>
+// Автоматическое обновление скрытых полей при изменении графика
+document.querySelectorAll('.plotly-graph-div').forEach(graph => {
+    graph.on('plotly_restyle', function(data) {
+        const feature = this.closest('.feature-block').querySelector('input[type="hidden"]');
+        const activeIndicators = [];
+        
+        // Определяем активные индикаторы
+        data[0].visible.forEach((vis, i) => {
+            if(i > 0 && vis) {  // Первый след - базовая цена
+                activeIndicators.push(this.data[i].name);
+            }
+        });
+        
+        feature.value = activeIndicators.join(',');
+    });
+});
+</script>

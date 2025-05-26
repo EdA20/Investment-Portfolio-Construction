@@ -1,0 +1,32 @@
+<div class="container">
+    <div class="step-indicator">
+        <div class="step">1</div>
+        <div class="step active">2</div>
+        <div class="step">3</div>
+        <div class="step">4</div>
+        <div class="step">5</div>
+    </div>
+    <link rel="stylesheet" href="/static/style.css">
+
+    <!-- Графики -->
+    <div class="chart-container" style="margin: 30px 0;">
+        {{ price_chart|safe }}
+        <!-- {{ volume_chart|safe }} -->
+    </div>
+
+    <h2>📊 Выберите экзогенные признаки</h2>
+    <form method="post" action="/select-features/">
+        <div class="checkbox-group">
+            {% for feature in features %}
+            <label class="feature-box">
+                <input type="checkbox" name="selected" value="{{ feature }}">
+                <span>{{ feature }}</span>
+            </label>
+            {% endfor %}
+        </div>
+        
+        <div style="margin-top: 25px; text-align: right;">
+            <button type="submit" class="btn">Далее →</button>
+        </div>
+    </form>
+</div>
