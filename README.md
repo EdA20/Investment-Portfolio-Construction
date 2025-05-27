@@ -23,15 +23,14 @@ Develop an **automated trading pipeline** using ML/DL models to generate buy/sel
 ---
 
 ## 📊 Visualizations
-...
 
-<!-- | ![IMOEX vs Portfolio](https://via.placeholder.com/400x200.png?text=Portfolio+vs+IMOEX+Returns) | ![Correlation Heatmap](https://via.placeholder.com/400x200.png?text=Asset+Correlation+Heatmap) |
-|:--:|:--:|
-| *Portfolio Performance vs Benchmark* | *Sector Correlation Analysis* |
+#### Strategy performance
 
-| ![Technical Indicators](https://via.placeholder.com/800x200.png?text=RSI+%26+MACD+Visualization) |
-|:--:|
-| *Feature Engineering: Technical Indicators* | -->
+![alt text](https://github.com/EdA20/ImoexMLProject/blob/master/_images/strategy_performance.png?raw=true)
+
+#### Strategy performance detailed
+
+![alt text](https://github.com/EdA20/ImoexMLProject/blob/master/_images/strategy_perf_detailed.png?raw=true)
 
 ---
 
