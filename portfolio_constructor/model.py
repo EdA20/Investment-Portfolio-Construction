@@ -547,7 +547,10 @@ class Strategy:
         self.logs = self.__dict__.copy()
         self.logs.update(model.logs)
 
-    def base_strategy_peformance(self, strat_data, preds, perf_plot=False, sliding_plot=False):
+    def base_strategy_peformance(self, strat_data, preds, plot_kwargs=None):
+        if not plot_kwargs:
+            plot_kwargs = {}
+
         strat_data = strat_data.copy()
 
         strat_data['preds'] = preds.mean(axis=1)
@@ -587,11 +590,11 @@ class Strategy:
         metrics = self.calculate_strategy_metrics(res)
         self.logs['metrics'] = metrics
 
-        if perf_plot:
-            plot_strategy_performance(res)
+        if plot_kwargs.get('perf_plot'):
+            plot_strategy_performance(res, save=plot_kwargs.get('save', False))
 
-        if sliding_plot:
-            plot_sliding_pnl(res)
+        if plot_kwargs.get('sliding_plot'):
+            plot_sliding_pnl(res, save=plot_kwargs.get('save', False))
 
         write_log_file(self.logs)
         output = {
