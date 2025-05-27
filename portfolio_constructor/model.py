@@ -14,7 +14,7 @@ from tqdm import tqdm
 from portfolio_constructor import PROJECT_ROOT, TQDM_DISABLE
 from portfolio_constructor.custom_metrics import *
 from portfolio_constructor.target_markup import position_rotator
-from portfolio_constructor.plotter import plot_strategy_performance
+from portfolio_constructor.plotter import plot_strategy_performance, plot_sliding_pnl
 
 # to plot in debug mode use this
 # import matplotlib as mpl
@@ -47,7 +47,7 @@ def write_log_file(info_to_log: Union[Dict, str] = None):
         logger.info(info_to_log)
 
 
-def read_logger(path: str = None):
+def read_logger(path: str = None, analyze=True):
     paths = [path] if path else os.listdir(PROJECT_ROOT / "logs")
 
     df_logs = []
@@ -66,35 +66,76 @@ def read_logger(path: str = None):
     df_logs = pd.concat(df_logs, ignore_index=True)
     df_logs = df_logs.sort_values("run_date", ascending=False, ignore_index=True)
 
-    return df_logs
+    if analyze:
+        log_analytics = get_log_analytics(df_logs)
+    else:
+        log_analytics = None
+
+    return df_logs, log_analytics
 
 
-def open_random_features_perf_file(path=None):
+def get_log_analytics(logs):
+
+    metrics = pd.DataFrame(list(logs['metrics']))
+    logs = pd.concat([logs, metrics], axis=1)
+    logs = logs.loc[:, ~logs.columns.duplicated()].copy()
+
+    logs['markup_name'] = logs['position_rotator_kwargs'].apply(lambda x: x.get('markup_name', 'min_max'))
+    logs['features'] = logs['features'].apply(lambda x: tuple(next(iter(x.values()))))
+
+    group_cols = ['markup_name', 'features', 'start_date', 'end_date']
+    agg_dct = {}
+    for col in metrics:
+        agg_dct[col] = ['mean', 'std']
+    agg_dct['strategy_perf'] = ['count', 'mean', 'std']
+
+    logs_agg = logs.groupby(group_cols).agg(agg_dct).reset_index()
+    logs_agg = logs_agg.sort_values(
+        [('end_date', ''), ('mean_outperf', 'mean')], ascending=[True, False], ignore_index=True
+    )
+    logs_agg = logs_agg.loc[logs_agg[('strategy_perf', 'count')] == 5].copy()
+
+    # feature_counter = {}
+    # top100_features = logs.loc[:100, ('f_features',)].squeeze()
+    # for i, features in top100_features.items():
+    #     for feature in features:
+    #         if feature_counter.get(feature):
+    #             feature_counter[feature] += 1
+    #         else:
+    #             feature_counter[feature] = 1
+
+    return logs_agg
+
+
+def open_random_features_perf_file(path=None, file_type='json'):
     if not path:
         json_dir = PROJECT_ROOT / "jsons"
-        files = sorted(json_dir.glob("random_features_perf_*.json"), reverse=True)
+        files = sorted(json_dir.glob(f"random_features_perf_*.{file_type}"), reverse=True)
         if not files:
             raise FileNotFoundError('В папке jsons нет файлов с результатами')
         path = files[0]
 
-    with open(path, "r") as file:
-        random_features_pnl = json.load(file)
+    if file_type == 'json':
+        with open(path, "r") as file:
+            random_features_pnl = json.load(file)
 
-    random_features_pnl = pd.DataFrame.from_dict(random_features_pnl, orient="index")
-    if random_features_pnl.shape[1] > 1:
-        if random_features_pnl.shape[1] == 2:
-            cols = ["mean_strategy_perf", "std_strategy_perf"]
-        else:
-            cols = [
-                "mean_strategy_perf",
-                "std_strategy_perf",
-                "mean_mean_outperf",
-                "std_mean_outperf",
-            ]
+        random_features_pnl = pd.DataFrame.from_dict(random_features_pnl, orient="index")
+        if random_features_pnl.shape[1] > 1:
+            if random_features_pnl.shape[1] == 2:
+                cols = ["mean_strategy_perf", "std_strategy_perf"]
+            else:
+                cols = [
+                    "mean_strategy_perf",
+                    "std_strategy_perf",
+                    "mean_mean_outperf",
+                    "std_mean_outperf",
+                ]
 
-        random_features_pnl = random_features_pnl.set_axis(cols, axis=1).sort_values(
-            "mean_strategy_perf", ascending=False
-        )
+            random_features_pnl = random_features_pnl.set_axis(cols, axis=1).sort_values(
+                "mean_strategy_perf", ascending=False
+            )
+    else:
+        random_features_pnl = pd.read_csv(path)
 
     return random_features_pnl
 
@@ -506,7 +547,7 @@ class Strategy:
         self.logs = self.__dict__.copy()
         self.logs.update(model.logs)
 
-    def base_strategy_peformance(self, strat_data, preds, plot=False):
+    def base_strategy_peformance(self, strat_data, preds, perf_plot=False, sliding_plot=False):
         strat_data = strat_data.copy()
 
         strat_data['preds'] = preds.mean(axis=1)
@@ -514,7 +555,7 @@ class Strategy:
         strat_data['is_bench_long'] = strat_data['preds'] >= 0.5
 
         cols = ['price', 'ruonia', 'ruonia_daily', 'preds', 'is_bench_long', 'price_return']
-        res = strat_data.loc[:, cols].dropna(subset='preds')
+        res = strat_data.loc[:, cols].dropna(subset=['preds'])
 
         if self.prob_to_weight:
             res['bench_long_weight'] = res['preds'].apply(
@@ -546,8 +587,11 @@ class Strategy:
         metrics = self.calculate_strategy_metrics(res)
         self.logs['metrics'] = metrics
 
-        if plot:
+        if perf_plot:
             plot_strategy_performance(res)
+
+        if sliding_plot:
+            plot_sliding_pnl(res)
 
         write_log_file(self.logs)
         output = {
@@ -567,39 +611,44 @@ class Strategy:
             weights += 0.5 * step_function(n, prob=0.99, convergence_to_prob=100, shift=shift)
         weights = weights / weights.sum()
 
-        market_outperformance = res['strat_return'] - res['price_return']
-        deposit_outperformance = res['strat_return'] - res['ruonia_daily']
-        sharpe_ratio_rf = deposit_outperformance.mean() / res['strat_return'].std()
-        sharpe_ratio_rm = market_outperformance.mean() / res['strat_return'].std()
-        weighted_sharpe_ratio_rf = sum(weights * deposit_outperformance) / res['strat_return'].std()
-        weighted_sharpe_ratio_rm = sum(weights * market_outperformance) / res['strat_return'].std()
+        return_types = ['price_return', 'strat_return']
+        metrics = {}
+        for return_type in return_types:
+            market_outperformance = res[return_type] - res['price_return']
+            deposit_outperformance = res[return_type] - res['ruonia_daily']
+            sharpe_ratio_rf = deposit_outperformance.mean() / res[return_type].std()
+            sharpe_ratio_rm = market_outperformance.mean() / res[return_type].std()
+            weighted_sharpe_ratio_rf = sum(weights * deposit_outperformance) / res[return_type].std()
+            weighted_sharpe_ratio_rm = sum(weights * market_outperformance) / res[return_type].std()
 
-        drawdown = res['strategy_perf'] / res['strategy_perf'].expanding().max() - 1
-        max_drawdown = drawdown.min()
+            drawdown = res['strategy_perf'] / res['strategy_perf'].expanding().max() - 1
+            max_drawdown = drawdown.min()
 
-        last_argmax = res['strategy_perf'].expanding().apply(lambda x: x.argmax())
-        max_recovery = last_argmax.drop_duplicates().diff().max()
+            last_argmax = res['strategy_perf'].expanding().apply(lambda x: x.argmax())
+            max_recovery = last_argmax.drop_duplicates().diff().max()
 
-        beta = res[['strat_return', 'price_return']].cov().iloc[0,1] / res['price_return'].var()
+            beta = res[[return_type, 'price_return']].cov().iloc[0,1] / res['price_return'].var()
 
-        var = res['strat_return'].quantile(0.01)
-        cvar = res.loc[res['strat_return'] < var, 'strat_return'].mean()
+            var = res[return_type].quantile(0.01)
+            cvar = res.loc[res[return_type] < var, return_type].mean()
 
-        metrics = {
-            'strategy_perf':  res['strategy_perf'].iloc[-1],
-            'bench_perf': res['bench_perf'].iloc[-1],
-            'mean_outperf':  res['outperf'].mean(),
-            'sharpe_ratio_rf': sharpe_ratio_rf,
-            'sharpe_ratio_rm': sharpe_ratio_rm,
-            'weighted_sharpe_ratio_rf': weighted_sharpe_ratio_rf,
-            'weighted_sharpe_ratio_rm': weighted_sharpe_ratio_rm,
-            'max_drawdown': max_drawdown,
-            'max_recovery': max_recovery,
-            'beta': beta,
-            'var': var,
-            'cvar': cvar
-        }
-        return metrics
+            dct = {
+                'strategy_perf':  res['strategy_perf'].iloc[-1],
+                'bench_perf': res['bench_perf'].iloc[-1],
+                'mean_outperf':  res['outperf'].mean(),
+                'sharpe_ratio_rf': sharpe_ratio_rf,
+                'sharpe_ratio_rm': sharpe_ratio_rm,
+                'weighted_sharpe_ratio_rf': weighted_sharpe_ratio_rf,
+                'weighted_sharpe_ratio_rm': weighted_sharpe_ratio_rm,
+                'max_drawdown': max_drawdown,
+                'max_recovery': max_recovery,
+                'beta': beta,
+                'var': var,
+                'cvar': cvar
+            }
+            metrics[return_type] = dct
+
+        return metrics['strat_return']
 
 
 def strategy_full_cycle(
@@ -609,7 +658,9 @@ def strategy_full_cycle(
     sample_weight_kwargs,
     position_rotator_kwargs,
     model_kwargs,
-    prob_to_weight
+    strat_kwargs,
+    prob_to_weight,
+    **kwargs
 ):
     dataset = Dataset(
         splitter_kwargs,
@@ -629,11 +680,30 @@ def strategy_full_cycle(
         prob_to_weight=prob_to_weight
     )
     strat_data = data.loc[:, ['price', 'price_return', 'ruonia', 'ruonia_daily']].copy()
-    output = strategy.base_strategy_peformance(strat_data, preds)
+    if kwargs.get('val_date_breakpoint', None):
+        output = {}
+        split_states = ['val', 'test']
+
+        for split_state in split_states:
+            idx = preds.index < kwargs['val_date_breakpoint']
+            idx = idx if split_state == 'val' else ~idx
+
+            split_preds = preds.loc[idx].copy()
+            split_output = strategy.base_strategy_peformance(strat_data, split_preds, **strat_kwargs)
+
+            output[split_state] = split_output
+    else:
+        output = strategy.base_strategy_peformance(strat_data, preds)
 
     return output
 
 
 if __name__ == "__main__":
-    df = read_logger()
+    logs, logs_analytics = read_logger()
+    val_logs = logs_analytics.loc[logs_analytics['start_date'] == '2012-01-10']
+    test_logs = logs_analytics.loc[logs_analytics['start_date'] == '2024-01-04']
+    val_test_logs = pd.merge(
+        val_logs, test_logs, how='inner', on=[('markup_name', ''), ('features', '')], suffixes=('_val', '_test')
+    )
     a=1
+    df = open_random_features_perf_file(file_type='csv')
