@@ -26,17 +26,32 @@ Develop an **automated trading pipeline** using ML/DL models to generate buy/sel
 
 #### Strategy performance
 
-![alt text](https://github.com/EdA20/ImoexMLProject/blob/master/_images/strategy_performance.png?raw=true)
+![alt text](https://raw.githubusercontent.com/EdA20/Investment-Portfolio-Construction/refs/heads/master/_images/strategy_performance.png)
 
 #### Strategy performance detailed
 
-![alt text](https://github.com/EdA20/ImoexMLProject/blob/master/_images/strategy_perf_detailed.png?raw=true)
+![alt text](https://raw.githubusercontent.com/EdA20/Investment-Portfolio-Construction/refs/heads/master/_images/strategy_perf_detailed.png)
 
 ---
 
+
 ## 🏆 Key Results
 
-...
+#### Metrics on validation dataset
+
+|                                                            	| Strategy 	|  MCFTRR 	|
+|------------------------------------------------------------	|:--------:	|:-------:	|
+|                         Sharp ratio                        	|   0.049  	|  0.018  	|
+|                        Max drawdown                        	|  -19.29% 	| -53.71% 	|
+|                            Beta                            	|   0.33   	|    1    	|
+|                     Value at Risk (VaR)                    	|   1.93%  	|   3.5%  	|
+| Outperformance of portfolio return index over MCFTRR index 	|   48.59  	|  -48.59 	|
+
+#### Interpretation
+
+- The maximum portfolio drawdown (-20%) was significantly lower than the benchmark (-53%)
+- The VaR index confirms effective risk control
+- The average annualized return consistently outperforms the MCFTRR index
 
 ---
 
@@ -90,8 +105,11 @@ poetry run uvicorn main:app --reload
 ---
 
 ## 📂 Project Structure
-...
 
+```bash
+/portfolio_constructor # python module files for strategy calculation
+/webservice # python + HTML + CSS + JS files for webservice
+```
 
 ## 🤝 Contribution Guidelines
 
