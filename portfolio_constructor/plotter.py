@@ -1,3 +1,6 @@
+import os
+import time
+
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -9,31 +12,109 @@ from IPython.display import clear_output
 from plotly.subplots import make_subplots
 from tqdm import tqdm
 
-from portfolio_constructor import EXOG_DATA_OTHER_FILES, EXOG_DATA_PRICE_FILES
+from portfolio_constructor import EXOG_DATA_OTHER_FILES, EXOG_DATA_PRICE_FILES, PROJECT_ROOT
 from portfolio_constructor.target_markup import position_rotator
 
 sns.set_style("darkgrid")
 
 
-def plot_position_rotator(price, freqs, shift_days=0, mode=1):
-    fig, ax = plt.subplots(len(freqs), figsize=(10, 4 * len(freqs)), dpi=100)
-    if len(freqs) == 1:
-        ax = [ax]
+SAVE_PLOT_DIR = 'plots'
 
-    for i, freq in enumerate(freqs):
-        min_max = position_rotator(price, freq, shift_days, mode)
 
-        sell = min_max.loc[min_max["action"] == "sell", "value"]
-        buy = min_max.loc[min_max["action"] == "buy", "value"]
+def plot_position_rotator(price, min_max, freq):
+    # Подготовка данных
+    sell = min_max.loc[min_max["action"] == "sell", "value"]
+    buy = min_max.loc[min_max["action"] == "buy", "value"]
 
-        ax[i].plot(price)
-        ax[i].scatter(sell.index, sell.values, s=40, c="g", label="sell")
-        ax[i].scatter(buy.index, buy.values, s=40, c="r", label="buy")
-        ax[i].set_title(f"Точки входа/выхода с частотой {freq}")
-        ax[i].legend(fontsize=13)
+    # Создание фигуры
+    fig = go.Figure()
 
-    plt.tight_layout()
-    plt.show()
+    # Линия цены
+    fig.add_trace(
+        go.Scatter(
+            x=price.index,
+            y=price,
+            mode='lines',
+            name='Цена',
+            line=dict(color='blue', width=2),
+            hovertemplate="Дата: %{x}<br>Цена: %{y:.2f}<extra></extra>"
+        )
+    )
+
+    # Точки продажи
+    fig.add_trace(
+        go.Scatter(
+            x=sell.index,
+            y=sell.values,
+            mode='markers',
+            name='Продажа',
+            marker=dict(
+                color='green',
+                size=10,
+                line=dict(width=1, color='DarkGreen')
+            ),
+            hovertemplate="Продажа<br>Дата: %{x}<br>Цена: %{y:.2f}<extra></extra>"
+        )
+    )
+
+    # Точки покупки
+    fig.add_trace(
+        go.Scatter(
+            x=buy.index,
+            y=buy.values,
+            mode='markers',
+            name='Покупка',
+            marker=dict(
+                color='red',
+                size=10,
+                line=dict(width=1, color='DarkRed')
+            ),
+            hovertemplate="Покупка<br>Дата: %{x}<br>Цена: %{y:.2f}<extra></extra>"
+        )
+    )
+
+    # Настройка layout
+    fig.update_layout(
+        title=f"Точки входа/выхода с частотой {freq}",
+        xaxis_title="Дата",
+        yaxis_title="Цена",
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.02,
+            xanchor="right",
+            x=1,
+            font=dict(size=14)
+        ),
+        hovermode="x unified",
+        template="plotly_white",
+        height=600,
+        width=1000,
+        margin=dict(l=50, r=50, b=50, t=80)
+    )
+
+    fig.show()
+
+
+# def plot_position_rotator(price, freqs, shift_days=0, mode=1):
+#     fig, ax = plt.subplots(len(freqs), figsize=(10, 4 * len(freqs)), dpi=100)
+#     if len(freqs) == 1:
+#         ax = [ax]
+#
+#     for i, freq in enumerate(freqs):
+#         min_max = position_rotator(price, freq, shift_days, mode)
+#
+#         sell = min_max.loc[min_max["action"] == "sell", "value"]
+#         buy = min_max.loc[min_max["action"] == "buy", "value"]
+#
+#         ax[i].plot(price)
+#         ax[i].scatter(sell.index, sell.values, s=40, c="g", label="sell")
+#         ax[i].scatter(buy.index, buy.values, s=40, c="r", label="buy")
+#         ax[i].set_title(f"Точки входа/выхода с частотой {freq}")
+#         ax[i].legend(fontsize=13)
+#
+#     plt.tight_layout()
+#     plt.show()
 
 
 def plot_train_position_rotator(
@@ -183,13 +264,15 @@ def plot_endog_vs_exog_index(data, return_cols=None, in_pycharm=True):
             ax[i].legend()
 
 
-def plot_sliding_start_pnl(res, days=365 * 3, plot=None):
+def plot_sliding_pnl(res, days=365*2, save=True):
+    # Проверка колонок
     cols = res.columns
     if "strat_return" not in cols:
         raise Exception('input dataframe must contain "strat_return" column')
     if "price_return" not in cols:
         raise Exception('input dataframe must contain "price_return" column')
 
+    # Расчет скользящей доходности
     res[f"strat_hist_pnl_{days}d"] = (
         res["strat_return"]
         .rolling(f"{days}D")
@@ -201,22 +284,59 @@ def plot_sliding_start_pnl(res, days=365 * 3, plot=None):
         .apply(lambda x: 100 * (1 + x).prod() - 100)
     )
 
-    if plot:
-        plt.figure(figsize=(10, 6), dpi=100)
-        if plot == "hist":
-            plt.hist(res[f"strat_hist_pnl_{days}d"], alpha=0.4, label="ML strat")
-            plt.hist(res[f"moex_hist_pnl_{days}d"], alpha=0.4, label="MOEX")
-        else:
-            plt.plot(res[f"strat_hist_pnl_{days}d"], label="ML strat")
-            plt.plot(res[f"moex_hist_pnl_{days}d"], label="MOEX")
-        plt.legend()
-        plt.title(f"ML strat vs IMOEX {days} days PnL")
-        plt.show()
+    # Создание графика Plotly
+    fig = go.Figure()
 
-    return res
+    # Добавление линий
+    fig.add_trace(go.Scatter(
+        x=res.index,
+        y=res[f"strat_hist_pnl_{days}d"],
+        name="Portfolio Return",
+        line=dict(color='blue', width=2)
+    ))
+
+    fig.add_trace(go.Scatter(
+        x=res.index,
+        y=res[f"moex_hist_pnl_{days}d"],
+        name="MCFTRR Return",
+        line=dict(color='red', width=2)
+    ))
+
+    # Настройка layout
+    fig.update_layout(
+        title=f"Portfolio vs MCFTRR {days} days PnL",
+        xaxis_title="Date",
+        yaxis_title="PnL (%)",
+        legend_title="Strategy",
+        hovermode="x unified",
+        template="plotly_white",
+        autosize=True,
+        title_x=0.5  # Центрирование заголовка
+    )
+
+    if save:
+        os.makedirs(PROJECT_ROOT / SAVE_PLOT_DIR, exist_ok=True)
+        name = pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')
+        fig.update_layout(
+            title_font=dict(size=20),
+            xaxis_title_font=dict(size=16),
+            yaxis_title_font=dict(size=16),
+            xaxis=dict(tickfont=dict(size=12), tickangle=-45),
+            legend=dict(font=dict(size=15), x=1.02, y=0.5)
+        )
+        fig.write_image(
+            PROJECT_ROOT / f"{SAVE_PLOT_DIR}/sliding_pnl_{name}.png",
+            width=1200,  # Ширина в пикселях
+            height=800,  # Высота в пикселях
+            scale=3,
+            engine="kaleido"
+        )
+
+    # Отображение графика
+    fig.show()
 
 
-def plot_strategy_performance(strategy_res):
+def plot_strategy_performance(strategy_res, save=True):
     cols = strategy_res.columns
     if "strategy_perf" not in cols:
         raise Exception('input dataframe must contain "strategy_perf" column')
@@ -229,7 +349,7 @@ def plot_strategy_performance(strategy_res):
     fig.add_trace(go.Scatter(
         x=strategy_res.index,
         y=strategy_res["strategy_perf"],
-        name="Strategy Performance",
+        name="Portfolio Performance",
         line=dict(color='blue', width=2)
     ))
 
@@ -237,7 +357,7 @@ def plot_strategy_performance(strategy_res):
     fig.add_trace(go.Scatter(
         x=strategy_res.index,
         y=strategy_res["bench_perf"],
-        name="Benchmark Performance",
+        name="MCFTRR Performance",
         line=dict(color='red', width=2)
     ))
 
@@ -257,10 +377,29 @@ def plot_strategy_performance(strategy_res):
     fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='LightGray')
     fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='LightGray')
 
+    if save:
+        os.makedirs(PROJECT_ROOT / SAVE_PLOT_DIR, exist_ok=True)
+        name = pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')
+        fig.update_layout(
+            title_font=dict(size=20),
+            xaxis_title_font=dict(size=16),
+            yaxis_title_font=dict(size=16),
+            xaxis=dict(tickfont=dict(size=12), tickangle=-45),
+            legend=dict(font=dict(size=15), x=1.02, y=0.5)
+        )
+        fig.write_image(
+            PROJECT_ROOT / f"{SAVE_PLOT_DIR}/performance_{name}.png",
+            width=1200,  # Ширина в пикселях
+            height=800,  # Высота в пикселях
+            scale=3,
+            engine="kaleido"
+        )
+        time.sleep(1)
+
     fig.show()
 
 
-def plot_shifted_strategy_with_benchmark(data, random_start_returns):
+def plot_shifted_strategy_with_benchmark(data, random_start_returns, save=True):
 
     strats_perf = random_start_returns.copy()
     moex_perf = data.loc[strats_perf.index, 'price'].pct_change()
@@ -317,10 +456,24 @@ def plot_shifted_strategy_with_benchmark(data, random_start_returns):
         hovermode="x unified",
         autosize=True,
     )
+
+    if save:
+        os.makedirs(PROJECT_ROOT / SAVE_PLOT_DIR, exist_ok=True)
+        name = pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')
+
+        fig.write_image(
+            f"{SAVE_PLOT_DIR}/quantile_shifted_performance_{name}.png",
+            width=1200,  # Ширина в пикселях
+            height=800,  # Высота в пикселях
+            scale=3,
+            engine="kaleido"
+        )
+        time.sleep(1)
+
     fig.show()
 
 
-def plot_bootstrap_features_performance(random_features_perf, outperf_info=True):
+def plot_bootstrap_features_performance(random_features_perf, outperf_info=True, save=True):
     if outperf_info:
         # Создаем фигуру с двумя горизонтальными субплoтами
         fig = make_subplots(
@@ -400,6 +553,18 @@ def plot_bootstrap_features_performance(random_features_perf, outperf_info=True)
         selector=dict(mode='markers')
     )
 
+    if save:
+        os.makedirs(PROJECT_ROOT / SAVE_PLOT_DIR, exist_ok=True)
+        name = pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')
+
+        fig.write_image(
+            f"{SAVE_PLOT_DIR}/bootstrap_features_performance_{name}.png",
+            width=1500,  # Ширина в пикселях
+            height=1000,  # Высота в пикселях
+            scale=3,
+            engine="kaleido"
+        )
+
     # Настройка отображения в браузере
     fig.show(config={'responsive': True})
 
@@ -417,19 +582,29 @@ def plot_losses(train_losses, test_losses):
 
 
 if __name__ == '__main__':
-    # # case 1
-    # from portfolio_constructor import PROJECT_ROOT
-    #
-    # data = pd.read_excel(
-    #     PROJECT_ROOT / "data/mcftrr.xlsx", index_col=[0], parse_dates=True
-    # )
-    # price = data["price"].copy()
-    # # plot_train_position_rotator(price, [42])
-    # plot_position_rotator(price, freqs=[42])
+    # case 1
+    from portfolio_constructor import PROJECT_ROOT
 
-    # case 2
-    from portfolio_constructor.model import open_random_features_perf_file
-    df = open_random_features_perf_file()
-    plot_bootstrap_features_performance(df)
+    data = pd.read_excel(
+        PROJECT_ROOT / "data/endog_data/mcftrr.xlsx", index_col=[0], parse_dates=True
+    )
+    position_rotator_kwargs = dict(
+        # markup_name='triple_barrier',
+        # markup_kwargs=dict(
+        #     h=250, shift_days=63, vol_span=20, volatility_multiplier=2
+        # ),
+        markup_name='min_max',
+        markup_kwargs=dict(
+            freq=63, rotator_type=1
+        )
+    )
+    min_max = position_rotator(data, **position_rotator_kwargs)
+    plot_position_rotator(data, min_max, 63)
     a=1
+
+    # # case 2
+    # from portfolio_constructor.model import open_random_features_perf_file
+    # df = open_random_features_perf_file()
+    # plot_bootstrap_features_performance(df)
+    # a=1
 
