@@ -185,6 +185,7 @@ data.csv
 !examples/logs
 /logs
 /jsons
+plots/
 data.zip
 /data
 /.dvc/config
