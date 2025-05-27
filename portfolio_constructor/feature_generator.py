@@ -440,8 +440,8 @@ def rolling_statistic_generator(
 ):
     stats = []
     del_cols = (
-        list(filter(lambda x: ("price" in x) and ("return" not in x), columns))
-        + EXOG_DATA_PRICE_FILES
+        list(filter(lambda x: ("price" in x) and ("return" not in x), columns)) +
+        list(filter(lambda x: x in columns, EXOG_DATA_PRICE_FILES))
     )
     drop_cols = []
 
@@ -470,40 +470,41 @@ def rolling_statistic_generator(
         stats = pd.DataFrame(stats)
 
     stats_compare = []
-    for short_w, long_w in ratio_windows:
-        for attr in attrs:
-            for smoothing_type in smoothing_types:
-                if (attr in simple_attrs) or (smoothing_type == "simple"):
-                    short_w_cols = [i + f"_sw_{attr}_{short_w}" for i in columns]
-                    long_w_cols = [i + f"_sw_{attr}_{long_w}" for i in columns]
-                    new_cols_div = [
-                        i + f"_sw_{attr}_{short_w}/{long_w}" for i in columns
-                    ]
-                    new_cols_subs = [
-                        i + f"_sw_{attr}_{short_w}_{long_w}" for i in columns
-                    ]
-                else:
-                    short_w_cols = [i + f"_ew_{attr}_{short_w}" for i in columns]
-                    long_w_cols = [i + f"_ew_{attr}_{long_w}" for i in columns]
-                    new_cols_div = [
-                        i + f"_ew_{attr}_{short_w}/{long_w}" for i in columns
-                    ]
-                    new_cols_subs = [
-                        i + f"_ew_{attr}_{short_w}_{long_w}" for i in columns
-                    ]
+    if ratio_windows:
+        for short_w, long_w in ratio_windows:
+            for attr in attrs:
+                for smoothing_type in smoothing_types:
+                    if (attr in simple_attrs) or (smoothing_type == "simple"):
+                        short_w_cols = [i + f"_sw_{attr}_{short_w}" for i in columns]
+                        long_w_cols = [i + f"_sw_{attr}_{long_w}" for i in columns]
+                        new_cols_div = [
+                            i + f"_sw_{attr}_{short_w}/{long_w}" for i in columns
+                        ]
+                        new_cols_subs = [
+                            i + f"_sw_{attr}_{short_w}_{long_w}" for i in columns
+                        ]
+                    else:
+                        short_w_cols = [i + f"_ew_{attr}_{short_w}" for i in columns]
+                        long_w_cols = [i + f"_ew_{attr}_{long_w}" for i in columns]
+                        new_cols_div = [
+                            i + f"_ew_{attr}_{short_w}/{long_w}" for i in columns
+                        ]
+                        new_cols_subs = [
+                            i + f"_ew_{attr}_{short_w}_{long_w}" for i in columns
+                        ]
 
-                div = pd.DataFrame(
-                    stats[short_w_cols].values / stats[long_w_cols].values,
-                    columns=new_cols_div,
-                    index=stats.index,
-                )
-                subs = pd.DataFrame(
-                    stats[short_w_cols].values - stats[long_w_cols].values,
-                    columns=new_cols_subs,
-                    index=stats.index,
-                )
-                stats_compare.append(div)
-                stats_compare.append(subs)
+                    div = pd.DataFrame(
+                        stats[short_w_cols].values / stats[long_w_cols].values,
+                        columns=new_cols_div,
+                        index=stats.index,
+                    )
+                    subs = pd.DataFrame(
+                        stats[short_w_cols].values - stats[long_w_cols].values,
+                        columns=new_cols_subs,
+                        index=stats.index,
+                    )
+                    stats_compare.append(div)
+                    stats_compare.append(subs)
 
     if len(stats_compare) > 0:
         stats_compare = pd.concat(stats_compare, axis=1)
@@ -549,7 +550,8 @@ def feature_construction(data, ta_methods, stat_gen_kwargs):
 def data_generator(
     path: str = None,
     exog_data_file_names: List[str] = None,
-    tsfresh_features: bool = False,
+    ta_methods: dict = None,
+    stat_gen_kwargs: dict = None,
 ):
     if exog_data_file_names is None:
         exog_data_file_names = ALL_EXOG_DATA_FILES
@@ -611,39 +613,42 @@ def data_generator(
     df["ruonia_daily"] = (df["ruonia"] - 0.005) * delta_days / days_in_year
 
     return_cols = list(filter(lambda x: "return" in x, df.columns))
-    ta_methods = {
-        "rsi": dict(
-            col="price", windows=[10, 21, 63, 126], moving_average_type="simple"
-        ),
-        "stochastic_oscillator": dict(
-            col="price",
-            high_col="price",
-            low_col="price",
-            windows_k=[10, 21, 63, 126],
-            windows_n=[5, 10, 21, 21],
-            moving_average_type="simple",
-            cols_to_use=[0],
-        ),
-        "stat_to_price_ratios": dict(
-            col="price",
-            stats=["mean", "min", "median", "max"],
-            windows=[10, 21, 63, 126, 252],
-        ),
-        "roc": dict(cols=return_cols, windows=[10, 21, 63, 126, 252]),
-        "custom_aroon": dict(col="price", windows=[126, 252, 504]),
-        "distribution_oscillator": dict(
-            cols=["price_return"], windows=[252, 378], roc_windows=[21, 63, 126, 252]
-        ),
-    }
+    if not ta_methods:
+        ta_methods = {
+            "rsi": dict(
+                col="price", windows=[10, 21, 63, 126], moving_average_type="simple"
+            ),
+            "stochastic_oscillator": dict(
+                col="price",
+                high_col="price",
+                low_col="price",
+                windows_k=[10, 21, 63, 126],
+                windows_n=[5, 10, 21, 21],
+                moving_average_type="simple",
+                cols_to_use=[0],
+            ),
+            "stat_to_price_ratios": dict(
+                col="price",
+                stats=["mean", "min", "median", "max"],
+                windows=[10, 21, 63, 126, 252],
+            ),
+            "roc": dict(cols=return_cols, windows=[10, 21, 63, 126, 252]),
+            "custom_aroon": dict(col="price", windows=[126, 252, 504]),
+            "distribution_oscillator": dict(
+                cols=["price_return"], windows=[252, 378], roc_windows=[21, 63, 126, 252]
+            ),
+        }
 
-    stat_gen_cols = list(df.drop("ruonia_daily", axis=1).columns)
-    stat_gen_kwargs = dict(
-        columns=stat_gen_cols,
-        attrs=("mean", "std", "skew", "kurt"),
-        windows=(5, 10, 21, 63, 126),
-        ratio_windows=((5, 21), (10, 21), (10, 63), (21, 63), (21, 126), (63, 126)),
-        smoothing_types=("simple", "exponential"),
-    )
+    if not stat_gen_kwargs:
+        stat_gen_cols = list(df.drop("ruonia_daily", axis=1).columns)
+        stat_gen_kwargs = dict(
+            columns=stat_gen_cols,
+            attrs=("mean", "std", "skew", "kurt"),
+            windows=(5, 10, 21, 63, 126),
+            ratio_windows=((5, 21), (10, 21), (10, 63), (21, 63), (21, 126), (63, 126)),
+            smoothing_types=("simple", "exponential"),
+        )
+
     data = feature_construction(df, ta_methods, stat_gen_kwargs)
     clear_output(wait=True)
 
