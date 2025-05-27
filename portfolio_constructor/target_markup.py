@@ -353,9 +353,7 @@ def position_rotator(price, markup_name, markup_kwargs):
     return target
 
 
-def main():
-    from portfolio_constructor import PROJECT_ROOT
-    price_data = pd.read_excel(PROJECT_ROOT / "data/endog_data/mcftrr.xlsx", index_col="date")
+def main(price_data):
     # Инициализация анализатора
     analyzer = TargetMarkup(price_data)
 
@@ -375,4 +373,18 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    from portfolio_constructor import PROJECT_ROOT
+    price_data = pd.read_excel(PROJECT_ROOT / "data/endog_data/mcftrr.xlsx", index_col="date")
+
+    position_rotator_kwargs = dict(
+        # markup_name='triple_barrier',
+        # markup_kwargs=dict(
+        #     h=250, shift_days=63, vol_span=20, volatility_multiplier=2
+        # ),
+        markup_name='min_max',
+        markup_kwargs=dict(
+            freq=63, rotator_type=1
+        )
+    )
+    data = position_rotator(price_data, **position_rotator_kwargs)
+    a=1

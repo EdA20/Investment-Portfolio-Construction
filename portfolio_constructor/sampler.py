@@ -43,6 +43,7 @@ class SampleStrategy:
         sample_weight_kwargs: Dict,
         position_rotator_kwargs: Dict,
         model_kwargs: Dict,
+        strat_kwargs: Dict,
         prob_to_weight: bool = True
     ):
         self.data = data
@@ -52,6 +53,7 @@ class SampleStrategy:
         self.position_rotator_kwargs = position_rotator_kwargs
         self.model_kwargs = model_kwargs
         self.prob_to_weight = prob_to_weight
+        self.strat_kwargs = strat_kwargs
 
     # перебор по сиду
     def sample_random_seed_strategy(self, size=100):

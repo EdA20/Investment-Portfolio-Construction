@@ -40,7 +40,7 @@ def main(parser):
     is_debug_mode = getattr(sys, "gettrace", lambda: None)() is not None
 
     if is_debug_mode:
-        args = argparse.Namespace(features="all", filter=False, sampling=True)
+        args = argparse.Namespace(features="random", filter=False, sampling=False)
     else:
         args = parser.parse_args()
 
@@ -54,20 +54,13 @@ def main(parser):
 
     if args.features == "all":
         features = list(data.drop(["price", "ruonia_daily"], axis=1).columns)
+
     elif args.features == "random":
         features = list(data.drop(["price", "ruonia_daily"], axis=1).columns)
         features = list(np.random.choice(features, 20, replace=False))
-    elif 'noise' in args.features:
-        if args.features == 'normal_noise':
-            data['normal_noise'] = np.random.normal(size=len(data))
-            features = ['normal_noise']
-        elif args.features == 'linear_noise':
-            data['linear_noise'] = np.arange(len(data))
-            features = ['linear_noise']
-        else:
-            data['normal_noise'] = np.random.normal(size=len(data))
-            data['linear_noise'] = np.arange(len(data))
-            features = ['normal_noise', 'linear_noise']
+
+    elif args.features == 'noise':
+        data['noise'] = np.random.normal(size=(len(data), 20))
 
     elif args.features == "last_best":
         main_logger.info("Использование лучших фичей из предыдущих запусков")
@@ -148,7 +141,7 @@ def main(parser):
     )
     model_kwargs = dict(
         model_name="catboost",
-        n_models=1,
+        n_models=5,
         iterations=10,
         subsample=0.8,
         random_state=2,
@@ -157,6 +150,9 @@ def main(parser):
         # grow_policy='Depthwise',
         # min_data_in_leaf=10,
         # thread_count=-1,
+    )
+    strat_kwargs = dict(
+        perf_plot=True, sliding_plot=True
     )
 
     if not args.sampling:
@@ -168,7 +164,9 @@ def main(parser):
             sample_weight_kwargs,
             position_rotator_kwargs,
             model_kwargs,
-            prob_to_weight=True
+            strat_kwargs,
+            prob_to_weight=True,
+            val_date_breakpoint='2024-01-01'
         )
         main_logger.info("Обучение завершено")
     else:
@@ -179,6 +177,7 @@ def main(parser):
             sample_weight_kwargs,
             position_rotator_kwargs,
             model_kwargs,
+            strat_kwargs,
             prob_to_weight=True
         )
         random_seed_res = sampler.random_features_sampling(
