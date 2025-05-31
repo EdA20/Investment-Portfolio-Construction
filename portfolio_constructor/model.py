@@ -9,6 +9,7 @@ import pandas as pd
 from catboost import CatBoostClassifier, Pool
 from IPython.display import clear_output
 from sktime.split import ExpandingWindowSplitter, SlidingWindowSplitter
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 from tqdm import tqdm
 
 from portfolio_constructor import PROJECT_ROOT, TQDM_DISABLE
@@ -661,7 +662,7 @@ def strategy_full_cycle(
     sample_weight_kwargs,
     position_rotator_kwargs,
     model_kwargs,
-    strat_kwargs,
+    plot_kwargs,
     prob_to_weight,
     **kwargs
 ):
@@ -692,11 +693,11 @@ def strategy_full_cycle(
             idx = idx if split_state == 'val' else ~idx
 
             split_preds = preds.loc[idx].copy()
-            split_output = strategy.base_strategy_peformance(strat_data, split_preds, **strat_kwargs)
+            split_output = strategy.base_strategy_peformance(strat_data, split_preds, plot_kwargs)
 
             output[split_state] = split_output
     else:
-        output = strategy.base_strategy_peformance(strat_data, preds)
+        output = strategy.base_strategy_peformance(strat_data, preds, plot_kwargs)
 
     return output
 
@@ -708,5 +709,26 @@ if __name__ == "__main__":
     val_test_logs = pd.merge(
         val_logs, test_logs, how='inner', on=[('markup_name', ''), ('features', '')], suffixes=('_val', '_test')
     )
-    a=1
+
+    # from portfolio_constructor.feature_filter import group_features
+    # all_features = []
+    # for features in val_test_logs['features'][:100]:
+    #     all_features.extend(features)
+    # all_features = list(set(all_features))
+    # feature_groups = group_features(all_features)
+
+    # gen_to_base_feature = {}
+    # for base_col, cols in feature_groups.items():
+    #     for col in cols:
+    #         gen_to_base_feature[col] = base_col
+
+    # base_feature_counter = {}
+    # for features in val_test_logs[:100]['features']:
+    #     for feature in features:
+    #         base_feature = gen_to_base_feature[feature]
+    #         if base_feature_counter.get(base_feature):
+    #             base_feature_counter[base_feature] += 1
+    #         else:
+    #             base_feature_counter[base_feature] = 1
+
     df = open_random_features_perf_file(file_type='csv')

@@ -44,7 +44,7 @@ def main(parser):
     else:
         args = parser.parse_args()
 
-    if "data.csv" in os.listdir("data"):
+    if "data.parquet" in os.listdir("data"):
         main_logger.info("Загрузка данных из data.parquet")
         data = pd.read_parquet("data/data.parquet")
     else:
@@ -151,8 +151,8 @@ def main(parser):
         # min_data_in_leaf=10,
         # thread_count=-1,
     )
-    strat_kwargs = dict(
-        perf_plot=True, sliding_plot=True
+    plot_kwargs = dict(
+        perf_plot=True, sliding_plot=True, save=False  # сразу рисует динамику портфеля
     )
 
     if not args.sampling:
@@ -164,9 +164,9 @@ def main(parser):
             sample_weight_kwargs,
             position_rotator_kwargs,
             model_kwargs,
-            strat_kwargs,
+            plot_kwargs,
             prob_to_weight=True,
-            val_date_breakpoint='2024-01-01'
+            # val_date_breakpoint='2024-01-01'
         )
         main_logger.info("Обучение завершено")
     else:
@@ -177,7 +177,7 @@ def main(parser):
             sample_weight_kwargs,
             position_rotator_kwargs,
             model_kwargs,
-            strat_kwargs,
+            plot_kwargs,
             prob_to_weight=True
         )
         random_seed_res = sampler.random_features_sampling(
