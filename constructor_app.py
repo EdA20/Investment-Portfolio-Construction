@@ -3,12 +3,17 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
+from warnings import simplefilter
+
+simplefilter("ignore")
 
 from portfolio_constructor.charts import (  # noqa  # noqa
     features_data,
     generate_feature_chart,
     generate_price_chart,
 )
+
+from portfolio_constructor import ALL_BASE_COLS_DESCRIPTIONS
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="data/static"), name="static")
@@ -34,12 +39,7 @@ async def login(request: Request, username: str = Form(...), password: str = For
             "feature_selection.html",
             {
                 "request": request,
-                "features": [
-                    "Цена на нефть",
-                    "Цена на золото",
-                    "Курс USD/RUB",
-                    "Облигации 10ти летние",
-                ],
+                "features": sorted(ALL_BASE_COLS_DESCRIPTIONS.keys()),
                 "price_chart": price_chart,
             },
         )

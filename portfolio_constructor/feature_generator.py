@@ -1,3 +1,4 @@
+import typing as t
 from typing import List
 
 import numpy as np
@@ -439,10 +440,9 @@ def rolling_statistic_generator(
     smoothing_types=("simple",),
 ):
     stats = []
-    del_cols = (
-        list(filter(lambda x: ("price" in x) and ("return" not in x), columns)) +
-        list(filter(lambda x: x in columns, EXOG_DATA_PRICE_FILES))
-    )
+    del_cols = list(
+        filter(lambda x: ("price" in x) and ("return" not in x), columns)
+    ) + list(filter(lambda x: x in columns, EXOG_DATA_PRICE_FILES))
     drop_cols = []
 
     simple_attrs = ["min", "median", "max", "quantile", "skew", "kurt"]
@@ -547,12 +547,10 @@ def feature_construction(data, ta_methods, stat_gen_kwargs):
     return all_data
 
 
-def data_generator(
+def base_features_data_generator(
     path: str = None,
-    exog_data_file_names: List[str] = None,
-    ta_methods: dict = None,
-    stat_gen_kwargs: dict = None,
-):
+    exog_data_file_names: t.List[str] = None,
+) -> t.Tuple[pd.DataFrame, t.List[str], t.List[str]]:
     if exog_data_file_names is None:
         exog_data_file_names = ALL_EXOG_DATA_FILES
     exog_data_file_paths = [
@@ -586,6 +584,7 @@ def data_generator(
     df = df.interpolate(
         method="linear", limit_direction="forward", limit_area="inside", axis=0
     )
+
     df["price_return"] = df["price"].pct_change()
 
     # код написан с расчетом на, что в exog_data_file_names захочется передавать не все файлы
@@ -613,6 +612,20 @@ def data_generator(
     df["ruonia_daily"] = (df["ruonia"] - 0.005) * delta_days / days_in_year
 
     return_cols = list(filter(lambda x: "return" in x, df.columns))
+
+    return df, exog_data_cols, return_cols
+
+
+def data_generator(
+    path: str = None,
+    exog_data_file_names: List[str] = None,
+    ta_methods: dict = None,
+    stat_gen_kwargs: dict = None,
+):
+    df, exog_data_cols, return_cols = base_features_data_generator(
+        path=path, exog_data_file_names=exog_data_file_names
+    )
+
     if not ta_methods:
         ta_methods = {
             "rsi": dict(
@@ -635,7 +648,9 @@ def data_generator(
             "roc": dict(cols=return_cols, windows=[10, 21, 63, 126, 252]),
             "custom_aroon": dict(col="price", windows=[126, 252, 504]),
             "distribution_oscillator": dict(
-                cols=["price_return"], windows=[252, 378], roc_windows=[21, 63, 126, 252]
+                cols=["price_return"],
+                windows=[252, 378],
+                roc_windows=[21, 63, 126, 252],
             ),
         }
 
@@ -680,5 +695,3 @@ if __name__ == "__main__":
     # generate feature space
     df = data_generator(path="mcftrr.xlsx")
     a = 1
-
-
