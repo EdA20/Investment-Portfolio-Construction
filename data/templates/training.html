@@ -17,29 +17,120 @@
         </div>
     </div>
     
-<div id="result" style="display: none;">
-    <h3 style="color: var(--accent);">🎉 Обучение завершено!</h3>
-    <p>Точность модели: <span id="accuracy" style="font-weight: 600;">0.85</span></p>
-    <div class="risk-summary">
-        <h4>Выбранные параметры:</h4>
-        <p>Риск-профиль: {{ "Низкий" if risk_profile == "low" else "Средний" if risk_profile == "medium" else "Высокий" }}</p>
-        <p>Take-profit/Stop-loss: {{ "5-10%" if risk_profile == "low" else "10-15%" if risk_profile == "medium" else "15-25%" }}</p>
+    <div id="result" style="display: none;">
+        <h3 style="color: var(--accent);">🎉 Обучение завершено!</h3>
+        <p>Точность модели: <span id="accuracy" style="font-weight: 600;"></span></p>
+        <div class="risk-summary">
+            <h4>Выбранные параметры:</h4>
+            <p>Риск-профиль: <span id="riskProfile"></span></p>
+            <p>Take-profit/Stop-loss: <span id="tpslValue"></span></p>
+        </div>
+        <div style="margin-top: 25px;">
+            <button class="btn" onclick="location.href='/'">Начать заново</button>
+        </div>
     </div>
-    <div style="margin-top: 25px;">
-        <button class="btn" onclick="location.href='/'">Начать заново</button>
-    </div>
-</div>
 </div>
 
 <script>
-    const progress = document.querySelector('.progress');
-    let width = 0;
-    const interval = setInterval(() => {
-        if(width >= 100) {
-            clearInterval(interval);
-            return;
+    async function startTraining() {
+        try {
+            // 1. Запускаем задачу на сервере
+            const response = await fetch('/train', { method: 'POST' });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const { task_id } = await response.json();
+
+            // 2. Начинаем отслеживать прогресс
+            trackProgress(task_id);
+        } catch (error) {
+            console.error('Ошибка при запуске обучения:', error);
+            showError('Не удалось начать обучение модели');
         }
-        width += (Math.random() * 5 + 3);
-        progress.style.width = Math.min(width, 100) + '%';
-    }, 300);
+    }
+
+    async function trackProgress(task_id) {
+        const progressBar = document.querySelector('.progress');
+        const interval = setInterval(async () => {
+            try {
+                // 3. Запрашиваем статус каждые 1.5 секунды
+                const response = await fetch(`/status/${task_id}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const status = await response.json();
+                
+                // Обновляем прогресс-бар
+                if (progressBar) {
+                    progressBar.style.width = `${status.progress}%`;
+                }
+                
+                // 4. Если обучение завершено
+                if (status.status === 'completed') {
+                    clearInterval(interval);
+                    showResults(status);
+                }
+            } catch (error) {
+                console.error('Ошибка при получении статуса:', error);
+                clearInterval(interval);
+                showError('Ошибка при получении данных обучения');
+            }
+        }, 1500);
+    }
+
+    function showResults(status) {
+        // Обновляем данные на странице
+        document.getElementById('accuracy').textContent = status.accuracy;
+        
+        // Конвертируем риск-профиль
+        const riskText = status.risk_profile === 'low' ? 'Низкий' :
+                      status.risk_profile === 'medium' ? 'Средний' : 'Высокий';
+        
+        document.getElementById('riskProfile').textContent = riskText;
+        
+        // Устанавливаем значения TP/SL
+        const tpslValue = status.risk_profile === 'low' ? '5-10%' :
+                       status.risk_profile === 'medium' ? '10-15%' : '15-25%';
+        
+        document.getElementById('tpslValue').textContent = tpslValue;
+        
+        // Показываем результат с анимацией
+        setTimeout(() => {
+            document.getElementById('trainingStatus').style.display = 'none';
+            document.getElementById('result').style.display = 'block';
+        }, 500);
+    }
+
+    function showError(message) {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-message';
+        errorDiv.textContent = message;
+        
+        const container = document.querySelector('.container');
+        container.insertBefore(errorDiv, container.firstChild);
+        
+        // Показываем кнопку для перезапуска
+        const restartBtn = document.createElement('button');
+        restartBtn.className = 'btn';
+        restartBtn.textContent = 'Попробовать снова';
+        restartBtn.onclick = () => location.reload();
+        
+        container.appendChild(restartBtn);
+    }
+
+    // Удаляем старый интервал и запускаем новый процесс
+    document.addEventListener('DOMContentLoaded', () => {
+        // Очищаем существующий интервал
+        const existingInterval = window.trainingInterval;
+        if (existingInterval) {
+            clearInterval(existingInterval);
+        }
+        
+        // Запускаем обучение
+        startTraining();
+    });
 </script>
