@@ -39,7 +39,7 @@ async def login(request: Request, username: str = Form(...), password: str = For
             "feature_selection.html",
             {
                 "request": request,
-                "features": sorted(ALL_BASE_COLS_DESCRIPTIONS.keys()),
+                "features": list(ALL_BASE_COLS_DESCRIPTIONS.values()),
                 "price_chart": price_chart,
             },
         )

@@ -1,7 +1,10 @@
 import pandas as pd
 import plotly.graph_objs as go
 
-from portfolio_constructor import ALL_BASE_COLS_DESCRIPTIONS
+from portfolio_constructor import (
+    ALL_BASE_COLS_DESCRIPTIONS,
+    REVERTED_ALL_BASE_COLS_DESCRIPTIONS,
+)
 from portfolio_constructor.feature_generator import base_features_data_generator
 
 
@@ -81,7 +84,7 @@ def generate_feature_chart(feature_name):
         go.Scatter(
             x=df.index,
             y=df["value"],
-            name=feature_name,
+            name=REVERTED_ALL_BASE_COLS_DESCRIPTIONS.get(feature_name, feature_name),
             line=dict(color="#2196F3"),
             visible=True,
         )
