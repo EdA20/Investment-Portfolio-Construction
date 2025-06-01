@@ -542,8 +542,8 @@ class Model:
 
 
 class Strategy:
-    def __init__(self, model, prob_to_weight=True):
-        self.prob_to_weight = prob_to_weight
+    def __init__(self, model, strat_kwargs):
+        self.strat_kwargs = strat_kwargs
 
         self.logs = self.__dict__.copy()
         self.logs.update(model.logs)
@@ -561,9 +561,9 @@ class Strategy:
         cols = ['price', 'ruonia', 'ruonia_daily', 'preds', 'is_bench_long', 'price_return']
         res = strat_data.loc[:, cols].dropna(subset=['preds'])
 
-        if self.prob_to_weight:
+        if self.strat_kwargs['prob_to_weight']:
             res['bench_long_weight'] = res['preds'].apply(
-                lambda x: x if x >= 0.5 else 0
+                lambda x: x if x >= self.strat_kwargs['weight_prob_threshold'] else 0
             )
         else:
             res["bench_long_weight"] = res["preds"].apply(
@@ -662,8 +662,8 @@ def strategy_full_cycle(
     sample_weight_kwargs,
     position_rotator_kwargs,
     model_kwargs,
+    strat_kwargs,
     plot_kwargs,
-    prob_to_weight,
     **kwargs
 ):
     dataset = Dataset(
@@ -681,7 +681,7 @@ def strategy_full_cycle(
 
     strategy = Strategy(
         model,
-        prob_to_weight=prob_to_weight
+        strat_kwargs
     )
     strat_data = data.loc[:, ['price', 'price_return', 'ruonia', 'ruonia_daily']].copy()
     if kwargs.get('val_date_breakpoint', None):

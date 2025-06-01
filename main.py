@@ -40,7 +40,7 @@ def main(parser):
     is_debug_mode = getattr(sys, "gettrace", lambda: None)() is not None
 
     if is_debug_mode:
-        args = argparse.Namespace(features="random", filter=False, sampling=False)
+        args = argparse.Namespace(features="best", filter=False, sampling=False)
     else:
         args = parser.parse_args()
 
@@ -59,56 +59,14 @@ def main(parser):
         features = list(data.drop(["price", "ruonia_daily"], axis=1).columns)
         features = list(np.random.choice(features, 20, replace=False))
 
+    elif args.features == "best":
+        features = ('long/short_physic_ratio_return_sw_std_10_21', 'bonds10y_sw_skew_10/21', 'top3_mean_vol_sw_skew_10/63', 'imoex_pe_return_sw_kurt_10', 'short_physic_ew_std_5/21', 'short_physic_sw_skew_10', 'top3_mean_vol_sw_std_21/126', 'long/short_entity_ratio_return_roc_252', 'long_physic_return_sw_std_63/126', 'short_physic_sw_kurt_10/21', 'long/short_entity_ratio_return_sw_mean_10/21', 'min/price_63', 'price_return_ew_mean_5/21', 'oscillator_sw_63', 'imoex_pe_sw_kurt_5')
+
     elif args.features == 'noise':
         data['noise'] = np.random.normal(size=(len(data), 20))
 
-    elif args.features == "last_best":
-        main_logger.info("Использование лучших фичей из предыдущих запусков")
-        trials = read_logger()
-        trials["features"] = trials["features"].apply(lambda x: tuple(x))
-        group_median_perf_delta = (
-            trials.groupby(["run_date", "features"])["median_perf_delta"]
-            .mean()
-            .reset_index()
-        )
-        trials = pd.merge(
-            trials,
-            group_median_perf_delta,
-            how="left",
-            on=["run_date", "features"],
-            suffixes=("", "_mean"),
-        )
-        max_median_perf_delta = trials.loc[
-            trials.groupby("run_date")["median_perf_delta_mean"].idxmax()
-        ].sort_values("run_date", ascending=False)
-        # features = max_median_perf_delta['features'].iloc[0]
-        features = max_median_perf_delta.loc[
-            max_median_perf_delta["run_date"] == "2025-03-25", "features"
-        ].item()
-        features = tuple(map(lambda x: replace_old_feature_names(x), features))
-
-    else:
-        if 'feature_importance.xlsx' not in os.listdir('data'):
-            raise Exception('"features_importance.xlsx" file is missing in folder "data"')
-        else:
-            feature_importance = pd.read_excel(
-                "data/feature_importance.xlsx", parse_dates=True
-            )
-            top_feature_importance = (
-                feature_importance.mean().iloc[4:-1].sort_values(ascending=False)
-            )
-            features = list(
-                top_feature_importance.loc[
-                    top_feature_importance > top_feature_importance.mean()
-                ].index[:100]
-            )
-
     if args.filter:
         features = feature_filter(data, var_threshold=0.001, corr_threshold=0.85)
-
-    # top_n = 10
-    # mutual_info = pd.read_excel('data/cum_mut_info.xlsx', index_col=[0], parse_dates=True)
-    # feature_info = mutual_info.apply(lambda x: list(x.nlargest(top_n).index), axis=1)
 
     step = 20
     splitter_kwargs = dict(
@@ -145,11 +103,9 @@ def main(parser):
         iterations=10,
         subsample=0.8,
         random_state=2,
-        # verbose=0,
-        # l2_leaf_reg=10 if args.features == 'all' else 3,
-        # grow_policy='Depthwise',
-        # min_data_in_leaf=10,
-        # thread_count=-1,
+    )
+    strat_kwargs = dict(
+        prob_to_weight=True, weight_prob_threshold=0.5
     )
     plot_kwargs = dict(
         perf_plot=True, sliding_plot=True, save=False  # сразу рисует динамику портфеля
@@ -164,8 +120,8 @@ def main(parser):
             sample_weight_kwargs,
             position_rotator_kwargs,
             model_kwargs,
+            strat_kwargs,
             plot_kwargs,
-            prob_to_weight=True,
             # val_date_breakpoint='2024-01-01'
         )
         main_logger.info("Обучение завершено")
