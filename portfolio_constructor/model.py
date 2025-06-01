@@ -656,7 +656,6 @@ class Strategy:
             "metrics": metrics,
             "plots": {
                 "strategy_perf": strategy_performance_img_path,
-                "sliding_pnl": sliding_pnl_img_path,
             },
         }
         return output
