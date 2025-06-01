@@ -303,3 +303,99 @@ input[type="checkbox"] {
 .risk-content ul {
     margin: 10px 0 0 0;
 }
+
+/* Обновленные стили для метрик */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin: 28px 0;
+}
+
+.metric-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 18px 15px;
+    text-align: center;
+    border: 1px solid #e0e0e0;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.metric-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+    border-color: var(--primary);
+}
+
+.metric-header {
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--primary);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.metric-value {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 10px 0;
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.metric-description {
+    font-size: 13px;
+    color: #5f6368;
+    line-height: 1.5;
+    margin-top: 8px;
+}
+
+.charts-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
+    margin: 35px 0;
+}
+
+@media (min-width: 768px) {
+    .charts-container {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.chart-box {
+    background: #fff;
+    border-radius: 14px;
+    padding: 22px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e0e0e0;
+    overflow: hidden;
+}
+
+.chart-box h4 {
+    color: var(--secondary);
+    margin-top: 0;
+    margin-bottom: 18px;
+    font-size: 17px;
+    font-weight: 600;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.chart-img {
+    width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid #eaeaea;
+    transition: transform 0.3s ease;
+}
+
+.chart-img:hover {
+    transform: scale(1.02);
+}

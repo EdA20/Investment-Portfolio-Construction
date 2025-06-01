@@ -17,16 +17,50 @@
         </div>
     </div>
     
-    <div id="result" style="display: none;">
+    <div id="result" style="display: none; opacity: 0; transform: translateY(20px); transition: opacity 0.8s ease, transform 0.8s ease;">
         <h3 style="color: var(--accent);">🎉 Обучение завершено!</h3>
-        <p>Точность модели: <span id="accuracy" style="font-weight: 600;"></span></p>
-        <div class="risk-summary">
-            <h4>Выбранные параметры:</h4>
-            <p>Риск-профиль: <span id="riskProfile"></span></p>
-            <p>Take-profit/Stop-loss: <span id="tpslValue"></span></p>
-        </div>
-        <div style="margin-top: 25px;">
-            <button class="btn" onclick="location.href='/'">Начать заново</button>
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-header">📈 Перформанс стратегии</div>
+                <div class="metric-value" id="strategy_perf"></div>
+                <div class="metric-description">Доходность стратегии</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-header">📊 Перформанс индекса</div>
+                <div class="metric-value" id="bench_perf"></div>
+                <div class="metric-description">Доходность индекса Мосбиржи</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-header">⚖️ Коэф. Шарпа</div>
+                <div class="metric-value" id="sharp_ratio"></div>
+                <div class="metric-description">Риск-скорректированная доходность</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-header">📉 Макс. просадка</div>
+                <div class="metric-value" id="max_drawdown"></div>
+                <div class="metric-description">Наибольшее сокращение капитала</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-header">β (Бета)</div>
+                <div class="metric-value" id="beta"></div>
+                <div class="metric-description">Волатильность относительно рынка</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-header">📌 VaR (95%)</div>
+                <div class="metric-value" id="var"></div>
+                <div class="metric-description">Макс. потеря с вероятностью 95%</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-header">⚠️ CVaR (95%)</div>
+                <div class="metric-value" id="cvar"></div>
+                <div class="metric-description">Средняя потеря при худших 5% сценариев</div>
+            </div>
         </div>
     </div>
 </div>
@@ -83,27 +117,38 @@
     }
 
     function showResults(status) {
-        // Обновляем данные на странице
-        document.getElementById('accuracy').textContent = status.accuracy;
-        
-        // Конвертируем риск-профиль
-        const riskText = status.risk_profile === 'low' ? 'Низкий' :
-                      status.risk_profile === 'medium' ? 'Средний' : 'Высокий';
-        
-        document.getElementById('riskProfile').textContent = riskText;
-        
-        // Устанавливаем значения TP/SL
-        const tpslValue = status.risk_profile === 'low' ? '5-10%' :
-                       status.risk_profile === 'medium' ? '10-15%' : '15-25%';
-        
-        document.getElementById('tpslValue').textContent = tpslValue;
-        
+        // Обновляем метрики
+        document.getElementById('strategy_perf').innerHTML = formatPercent(status.strategy_perf);
+        document.getElementById('bench_perf').innerHTML = formatPercent(status.bench_perf);
+        document.getElementById('sharp_ratio').innerHTML = status.sharp_ratio.toFixed(2);
+        document.getElementById('max_drawdown').innerHTML = formatPercent(status.max_drawdown);
+        document.getElementById('beta').innerHTML = status.beta.toFixed(2);
+        document.getElementById('var').innerHTML = formatPercent(status.var);
+        document.getElementById('cvar').innerHTML = formatPercent(status.cvar);
+
         // Показываем результат с анимацией
         setTimeout(() => {
             document.getElementById('trainingStatus').style.display = 'none';
             document.getElementById('result').style.display = 'block';
+            
+            // Добавляем класс для плавного появления
+            setTimeout(() => {
+                document.getElementById('result').style.opacity = 1;
+                document.getElementById('result').style.transform = 'translateY(0)';
+            }, 50);
         }, 500);
     }
+
+// Форматирование процентов с цветовой индикацией
+function formatPercent(value) {
+    const formatted = (value * 100).toFixed(2) + '%';
+    if (value > 0) {
+        return `<span style="color: #4caf50;">${formatted}</span>`;
+    } else if (value < 0) {
+        return `<span style="color: #f44336;">${formatted}</span>`;
+    }
+    return formatted;
+}
 
     function showError(message) {
         const errorDiv = document.createElement('div');

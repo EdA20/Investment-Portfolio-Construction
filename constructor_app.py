@@ -140,7 +140,7 @@ async def get_status(task_id: str):
 
 
 def train_model(task_id: str):
-    tasks[task_id]["progress"] = 100
+    tasks[task_id]["progress"] = 65
 
     ta_methods = {
         "rsi": dict(
@@ -242,18 +242,28 @@ def train_model(task_id: str):
     plot_kwargs = dict(
         perf_plot=True,
         sliding_plot=True,
-        save=False,  # сразу рисует динамику портфеля
+        save=True,  # сразу рисует динамику портфеля
     )
+
     output = strategy.base_strategy_peformance(strat_data, preds, plot_kwargs)
 
-    print(type(output))
+    output_metrics = {
+        metric_name: float(metric_value)
+        for metric_name, metric_value in output["metrics"].items()
+    }
 
     # Сохраняем результат
     result = {
         "status": "completed",
         "progress": 100,
-        "accuracy": 0.85,
-        "risk_profile": "medium",  # Пример данных
+        "strategy_perf": output_metrics["strategy_perf"] / 100,  # 12.5%
+        "bench_perf": output_metrics["bench_perf"] / 100,  # 10.2%
+        "mean_outperf": output_metrics["mean_outperf"] / 100,
+        "sharp_ratio": output_metrics["sharpe_ratio_rf"],
+        "max_drawdown": output_metrics["max_drawdown"],  # -15.3%
+        "beta": output_metrics["beta"],
+        "var": output_metrics["var"],  # -5.0%
+        "cvar": output_metrics["cvar"],  # -7.5%
     }
     tasks[task_id] = result
 
