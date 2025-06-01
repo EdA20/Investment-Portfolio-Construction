@@ -62,6 +62,14 @@
                 <div class="metric-description">Средняя потеря при худших 5% сценариев</div>
             </div>
         </div>
+
+        <div class="feature-block">
+            <div class="chart-container">
+                <h4>📈 Доходность стратегии</h4>
+                <img id="strategyChart" class="chart-img" alt="Доходность стратегии" 
+                    style="display: block; margin: 0 auto;">
+            </div>
+        </div>
     </div>
 </div>
 
@@ -125,30 +133,36 @@
         document.getElementById('beta').innerHTML = status.beta.toFixed(2);
         document.getElementById('var').innerHTML = formatPercent(status.var);
         document.getElementById('cvar').innerHTML = formatPercent(status.cvar);
+        if (status.strategy_performance) {
+            document.getElementById('strategyChart').src = 
+                `data:image/png;base64,${status.strategy_performance}`;
+        }
+        
+        if (status.sliding_pnl) {
+            document.getElementById('pnlChart').src = 
+                `data:image/png;base64,${status.sliding_pnl}`;
+        }
 
         // Показываем результат с анимацией
         setTimeout(() => {
             document.getElementById('trainingStatus').style.display = 'none';
             document.getElementById('result').style.display = 'block';
             
-            // Добавляем класс для плавного появления
             setTimeout(() => {
                 document.getElementById('result').style.opacity = 1;
                 document.getElementById('result').style.transform = 'translateY(0)';
             }, 50);
         }, 500);
     }
-
-// Форматирование процентов с цветовой индикацией
-function formatPercent(value) {
-    const formatted = (value * 100).toFixed(2) + '%';
-    if (value > 0) {
-        return `<span style="color: #4caf50;">${formatted}</span>`;
-    } else if (value < 0) {
-        return `<span style="color: #f44336;">${formatted}</span>`;
+    function formatPercent(value) {
+        const formatted = (value * 100).toFixed(2) + '%';
+        if (value > 0) {
+            return `<span style="color: #4caf50;">${formatted}</span>`;
+        } else if (value < 0) {
+            return `<span style="color: #f44336;">${formatted}</span>`;
+        }
+        return formatted;
     }
-    return formatted;
-}
 
     function showError(message) {
         const errorDiv = document.createElement('div');

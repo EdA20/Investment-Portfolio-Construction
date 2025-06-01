@@ -74,4 +74,5 @@ def generate_feature_chart(feature_name):
         height=500,
     )
 
-    return fig.to_html(full_html=False)
+    result = fig.to_html(full_html=False)
+    return result

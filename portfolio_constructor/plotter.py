@@ -1,24 +1,27 @@
 import os
 import time
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
-import plotly.graph_objects as go
 import plotly.express as px
-
+import plotly.graph_objects as go
+import seaborn as sns
 from IPython.display import clear_output
 from plotly.subplots import make_subplots
 from tqdm import tqdm
 
-from portfolio_constructor import EXOG_DATA_OTHER_FILES, EXOG_DATA_PRICE_FILES, PROJECT_ROOT
+from portfolio_constructor import (
+    EXOG_DATA_OTHER_FILES,
+    EXOG_DATA_PRICE_FILES,
+    PROJECT_ROOT,
+)
 from portfolio_constructor.target_markup import position_rotator
 
 sns.set_style("darkgrid")
 
 
-SAVE_PLOT_DIR = 'plots'
+SAVE_PLOT_DIR = "plots"
 
 
 def plot_position_rotator(price, min_max, freq):
@@ -34,10 +37,10 @@ def plot_position_rotator(price, min_max, freq):
         go.Scatter(
             x=price.index,
             y=price,
-            mode='lines',
-            name='Цена',
-            line=dict(color='blue', width=2),
-            hovertemplate="Дата: %{x}<br>Цена: %{y:.2f}<extra></extra>"
+            mode="lines",
+            name="Цена",
+            line=dict(color="blue", width=2),
+            hovertemplate="Дата: %{x}<br>Цена: %{y:.2f}<extra></extra>",
         )
     )
 
@@ -46,14 +49,11 @@ def plot_position_rotator(price, min_max, freq):
         go.Scatter(
             x=sell.index,
             y=sell.values,
-            mode='markers',
-            name='Продажа',
-            marker=dict(
-                color='green',
-                size=10,
-                line=dict(width=1, color='DarkGreen')
-            ),
-            hovertemplate="Продажа<br>Дата: %{x}<br>Цена: %{y:.2f}<extra></extra>"
+            mode="markers",
+            name="Продажа",
+            marker=dict(color="green", size=10, line=dict(width=1, color="DarkGreen")),
+            visible=True,
+            # hovertemplate="Продажа<br>Дата: %{x}<br>Цена: %{y:.2f}<extra></extra>",
         )
     )
 
@@ -62,14 +62,11 @@ def plot_position_rotator(price, min_max, freq):
         go.Scatter(
             x=buy.index,
             y=buy.values,
-            mode='markers',
-            name='Покупка',
-            marker=dict(
-                color='red',
-                size=10,
-                line=dict(width=1, color='DarkRed')
-            ),
-            hovertemplate="Покупка<br>Дата: %{x}<br>Цена: %{y:.2f}<extra></extra>"
+            mode="markers",
+            name="Покупка",
+            marker=dict(color="red", size=10, line=dict(width=1, color="DarkRed")),
+            visible=True,
+            # hovertemplate="Покупка<br>Дата: %{x}<br>Цена: %{y:.2f}<extra></extra>",
         )
     )
 
@@ -84,16 +81,18 @@ def plot_position_rotator(price, min_max, freq):
             y=1.02,
             xanchor="right",
             x=1,
-            font=dict(size=14)
+            font=dict(size=14),
         ),
-        hovermode="x unified",
+        # hovermode="x unified",
         template="plotly_white",
-        height=600,
-        width=1000,
-        margin=dict(l=50, r=50, b=50, t=80)
+        height=500,
+        # width=1000,
+        # margin=dict(l=50, r=50, b=50, t=80),
     )
 
-    fig.show()
+    # fig.show()
+
+    return fig.to_html(full_html=False)
 
 
 # def plot_position_rotator(price, freqs, shift_days=0, mode=1):
@@ -264,7 +263,7 @@ def plot_endog_vs_exog_index(data, return_cols=None, in_pycharm=True):
             ax[i].legend()
 
 
-def plot_sliding_pnl(res, days=365*2, save=True):
+def plot_sliding_pnl(res, days=365 * 2, save=True):
     # Проверка колонок
     cols = res.columns
     if "strat_return" not in cols:
@@ -288,19 +287,25 @@ def plot_sliding_pnl(res, days=365*2, save=True):
     fig = go.Figure()
 
     # Добавление линий
-    fig.add_trace(go.Scatter(
-        x=res.index,
-        y=res[f"strat_hist_pnl_{days}d"],
-        name="Portfolio Return",
-        line=dict(color='blue', width=2)
-    ))
+    fig.add_trace(
+        go.Scatter(
+            x=res.index,
+            y=res[f"strat_hist_pnl_{days}d"],
+            name="Portfolio Return",
+            line=dict(color="blue", width=2),
+            visible=True,
+        )
+    )
 
-    fig.add_trace(go.Scatter(
-        x=res.index,
-        y=res[f"moex_hist_pnl_{days}d"],
-        name="MCFTRR Return",
-        line=dict(color='red', width=2)
-    ))
+    fig.add_trace(
+        go.Scatter(
+            x=res.index,
+            y=res[f"moex_hist_pnl_{days}d"],
+            name="MCFTRR Return",
+            line=dict(color="red", width=2),
+            visible=True,
+        )
+    )
 
     # Настройка layout
     fig.update_layout(
@@ -308,32 +313,36 @@ def plot_sliding_pnl(res, days=365*2, save=True):
         xaxis_title="Date",
         yaxis_title="PnL (%)",
         legend_title="Strategy",
-        hovermode="x unified",
         template="plotly_white",
         autosize=True,
-        title_x=0.5  # Центрирование заголовка
+        height=500,
+        title_x=0.5,  # Центрирование заголовка
     )
 
     if save:
         os.makedirs(PROJECT_ROOT / SAVE_PLOT_DIR, exist_ok=True)
-        name = pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')
+        name = pd.Timestamp.now().strftime("%Y%m%d_%H%M%S")
+        saving_path = os.path.join(
+            PROJECT_ROOT,
+            f"{SAVE_PLOT_DIR}/sliding_pnl_{name}.png",
+        )
         fig.update_layout(
             title_font=dict(size=20),
             xaxis_title_font=dict(size=16),
             yaxis_title_font=dict(size=16),
             xaxis=dict(tickfont=dict(size=12), tickangle=-45),
-            legend=dict(font=dict(size=15), x=1.02, y=0.5)
+            legend=dict(font=dict(size=15), x=1.02, y=0.5),
         )
         fig.write_image(
-            PROJECT_ROOT / f"{SAVE_PLOT_DIR}/sliding_pnl_{name}.png",
-            width=1200,  # Ширина в пикселях
-            height=800,  # Высота в пикселях
+            saving_path,
+            width=800,  # Ширина в пикселях
+            height=500,  # Высота в пикселях
             scale=3,
-            engine="kaleido"
+            engine="kaleido",
         )
 
-    # Отображение графика
-    fig.show()
+    # fig.show()
+    return saving_path
 
 
 def plot_strategy_performance(strategy_res, save=True):
@@ -346,20 +355,24 @@ def plot_strategy_performance(strategy_res, save=True):
     fig = go.Figure()
 
     # Добавляем стратегию
-    fig.add_trace(go.Scatter(
-        x=strategy_res.index,
-        y=strategy_res["strategy_perf"],
-        name="Portfolio Performance",
-        line=dict(color='blue', width=2)
-    ))
+    fig.add_trace(
+        go.Scatter(
+            x=strategy_res.index,
+            y=strategy_res["strategy_perf"],
+            name="Portfolio Performance",
+            line=dict(color="blue", width=2),
+        )
+    )
 
     # Добавляем бенчмарк
-    fig.add_trace(go.Scatter(
-        x=strategy_res.index,
-        y=strategy_res["bench_perf"],
-        name="MCFTRR Performance",
-        line=dict(color='red', width=2)
-    ))
+    fig.add_trace(
+        go.Scatter(
+            x=strategy_res.index,
+            y=strategy_res["bench_perf"],
+            name="MCFTRR Performance",
+            line=dict(color="red", width=2),
+        )
+    )
 
     # Настраиваем layout
     fig.update_layout(
@@ -369,82 +382,87 @@ def plot_strategy_performance(strategy_res, save=True):
         legend_title="Legend",
         hovermode="x unified",
         autosize=True,
+        width=800,
+        height=500,
         template="plotly_white",
-        showlegend=True
+        showlegend=True,
     )
 
     # Добавляем сетку
-    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='LightGray')
-    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='LightGray')
+    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor="LightGray")
+    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor="LightGray")
 
     if save:
         os.makedirs(PROJECT_ROOT / SAVE_PLOT_DIR, exist_ok=True)
-        name = pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')
+        name = pd.Timestamp.now().strftime("%Y%m%d_%H%M%S")
+        saving_path = os.path.join(
+            PROJECT_ROOT, f"{SAVE_PLOT_DIR}/performance_{name}.png"
+        )
         fig.update_layout(
             title_font=dict(size=20),
             xaxis_title_font=dict(size=16),
             yaxis_title_font=dict(size=16),
             xaxis=dict(tickfont=dict(size=12), tickangle=-45),
-            legend=dict(font=dict(size=15), x=1.02, y=0.5)
+            legend=dict(font=dict(size=15), x=1.02, y=0.5),
         )
         fig.write_image(
-            PROJECT_ROOT / f"{SAVE_PLOT_DIR}/performance_{name}.png",
-            width=1200,  # Ширина в пикселях
-            height=800,  # Высота в пикселях
+            saving_path,
+            width=800,  # Ширина в пикселях
+            height=500,  # Высота в пикселях
             scale=3,
-            engine="kaleido"
+            engine="kaleido",
         )
         time.sleep(1)
 
-    fig.show()
+    # fig.show()
+    return saving_path
 
 
 def plot_shifted_strategy_with_benchmark(data, random_start_returns, save=True):
-
     strats_perf = random_start_returns.copy()
-    moex_perf = data.loc[strats_perf.index, 'price'].pct_change()
+    moex_perf = data.loc[strats_perf.index, "price"].pct_change()
 
-    perfs = {
-        'strats_perf': strats_perf,
-        'moex_perf': moex_perf
-    }
+    perfs = {"strats_perf": strats_perf, "moex_perf": moex_perf}
     for name, df in perfs.items():
         df.iloc[0] = 0
         df = (df + 1).cumprod() * 100
         perfs[name] = df
 
-    perf_distribution = perfs['strats_perf'].iloc[-1].sort_values()
+    perf_distribution = perfs["strats_perf"].iloc[-1].sort_values()
 
     quantiles = [0.05, 0.5, 0.95]
-    compare_perfs = {'bench_perf': perfs['moex_perf']}
+    compare_perfs = {"bench_perf": perfs["moex_perf"]}
     for q in quantiles:
         q_iloc = [int(len(perf_distribution) * q)]
         col_name = perf_distribution.iloc[q_iloc].index[0]
-        compare_perfs[q] = perfs['strats_perf'][col_name]
+        compare_perfs[q] = perfs["strats_perf"][col_name]
     compare_perfs = pd.DataFrame(compare_perfs)
 
     fig = go.Figure()
 
     # Добавляем линии для квантилей
     for q in quantiles:
-        fig.add_trace(go.Scatter(
-            x=compare_perfs.index,
-            y=compare_perfs[q],
-            name=f"{q} quantile of performance distribution",
-            line=dict(
-                dash="solid" if q == 0.5 else "dash",
-                width=2.5 if q == 0.5 else 1.5
-            ),
-            opacity=1 if q == 0.5 else 0.7
-        ))
+        fig.add_trace(
+            go.Scatter(
+                x=compare_perfs.index,
+                y=compare_perfs[q],
+                name=f"{q} quantile of performance distribution",
+                line=dict(
+                    dash="solid" if q == 0.5 else "dash", width=2.5 if q == 0.5 else 1.5
+                ),
+                opacity=1 if q == 0.5 else 0.7,
+            )
+        )
 
     # Добавляем линию бенчмарка
-    fig.add_trace(go.Scatter(
-        x=compare_perfs.index,
-        y=compare_perfs["bench_perf"],
-        name="benchmark performance",
-        line=dict(color='black', width=2)
-    ))
+    fig.add_trace(
+        go.Scatter(
+            x=compare_perfs.index,
+            y=compare_perfs["bench_perf"],
+            name="benchmark performance",
+            line=dict(color="black", width=2),
+        )
+    )
 
     # Настраиваем layout
     fig.update_layout(
@@ -459,27 +477,26 @@ def plot_shifted_strategy_with_benchmark(data, random_start_returns, save=True):
 
     if save:
         os.makedirs(PROJECT_ROOT / SAVE_PLOT_DIR, exist_ok=True)
-        name = pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')
+        name = pd.Timestamp.now().strftime("%Y%m%d_%H%M%S")
 
         fig.write_image(
             f"{SAVE_PLOT_DIR}/quantile_shifted_performance_{name}.png",
             width=1200,  # Ширина в пикселях
             height=800,  # Высота в пикселях
             scale=3,
-            engine="kaleido"
+            engine="kaleido",
         )
         time.sleep(1)
 
     fig.show()
 
 
-def plot_bootstrap_features_performance(random_features_perf, outperf_info=True, save=True):
+def plot_bootstrap_features_performance(
+    random_features_perf, outperf_info=True, save=True
+):
     if outperf_info:
         # Создаем фигуру с двумя горизонтальными субплoтами
-        fig = make_subplots(
-            rows=1, cols=2,
-            horizontal_spacing=0.25
-        )
+        fig = make_subplots(rows=1, cols=2, horizontal_spacing=0.25)
 
         # Цветовая схема с хорошей различимостью
         color_scale = px.colors.sequential.Plasma
@@ -490,7 +507,7 @@ def plot_bootstrap_features_performance(random_features_perf, outperf_info=True,
                 go.Scatter(
                     x=random_features_perf["std_strategy_perf"],
                     y=random_features_perf["mean_strategy_perf"],
-                    mode='markers',
+                    mode="markers",
                     marker=dict(
                         color=random_features_perf[col],
                         colorscale=color_scale,
@@ -499,18 +516,21 @@ def plot_bootstrap_features_performance(random_features_perf, outperf_info=True,
                             title=f"{col.split('_')[0].title()} Mean Outperformance<br>&nbsp;",
                             len=0.5,
                             y=0.5,
-                            x=0.4 if i == 1 else 1.05,  # Размещаем цветовые бары справа от каждого графика
-                            orientation='v'
+                            x=0.4
+                            if i == 1
+                            else 1.05,  # Размещаем цветовые бары справа от каждого графика
+                            orientation="v",
                         ),
                         size=12,
                         opacity=0.9,
-                        line=dict(width=1, color='black')
+                        line=dict(width=1, color="black"),
                     ),
                     hovertext=random_features_perf[col].round(2),
                     hoverinfo="x+y+text",
-                    name=col.replace('_', ' ').title()
+                    name=col.replace("_", " ").title(),
                 ),
-                row=1, col=i
+                row=1,
+                col=i,
             )
 
             # Обновляем оси
@@ -526,7 +546,7 @@ def plot_bootstrap_features_performance(random_features_perf, outperf_info=True,
             template="plotly_white",
             hovermode="closest",
             margin=dict(l=50, r=150, b=80, t=80, pad=10),
-            showlegend=False
+            showlegend=False,
         )
     else:
         # Упрощенная версия с одним графиком
@@ -534,39 +554,36 @@ def plot_bootstrap_features_performance(random_features_perf, outperf_info=True,
             random_features_perf,
             x="std_strategy_perf",
             y="mean_strategy_perf",
-            title="Strategy exploration via seed and feature space sampling"
+            title="Strategy exploration via seed and feature space sampling",
         )
         fig.update_traces(
-            marker=dict(size=12, opacity=0.9, line=dict(width=1, color='black'))
+            marker=dict(size=12, opacity=0.9, line=dict(width=1, color="black"))
         )
         fig.update_layout(
             autosize=True,
             title_x=0.5,
             template="plotly_white",
             xaxis_title="Std Performance",
-            yaxis_title="Mean Performance"
+            yaxis_title="Mean Performance",
         )
 
     # Улучшаем видимость маркеров
-    fig.update_traces(
-        marker=dict(opacity=0.9),
-        selector=dict(mode='markers')
-    )
+    fig.update_traces(marker=dict(opacity=0.9), selector=dict(mode="markers"))
 
     if save:
         os.makedirs(PROJECT_ROOT / SAVE_PLOT_DIR, exist_ok=True)
-        name = pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')
+        name = pd.Timestamp.now().strftime("%Y%m%d_%H%M%S")
 
         fig.write_image(
             f"{SAVE_PLOT_DIR}/bootstrap_features_performance_{name}.png",
             width=1500,  # Ширина в пикселях
             height=1000,  # Высота в пикселях
             scale=3,
-            engine="kaleido"
+            engine="kaleido",
         )
 
     # Настройка отображения в браузере
-    fig.show(config={'responsive': True})
+    fig.show(config={"responsive": True})
 
 
 def plot_losses(train_losses, test_losses):
@@ -581,7 +598,7 @@ def plot_losses(train_losses, test_losses):
     return fig
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # case 1
     from portfolio_constructor import PROJECT_ROOT
 
@@ -593,18 +610,15 @@ if __name__ == '__main__':
         # markup_kwargs=dict(
         #     h=250, shift_days=63, vol_span=20, volatility_multiplier=2
         # ),
-        markup_name='min_max',
-        markup_kwargs=dict(
-            freq=63, rotator_type=1
-        )
+        markup_name="min_max",
+        markup_kwargs=dict(freq=63, rotator_type=1),
     )
     min_max = position_rotator(data, **position_rotator_kwargs)
     plot_position_rotator(data, min_max, 63)
-    a=1
+    a = 1
 
     # # case 2
     # from portfolio_constructor.model import open_random_features_perf_file
     # df = open_random_features_perf_file()
     # plot_bootstrap_features_performance(df)
     # a=1
-

@@ -6,6 +6,9 @@ from starlette.middleware.sessions import SessionMiddleware
 from warnings import simplefilter
 from pydantic import BaseModel  # noqa
 import typing as t  # noqa
+from PIL import Image  # noqa
+from io import BytesIO
+import base64
 
 import uuid  # noqa
 import time  # noqa
@@ -34,6 +37,16 @@ derivatives = {}
 
 users_db = {"admin": "admin123"}
 tasks: t.Dict[str, t.Dict] = {}
+
+
+def fig_to_base64(img_path: str):
+    with Image.open(img_path) as img:
+        buffer = BytesIO()
+        img.save(
+            buffer, format="png"
+        )  # Ваши данные продолжают находиться в безопасности
+        byte_data = buffer.getvalue()
+        return base64.b64encode(byte_data).decode("utf-8")
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -121,24 +134,6 @@ async def get_status(task_id: str):
     return tasks.get(task_id, {"status": "not_found"})
 
 
-# def train_model(task_id: str):
-#     """Длительная операция обучения (замена на реальную логику)"""
-#     PROGRESS_CNT = 20
-#     for i in range(1, PROGRESS_CNT + 1):
-#         time.sleep(0.3)  # Имитация работы
-#         tasks[task_id]["progress"] = i
-
-#     # Сохраняем результат
-#     result = {
-#         "status": "completed",
-#         "progress": PROGRESS_CNT,
-#         "accuracy": 0.85,
-#         "risk_profile": "medium",  # Пример данных
-#     }
-#     tasks[task_id] = result
-#     return result
-
-
 def train_model(task_id: str):
     tasks[task_id]["progress"] = 65
 
@@ -162,9 +157,6 @@ def train_model(task_id: str):
         ),
         "roc": dict(cols=["price_return"], windows=[10, 21, 63, 126, 252]),
         "custom_aroon": dict(col="price", windows=[126, 252, 504]),
-        #     "distribution_oscillator": dict(
-        #         cols=["price_return"], windows=[252, 378], roc_windows=[21, 63, 126, 252] # лучше не исп-ть, будет долго считать
-        #     ),
     }
 
     # определяем какие базовые признаки мы хотим исп-ть, например такие
@@ -241,7 +233,7 @@ def train_model(task_id: str):
     strat_data = data.loc[:, ["price", "price_return", "ruonia", "ruonia_daily"]].copy()
     plot_kwargs = dict(
         perf_plot=True,
-        sliding_plot=True,
+        sliding_plot=False,
         save=True,  # сразу рисует динамику портфеля
     )
 
@@ -252,18 +244,21 @@ def train_model(task_id: str):
         for metric_name, metric_value in output["metrics"].items()
     }
 
+    strategy_perf_path = fig_to_base64(output["plots"]["strategy_perf"])
+
     # Сохраняем результат
     result = {
         "status": "completed",
         "progress": 100,
-        "strategy_perf": output_metrics["strategy_perf"] / 100,  # 12.5%
-        "bench_perf": output_metrics["bench_perf"] / 100,  # 10.2%
+        "strategy_perf": output_metrics["strategy_perf"] / 100,
+        "bench_perf": output_metrics["bench_perf"] / 100,
         "mean_outperf": output_metrics["mean_outperf"] / 100,
         "sharp_ratio": output_metrics["sharpe_ratio_rf"],
-        "max_drawdown": output_metrics["max_drawdown"],  # -15.3%
+        "max_drawdown": output_metrics["max_drawdown"],
         "beta": output_metrics["beta"],
-        "var": output_metrics["var"],  # -5.0%
-        "cvar": output_metrics["cvar"],  # -7.5%
+        "var": output_metrics["var"],
+        "cvar": output_metrics["cvar"],
+        "strategy_performance": strategy_perf_path,
     }
     tasks[task_id] = result
 
