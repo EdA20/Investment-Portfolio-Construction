@@ -5,17 +5,15 @@ from typing import Dict, Union
 
 import numpy as np
 import pandas as pd
-
 from catboost import CatBoostClassifier, Pool
 from IPython.display import clear_output
 from sktime.split import ExpandingWindowSplitter, SlidingWindowSplitter
-from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 from tqdm import tqdm
 
 from portfolio_constructor import PROJECT_ROOT, TQDM_DISABLE
 from portfolio_constructor.custom_metrics import *
+from portfolio_constructor.plotter import plot_sliding_pnl, plot_strategy_performance
 from portfolio_constructor.target_markup import position_rotator
-from portfolio_constructor.plotter import plot_strategy_performance, plot_sliding_pnl
 
 # to plot in debug mode use this
 # import matplotlib as mpl
@@ -76,25 +74,28 @@ def read_logger(path: str = None, analyze=True):
 
 
 def get_log_analytics(logs):
-
-    metrics = pd.DataFrame(list(logs['metrics']))
+    metrics = pd.DataFrame(list(logs["metrics"]))
     logs = pd.concat([logs, metrics], axis=1)
     logs = logs.loc[:, ~logs.columns.duplicated()].copy()
 
-    logs['markup_name'] = logs['position_rotator_kwargs'].apply(lambda x: x.get('markup_name', 'min_max'))
-    logs['features'] = logs['features'].apply(lambda x: tuple(next(iter(x.values()))))
+    logs["markup_name"] = logs["position_rotator_kwargs"].apply(
+        lambda x: x.get("markup_name", "min_max")
+    )
+    logs["features"] = logs["features"].apply(lambda x: tuple(next(iter(x.values()))))
 
-    group_cols = ['markup_name', 'features', 'start_date', 'end_date']
+    group_cols = ["markup_name", "features", "start_date", "end_date"]
     agg_dct = {}
     for col in metrics:
-        agg_dct[col] = ['mean', 'std']
-    agg_dct['strategy_perf'] = ['count', 'mean', 'std']
+        agg_dct[col] = ["mean", "std"]
+    agg_dct["strategy_perf"] = ["count", "mean", "std"]
 
     logs_agg = logs.groupby(group_cols).agg(agg_dct).reset_index()
     logs_agg = logs_agg.sort_values(
-        [('end_date', ''), ('mean_outperf', 'mean')], ascending=[True, False], ignore_index=True
+        [("end_date", ""), ("mean_outperf", "mean")],
+        ascending=[True, False],
+        ignore_index=True,
     )
-    logs_agg = logs_agg.loc[logs_agg[('strategy_perf', 'count')] == 5].copy()
+    logs_agg = logs_agg.loc[logs_agg[("strategy_perf", "count")] == 5].copy()
 
     # feature_counter = {}
     # top100_features = logs.loc[:100, ('f_features',)].squeeze()
@@ -108,19 +109,23 @@ def get_log_analytics(logs):
     return logs_agg
 
 
-def open_random_features_perf_file(path=None, file_type='json'):
+def open_random_features_perf_file(path=None, file_type="json"):
     if not path:
         json_dir = PROJECT_ROOT / "jsons"
-        files = sorted(json_dir.glob(f"random_features_perf_*.{file_type}"), reverse=True)
+        files = sorted(
+            json_dir.glob(f"random_features_perf_*.{file_type}"), reverse=True
+        )
         if not files:
-            raise FileNotFoundError('В папке jsons нет файлов с результатами')
+            raise FileNotFoundError("В папке jsons нет файлов с результатами")
         path = files[0]
 
-    if file_type == 'json':
+    if file_type == "json":
         with open(path, "r") as file:
             random_features_pnl = json.load(file)
 
-        random_features_pnl = pd.DataFrame.from_dict(random_features_pnl, orient="index")
+        random_features_pnl = pd.DataFrame.from_dict(
+            random_features_pnl, orient="index"
+        )
         if random_features_pnl.shape[1] > 1:
             if random_features_pnl.shape[1] == 2:
                 cols = ["mean_strategy_perf", "std_strategy_perf"]
@@ -132,16 +137,18 @@ def open_random_features_perf_file(path=None, file_type='json'):
                     "std_mean_outperf",
                 ]
 
-            random_features_pnl = random_features_pnl.set_axis(cols, axis=1).sort_values(
-                "mean_strategy_perf", ascending=False
-            )
+            random_features_pnl = random_features_pnl.set_axis(
+                cols, axis=1
+            ).sort_values("mean_strategy_perf", ascending=False)
     else:
         random_features_pnl = pd.read_csv(path)
 
     return random_features_pnl
 
 
-def time_critical_weighting(init_w, returns, k=100, q=0.01, jump_coef=20, fading_factor=21):
+def time_critical_weighting(
+    init_w, returns, k=100, q=0.01, jump_coef=20, fading_factor=21
+):
     init_w = init_w.copy()
     returns = returns.copy()
 
@@ -158,7 +165,9 @@ def time_critical_weighting(init_w, returns, k=100, q=0.01, jump_coef=20, fading
         critical_w = jump_coef * np.exp(-gamma * critical_w)
         critical_ws.append(critical_w)
     critical_weighting = pd.concat(critical_ws, axis=1).fillna(0).max(axis=1)
-    weights = pd.concat([time_weighting, critical_weighting], axis=1).fillna(0).sum(axis=1)
+    weights = (
+        pd.concat([time_weighting, critical_weighting], axis=1).fillna(0).sum(axis=1)
+    )
     weights = weights / weights.sum()
 
     return weights
@@ -184,7 +193,7 @@ class Dataset:
         self.feature_info = feature_info
 
         self.logs = self.__dict__.copy()
-        self.logs.pop('feature_info', None)
+        self.logs.pop("feature_info", None)
 
     @staticmethod
     def get_sample_weights(
@@ -202,28 +211,39 @@ class Dataset:
         mode = list(weight_params.keys())[0]
         weight_params = weight_params[mode]
 
-        if mode == 'time_critical':
+        if mode == "time_critical":
             cum_weights = data[weight_name].cumsum()
-            alpha = np.log(weight_params['k']) / len(cum_weights)
+            alpha = np.log(weight_params["k"]) / len(cum_weights)
             time_weighting = np.exp(alpha * cum_weights)
 
-            crit_dates = data.index[np.where(data['price_return'] < data['price_return'].quantile(weight_params['q']))]
-            gamma = np.log(weight_params['k']) / weight_params['fading_factor']
+            crit_dates = data.index[
+                np.where(
+                    data["price_return"]
+                    < data["price_return"].quantile(weight_params["q"])
+                )
+            ]
+            gamma = np.log(weight_params["k"]) / weight_params["fading_factor"]
             critical_ws = []
             for crit_date in crit_dates:
                 critical_w = data[weight_name].loc[crit_date:]
                 critical_w = critical_w.cumsum()
-                critical_w = weight_params['jump_coef'] * np.exp(-gamma * critical_w)
+                critical_w = weight_params["jump_coef"] * np.exp(-gamma * critical_w)
                 critical_ws.append(critical_w)
             critical_weighting = pd.concat(critical_ws, axis=1).fillna(0).max(axis=1)
 
-            data[weight_name] = pd.concat([time_weighting, critical_weighting], axis=1).fillna(0).sum(axis=1)
+            data[weight_name] = (
+                pd.concat([time_weighting, critical_weighting], axis=1)
+                .fillna(0)
+                .sum(axis=1)
+            )
 
-        elif mode == 'rotation_event':
+        elif mode == "rotation_event":
             # пока что не работает
-            if weight_params.get('imptnt_obs_lag_reaction') is None:
-                raise Exception('pass "imptnt_obs_lag_reaction" arg in "weight_sample_kwargs"')
-            if weight_params.get('imptnt_obs_w') is None:
+            if weight_params.get("imptnt_obs_lag_reaction") is None:
+                raise Exception(
+                    'pass "imptnt_obs_lag_reaction" arg in "weight_sample_kwargs"'
+                )
+            if weight_params.get("imptnt_obs_w") is None:
                 raise Exception('pass "imptnt_obs_w" arg in "weight_sample_kwargs"')
             reaction_days = np.arange(
                 1, 1 + weight_params["imptnt_obs_lag_reaction"]
@@ -243,7 +263,7 @@ class Dataset:
                 raise Exception('pass "return_mult" arg for "weight_sample_kwargs"')
             if weight_params.get("return_thresh") is None:
                 raise Exception('pass "return_thresh" arg for "weight_sample_kwargs"')
-            data[weight_name] = data['price_return'].copy()
+            data[weight_name] = data["price_return"].copy()
             data[weight_name] = data[weight_name].apply(
                 lambda x: x * weight_params["return_mult"]
                 if (x <= -weight_params["return_thresh"])
@@ -258,18 +278,27 @@ class Dataset:
             if weight_params.get("sqrt_scale") is None:
                 raise Exception('pass "sqrt_scale" arg for "weight_sample_kwargs"')
 
-            max_wieght = len(data) * weight_params['obs_frac']
-            shifted_returns = data['price_return'].copy()
-            data[weight_name] = abs(np.emath.logn(1 + shifted_returns.mean(), 1 + shifted_returns))
+            max_wieght = len(data) * weight_params["obs_frac"]
+            shifted_returns = data["price_return"].copy()
+            data[weight_name] = abs(
+                np.emath.logn(1 + shifted_returns.mean(), 1 + shifted_returns)
+            )
             data[weight_name] = np.clip(data[weight_name], 0, max_wieght)
             if weight_params["sqrt_scale"]:
                 data[weight_name] = np.sqrt(data[weight_name])
 
         if weight_smoothing:
-            data[weight_name] = data[weight_name]\
-                .rolling(window=weight_smoothing['window'], win_type='exponential')\
-                .mean(center=weight_smoothing['window'], sym=False, tau=weight_smoothing['win_type_param'])\
-                .bfill().ffill()
+            data[weight_name] = (
+                data[weight_name]
+                .rolling(window=weight_smoothing["window"], win_type="exponential")
+                .mean(
+                    center=weight_smoothing["window"],
+                    sym=False,
+                    tau=weight_smoothing["win_type_param"],
+                )
+                .bfill()
+                .ffill()
+            )
 
         return data[weight_name]
 
@@ -319,7 +348,7 @@ class Dataset:
             dates = [
                 (
                     train_dates[: -self.splitter_kwargs["eval_obs"]],
-                    train_dates[-self.splitter_kwargs["eval_obs"]: ],
+                    train_dates[-self.splitter_kwargs["eval_obs"] :],
                     test_dates,
                 )
                 for train_dates, test_dates in dates
@@ -339,8 +368,12 @@ class Dataset:
             ]
 
         batches = []
-        names = ('train', 'test') if self.splitter_kwargs["eval_obs"] <= 0 else ('train', 'val', 'test')
-        for chunk_dates in tqdm(dates, desc='position_rotator', disable=TQDM_DISABLE):
+        names = (
+            ("train", "test")
+            if self.splitter_kwargs["eval_obs"] <= 0
+            else ("train", "val", "test")
+        )
+        for chunk_dates in tqdm(dates, desc="position_rotator", disable=TQDM_DISABLE):
             zip_names_dates = zip(names, chunk_dates)
 
             cum_dates = pd.DatetimeIndex([])
@@ -350,7 +383,11 @@ class Dataset:
                 train_val_test_dates[name] = (dates, cum_dates)
 
             if self.feature_info is not None:
-                idx = max(np.where(self.feature_info.index <= train_val_test_dates['train'][0][-1])[0])
+                idx = max(
+                    np.where(
+                        self.feature_info.index <= train_val_test_dates["train"][0][-1]
+                    )[0]
+                )
                 features = self.feature_info.iloc[idx]
 
             pools = {}
@@ -361,10 +398,12 @@ class Dataset:
                 weight_col = f"{subset}_weight"
                 data_united = data.loc[united_dates.values]
 
-                rotator = position_rotator(data_united["price"], **self.position_rotator_kwargs)
-                data_united[target_col] = rotator['target'].copy()
+                rotator = position_rotator(
+                    data_united["price"], **self.position_rotator_kwargs
+                )
+                data_united[target_col] = rotator["target"].copy()
 
-                if subset == 'train' and self.sample_weight_kwargs:
+                if subset == "train" and self.sample_weight_kwargs:
                     obs_weights = self.get_sample_weights(
                         data_united,
                         target_col,
@@ -389,15 +428,13 @@ class Dataset:
 
 
 class Model:
-
-    ALL_MODELS = ('catboost',)
+    ALL_MODELS = ("catboost",)
 
     def __init__(
         self,
         dataset,
         model_kwargs,
     ):
-
         self.model_kwargs = model_kwargs
 
         self.logs = self.__dict__.copy()
@@ -528,15 +565,16 @@ class Model:
 
         if self.logs:
             features = all_train_info.copy()
-            features = features.drop_duplicates('from_date')
-            features['from_date'] = features['from_date'].astype(str)
-            features = features\
-                .set_index('from_date')\
-                .drop(['mean_train_target', 'mean_test_target', 'till_date', 'n_model'], axis=1)
+            features = features.drop_duplicates("from_date")
+            features["from_date"] = features["from_date"].astype(str)
+            features = features.set_index("from_date").drop(
+                ["mean_train_target", "mean_test_target", "till_date", "n_model"],
+                axis=1,
+            )
 
             features = features.apply(lambda x: list(x[x.notna()].index), axis=1)
             features = features.drop_duplicates().to_dict()
-            self.logs['features'] = features
+            self.logs["features"] = features
 
         return all_preds, all_train_info
 
@@ -554,105 +592,131 @@ class Strategy:
 
         strat_data = strat_data.copy()
 
-        strat_data['preds'] = preds.mean(axis=1)
-        strat_data['preds'] = strat_data['preds'].shift()
-        strat_data['is_bench_long'] = strat_data['preds'] >= 0.5
+        strat_data["preds"] = preds.mean(axis=1)
+        strat_data["preds"] = strat_data["preds"].shift()
+        strat_data["is_bench_long"] = strat_data["preds"] >= 0.5
 
-        cols = ['price', 'ruonia', 'ruonia_daily', 'preds', 'is_bench_long', 'price_return']
-        res = strat_data.loc[:, cols].dropna(subset=['preds'])
+        cols = [
+            "price",
+            "ruonia",
+            "ruonia_daily",
+            "preds",
+            "is_bench_long",
+            "price_return",
+        ]
+        res = strat_data.loc[:, cols].dropna(subset=["preds"])
 
-        if self.strat_kwargs['prob_to_weight']:
-            res['bench_long_weight'] = res['preds'].apply(
-                lambda x: x if x >= self.strat_kwargs['weight_prob_threshold'] else 0
+        if self.strat_kwargs["prob_to_weight"]:
+            res["bench_long_weight"] = res["preds"].apply(
+                lambda x: x if x >= self.strat_kwargs["weight_prob_threshold"] else 0
             )
         else:
             res["bench_long_weight"] = res["preds"].apply(
                 lambda x: 1 if x >= 0.5 else 0
             )
 
-        year_fraq = ((res.index - res.index[0]).days + 1) / (res.index.is_leap_year + 365)
-        strat_data['turnover'] = abs(res['bench_long_weight'].diff()).cumsum() / year_fraq
-
-        res['strat_return'] = (
-            res['bench_long_weight'] * res['price_return'] +
-            (1 - res['bench_long_weight']) * res['ruonia_daily']
+        year_fraq = ((res.index - res.index[0]).days + 1) / (
+            res.index.is_leap_year + 365
         )
-        res.loc[res.index[0], ['price_return', 'strat_return']] = 0
-        res['strategy_perf'] = (res['strat_return'] + 1).cumprod() * 100
-        res['bench_perf'] = (res['price_return'] + 1).cumprod() * 100
-        res['outperf'] = res['strategy_perf'] - res['bench_perf']
+        strat_data["turnover"] = (
+            abs(res["bench_long_weight"].diff()).cumsum() / year_fraq
+        )
 
-        self.logs['start_date'] = res.index[0].strftime('%Y-%m-%d')
-        self.logs['end_date'] = res.index[-1].strftime('%Y-%m-%d')
-        self.logs['strategy_perf'] = res['strategy_perf'].iloc[-1]
-        self.logs['bench_perf'] = res['bench_perf'].iloc[-1]
-        self.logs['mean_outperf'] = res['outperf'].mean()
+        res["strat_return"] = (
+            res["bench_long_weight"] * res["price_return"]
+            + (1 - res["bench_long_weight"]) * res["ruonia_daily"]
+        )
+        res.loc[res.index[0], ["price_return", "strat_return"]] = 0
+        res["strategy_perf"] = (res["strat_return"] + 1).cumprod() * 100
+        res["bench_perf"] = (res["price_return"] + 1).cumprod() * 100
+        res["outperf"] = res["strategy_perf"] - res["bench_perf"]
+
+        self.logs["start_date"] = res.index[0].strftime("%Y-%m-%d")
+        self.logs["end_date"] = res.index[-1].strftime("%Y-%m-%d")
+        self.logs["strategy_perf"] = res["strategy_perf"].iloc[-1]
+        self.logs["bench_perf"] = res["bench_perf"].iloc[-1]
+        self.logs["mean_outperf"] = res["outperf"].mean()
 
         metrics = self.calculate_strategy_metrics(res)
-        self.logs['metrics'] = metrics
+        self.logs["metrics"] = metrics
 
-        if plot_kwargs.get('perf_plot'):
-            plot_strategy_performance(res, save=plot_kwargs.get('save', False))
+        if plot_kwargs.get("perf_plot"):
+            strategy_performance_img_path = plot_strategy_performance(
+                res, save=plot_kwargs.get("save", False)
+            )
 
-        if plot_kwargs.get('sliding_plot'):
-            plot_sliding_pnl(res, save=plot_kwargs.get('save', False))
+        if plot_kwargs.get("sliding_plot"):
+            sliding_pnl_img_path = plot_sliding_pnl(
+                res, save=plot_kwargs.get("save", False)
+            )
 
         write_log_file(self.logs)
         output = {
-            'res': res,
-            'metrics': metrics
+            "res": res,
+            "metrics": metrics,
+            "plots": {
+                "strategy_perf": strategy_performance_img_path,
+            },
         }
         return output
 
     @staticmethod
     def calculate_strategy_metrics(res):
-
-        structural_shift_dates = ['2014-06-01', '2022-02-24']
+        structural_shift_dates = ["2014-06-01", "2022-02-24"]
         n = np.array([i for i in range(1, len(res) + 1)])
         weights = np.ones(len(res))
         for date in structural_shift_dates:
             shift = np.where(res.index >= date)[0][0]
-            weights += 0.5 * step_function(n, prob=0.99, convergence_to_prob=100, shift=shift)
+            weights += 0.5 * step_function(
+                n, prob=0.99, convergence_to_prob=100, shift=shift
+            )
         weights = weights / weights.sum()
 
-        return_types = ['price_return', 'strat_return']
+        return_types = ["price_return", "strat_return"]
         metrics = {}
         for return_type in return_types:
-            market_outperformance = res[return_type] - res['price_return']
-            deposit_outperformance = res[return_type] - res['ruonia_daily']
+            market_outperformance = res[return_type] - res["price_return"]
+            deposit_outperformance = res[return_type] - res["ruonia_daily"]
             sharpe_ratio_rf = deposit_outperformance.mean() / res[return_type].std()
             sharpe_ratio_rm = market_outperformance.mean() / res[return_type].std()
-            weighted_sharpe_ratio_rf = sum(weights * deposit_outperformance) / res[return_type].std()
-            weighted_sharpe_ratio_rm = sum(weights * market_outperformance) / res[return_type].std()
+            weighted_sharpe_ratio_rf = (
+                sum(weights * deposit_outperformance) / res[return_type].std()
+            )
+            weighted_sharpe_ratio_rm = (
+                sum(weights * market_outperformance) / res[return_type].std()
+            )
 
-            drawdown = res['strategy_perf'] / res['strategy_perf'].expanding().max() - 1
+            drawdown = res["strategy_perf"] / res["strategy_perf"].expanding().max() - 1
             max_drawdown = drawdown.min()
 
-            last_argmax = res['strategy_perf'].expanding().apply(lambda x: x.argmax())
+            last_argmax = res["strategy_perf"].expanding().apply(lambda x: x.argmax())
             max_recovery = last_argmax.drop_duplicates().diff().max()
 
-            beta = res[[return_type, 'price_return']].cov().iloc[0,1] / res['price_return'].var()
+            beta = (
+                res[[return_type, "price_return"]].cov().iloc[0, 1]
+                / res["price_return"].var()
+            )
 
             var = res[return_type].quantile(0.01)
             cvar = res.loc[res[return_type] < var, return_type].mean()
 
             dct = {
-                'strategy_perf':  res['strategy_perf'].iloc[-1],
-                'bench_perf': res['bench_perf'].iloc[-1],
-                'mean_outperf':  res['outperf'].mean(),
-                'sharpe_ratio_rf': sharpe_ratio_rf,
-                'sharpe_ratio_rm': sharpe_ratio_rm,
-                'weighted_sharpe_ratio_rf': weighted_sharpe_ratio_rf,
-                'weighted_sharpe_ratio_rm': weighted_sharpe_ratio_rm,
-                'max_drawdown': max_drawdown,
-                'max_recovery': max_recovery,
-                'beta': beta,
-                'var': var,
-                'cvar': cvar
+                "strategy_perf": res["strategy_perf"].iloc[-1],
+                "bench_perf": res["bench_perf"].iloc[-1],
+                "mean_outperf": res["outperf"].mean(),
+                "sharpe_ratio_rf": sharpe_ratio_rf,
+                "sharpe_ratio_rm": sharpe_ratio_rm,
+                "weighted_sharpe_ratio_rf": weighted_sharpe_ratio_rf,
+                "weighted_sharpe_ratio_rm": weighted_sharpe_ratio_rm,
+                "max_drawdown": max_drawdown,
+                "max_recovery": max_recovery,
+                "beta": beta,
+                "var": var,
+                "cvar": cvar,
             }
             metrics[return_type] = dct
 
-        return metrics['strat_return']
+        return metrics["strat_return"]
 
 
 def strategy_full_cycle(
@@ -664,7 +728,7 @@ def strategy_full_cycle(
     model_kwargs,
     strat_kwargs,
     plot_kwargs,
-    **kwargs
+    **kwargs,
 ):
     dataset = Dataset(
         splitter_kwargs,
@@ -679,21 +743,20 @@ def strategy_full_cycle(
     )
     preds, train_info = model.get_predictions(batches)
 
-    strategy = Strategy(
-        model,
-        strat_kwargs
-    )
-    strat_data = data.loc[:, ['price', 'price_return', 'ruonia', 'ruonia_daily']].copy()
-    if kwargs.get('val_date_breakpoint', None):
+    strategy = Strategy(model, strat_kwargs)
+    strat_data = data.loc[:, ["price", "price_return", "ruonia", "ruonia_daily"]].copy()
+    if kwargs.get("val_date_breakpoint", None):
         output = {}
-        split_states = ['val', 'test']
+        split_states = ["val", "test"]
 
         for split_state in split_states:
-            idx = preds.index < kwargs['val_date_breakpoint']
-            idx = idx if split_state == 'val' else ~idx
+            idx = preds.index < kwargs["val_date_breakpoint"]
+            idx = idx if split_state == "val" else ~idx
 
             split_preds = preds.loc[idx].copy()
-            split_output = strategy.base_strategy_peformance(strat_data, split_preds, plot_kwargs)
+            split_output = strategy.base_strategy_peformance(
+                strat_data, split_preds, plot_kwargs
+            )
 
             output[split_state] = split_output
     else:
@@ -704,10 +767,14 @@ def strategy_full_cycle(
 
 if __name__ == "__main__":
     logs, logs_analytics = read_logger()
-    val_logs = logs_analytics.loc[logs_analytics['start_date'] == '2012-01-10']
-    test_logs = logs_analytics.loc[logs_analytics['start_date'] == '2024-01-04']
+    val_logs = logs_analytics.loc[logs_analytics["start_date"] == "2012-01-10"]
+    test_logs = logs_analytics.loc[logs_analytics["start_date"] == "2024-01-04"]
     val_test_logs = pd.merge(
-        val_logs, test_logs, how='inner', on=[('markup_name', ''), ('features', '')], suffixes=('_val', '_test')
+        val_logs,
+        test_logs,
+        how="inner",
+        on=[("markup_name", ""), ("features", "")],
+        suffixes=("_val", "_test"),
     )
 
     # from portfolio_constructor.feature_filter import group_features
@@ -731,4 +798,4 @@ if __name__ == "__main__":
     #         else:
     #             base_feature_counter[base_feature] = 1
 
-    df = open_random_features_perf_file(file_type='csv')
+    df = open_random_features_perf_file(file_type="csv")

@@ -24,20 +24,3 @@
         </div>
     </form>
 </div>
-
-<script>
-document.querySelectorAll('.plotly-graph-div').forEach(graph => {
-    graph.on('plotly_restyle', function(data) {
-        const feature = this.closest('.feature-block').querySelector('input[type="hidden"]');
-        const activeIndicators = [];
-        
-        data[0].visible.forEach((vis, i) => {
-            if(i > 0 && vis) { 
-                activeIndicators.push(this.data[i].name);
-            }
-        });
-        
-        feature.value = activeIndicators.join(',');
-    });
-});
-</script>

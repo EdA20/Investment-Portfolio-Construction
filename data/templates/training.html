@@ -1,0 +1,209 @@
+<div class="container">
+    <div class="step-indicator">
+        <div class="step">1</div>
+        <div class="step">2</div>
+        <div class="step">3</div>
+        <div class="step">4</div>
+        <div class="step active">5</div>
+    </div>
+    <link rel="stylesheet" href="/static/style.css">
+
+    <h2>🤖 Обучение модели</h2>
+    <div id="trainingStatus">
+        <div class="loader"></div>
+        <p style="text-align: center; color: #666;">Идет анализ данных и обучение модели...</p>
+        <div class="progress-bar">
+            <div class="progress"></div>
+        </div>
+    </div>
+    
+    <div id="result" style="display: none; opacity: 0; transform: translateY(20px); transition: opacity 0.8s ease, transform 0.8s ease;">
+        <h3 style="color: var(--accent);">🎉 Обучение завершено!</h3>
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-header">📈 Перформанс стратегии</div>
+                <div class="metric-value" id="strategy_perf"></div>
+                <div class="metric-description">Доходность стратегии</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-header">📊 Перформанс индекса</div>
+                <div class="metric-value" id="bench_perf"></div>
+                <div class="metric-description">Доходность индекса Мосбиржи</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-header">⚖️ Коэф. Шарпа</div>
+                <div class="metric-value" id="sharp_ratio"></div>
+                <div class="metric-description">Риск-скорректированная доходность</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-header">📉 Макс. просадка</div>
+                <div class="metric-value" id="max_drawdown"></div>
+                <div class="metric-description">Наибольшее сокращение капитала</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-header">β (Бета)</div>
+                <div class="metric-value" id="beta"></div>
+                <div class="metric-description">Волатильность относительно рынка</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-header">📌 VaR (95%)</div>
+                <div class="metric-value" id="var"></div>
+                <div class="metric-description">Макс. потеря с вероятностью 95%</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-header">⚠️ CVaR (95%)</div>
+                <div class="metric-value" id="cvar"></div>
+                <div class="metric-description">Средняя потеря при худших 5% сценариев</div>
+            </div>
+        </div>
+
+        <div class="feature-block">
+            <h3>📋 Базовые признаки модели</h3>
+            <div id="baseFeaturesList" class="features-list"></div>
+        </div>
+
+        <div class="feature-block">
+            <div class="chart-container">
+                <h4>📈 Доходность стратегии</h4>
+                <img id="strategyChart" class="chart-img" alt="Доходность стратегии" 
+                    style="display: block; margin: 0 auto;">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    async function startTraining() {
+        try {
+            // 1. Запускаем задачу на сервере
+            const response = await fetch('/train', { method: 'POST' });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const { task_id } = await response.json();
+
+            // 2. Начинаем отслеживать прогресс
+            trackProgress(task_id);
+        } catch (error) {
+            console.error('Ошибка при запуске обучения:', error);
+            showError('Не удалось начать обучение модели');
+        }
+    }
+
+    async function trackProgress(task_id) {
+        const progressBar = document.querySelector('.progress');
+        const interval = setInterval(async () => {
+            try {
+                // 3. Запрашиваем статус каждые 1.5 секунды
+                const response = await fetch(`/status/${task_id}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const status = await response.json();
+                
+                // Обновляем прогресс-бар
+                if (progressBar) {
+                    progressBar.style.width = `${status.progress}%`;
+                }
+                
+                // 4. Если обучение завершено
+                if (status.status === 'completed') {
+                    clearInterval(interval);
+                    showResults(status);
+                }
+            } catch (error) {
+                console.error('Ошибка при получении статуса:', error);
+                clearInterval(interval);
+                showError('Ошибка при получении данных обучения');
+            }
+        }, 1500);
+    }
+
+    function showResults(status) {
+        // Обновляем метрики
+        document.getElementById('strategy_perf').innerHTML = formatPercent(status.strategy_perf);
+        document.getElementById('bench_perf').innerHTML = formatPercent(status.bench_perf);
+        document.getElementById('sharp_ratio').innerHTML = status.sharp_ratio.toFixed(2);
+        document.getElementById('max_drawdown').innerHTML = formatPercent(status.max_drawdown);
+        document.getElementById('beta').innerHTML = status.beta.toFixed(2);
+        document.getElementById('var').innerHTML = formatPercent(status.var);
+        document.getElementById('cvar').innerHTML = formatPercent(status.cvar);
+        if (status.strategy_performance) {
+            document.getElementById('strategyChart').src = 
+                `data:image/png;base64,${status.strategy_performance}`;
+        }
+
+            // Добавляем обработку признаков
+        const baseFeaturesContainer = document.getElementById('baseFeaturesList');
+        if (status.base_feature_names && Array.isArray(status.base_feature_names)) {
+            baseFeaturesContainer.innerHTML = '';
+            status.base_feature_names.forEach(feature => {
+                const tag = document.createElement('div');
+                tag.className = 'feature-tag';
+                tag.textContent = feature;
+                baseFeaturesContainer.appendChild(tag);
+            });
+        } else {
+            baseFeaturesContainer.innerHTML = '<p>Нет данных о признаках</p>';
+        }
+
+        // Показываем результат с анимацией
+        setTimeout(() => {
+            document.getElementById('trainingStatus').style.display = 'none';
+            document.getElementById('result').style.display = 'block';
+            
+            setTimeout(() => {
+                document.getElementById('result').style.opacity = 1;
+                document.getElementById('result').style.transform = 'translateY(0)';
+            }, 50);
+        }, 500);
+    }
+    function formatPercent(value) {
+        const formatted = (value * 100).toFixed(2) + '%';
+        if (value > 0) {
+            return `<span style="color: #4caf50;">${formatted}</span>`;
+        } else if (value < 0) {
+            return `<span style="color: #f44336;">${formatted}</span>`;
+        }
+        return formatted;
+    }
+
+    function showError(message) {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-message';
+        errorDiv.textContent = message;
+        
+        const container = document.querySelector('.container');
+        container.insertBefore(errorDiv, container.firstChild);
+        
+        // Показываем кнопку для перезапуска
+        const restartBtn = document.createElement('button');
+        restartBtn.className = 'btn';
+        restartBtn.textContent = 'Попробовать снова';
+        restartBtn.onclick = () => location.reload();
+        
+        container.appendChild(restartBtn);
+    }
+
+    // Удаляем старый интервал и запускаем новый процесс
+    document.addEventListener('DOMContentLoaded', () => {
+        // Очищаем существующий интервал
+        const existingInterval = window.trainingInterval;
+        if (existingInterval) {
+            clearInterval(existingInterval);
+        }
+        
+        // Запускаем обучение
+        startTraining();
+    });
+</script>
