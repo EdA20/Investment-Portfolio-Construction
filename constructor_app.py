@@ -93,11 +93,12 @@ async def process_features(request: Request, selected: list = Form(...)):
 
 @app.post("/select-risk-profile/")
 async def process_risk_profile(request: Request, risk_profile: str = Form(...)):
-    global selected_features
+    global selected_features, risk_profile_global
     selected_features = [
         REVERTED_ALL_BASE_COLS_DESCRIPTIONS[feature_desc]
         for feature_desc in request.session["selected_features"]
     ]
+    risk_profile_global = risk_profile
     request.session["risk_profile"] = risk_profile
     return templates.TemplateResponse("training.html", {"request": request})
 
@@ -231,10 +232,12 @@ def train_model(task_id: str):
     )
     preds, train_info = model.get_predictions(batches)
 
-    strategy = Strategy(
-        model,
-        prob_to_weight=True,
-    )
+    risk_profile_dict = {"low": 0.7, "medium": 0.5, "high": 0.3}
+    strategy_kwargs = {
+        "prob_to_weight": True,
+        "weight_prob_threshold": risk_profile_dict[risk_profile_global],
+    }
+    strategy = Strategy(model, strat_kwargs=strategy_kwargs)
 
     strat_data = data.loc[:, ["price", "price_return", "ruonia", "ruonia_daily"]].copy()
     plot_kwargs = dict(
