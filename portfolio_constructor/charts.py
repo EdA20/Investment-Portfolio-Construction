@@ -68,17 +68,17 @@ def generate_price_chart():
 
 def generate_base_features():
     features = {
-        "Цена на нефть": pd.read_excel("data/exog_data/brent.xlsx", index_col="date")[
-            "brent"
-        ],
-        "Цена на золото": pd.read_excel("data/exog_data/gold.xlsx", index_col="date")[
-            "gold"
-        ],
-        "Курс USD/RUB": pd.read_excel("data/exog_data/usd.xlsx", index_col="date")[
-            "usd"
-        ],
+        "Цена на нефть": pd.read_excel(
+            "data/exog_data/preprocessed/brent.xlsx", index_col="date"
+        )["brent"],
+        "Цена на золото": pd.read_excel(
+            "data/exog_data/preprocessed/gold.xlsx", index_col="date"
+        )["gold"],
+        "Курс USD/RUB": pd.read_excel(
+            "data/exog_data/preprocessed/usd.xlsx", index_col="date"
+        )["usd"],
         "Облигации 10ти летние": pd.read_excel(
-            "data/exog_data/bonds10y.xlsx", index_col="date"
+            "data/exog_data/preprocessed/bonds10y.xlsx", index_col="date"
         )["bonds10y"],
     }
 

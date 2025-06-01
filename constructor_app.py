@@ -4,15 +4,15 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
 
-from charts import (  # noqa  # noqa
+from portfolio_constructor.charts import (  # noqa  # noqa
     features_data,
     generate_feature_chart,
     generate_price_chart,
 )
 
 app = FastAPI()
-app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="templates")
+app.mount("/static", StaticFiles(directory="data/static"), name="static")
+templates = Jinja2Templates(directory="data/templates")
 
 user_data = {}
 selected_features = {}
