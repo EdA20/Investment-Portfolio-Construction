@@ -278,17 +278,15 @@ input[type="checkbox"] {
     background: var(--primary);
 }
 
-.risk-card input:checked + .risk-content::after {
+.risk-card input:checked {
     content: "";
     display: block;
-    width: 12px;
-    height: 12px;
+    width: 22px;
+    height: 22px;
     background: var(--primary);
     border-radius: 50%;
     position: absolute;
-    left: 24px;
-    top: 50%;
-    transform: translateY(-50%);
+    margin: 0;
 }
 
 .risk-content {

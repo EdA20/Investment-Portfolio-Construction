@@ -1,9 +1,49 @@
+import sys
+
 import pandas as pd
 import plotly.graph_objs as go
 
+sys.path.append("../")
+
+
+ALL_BASE_COLS = [
+    "price",
+    "bonds10y",
+    "ruonia",
+    "brent",
+    "gold",
+    "usd",
+    "mredc",
+    "top3_mean_vol",
+    "imoex_pe",
+    "long_entity",
+    "short_entity",
+    "long_physic",
+    "short_physic",
+    "long/short_entity_ratio",
+    "long/short_physic_ratio",
+    "price_return",
+    "brent_return",
+    "gold_return",
+    "usd_return",
+    "mredc_return",
+    "top3_mean_vol_return",
+    "imoex_pe_return",
+    "long_entity_return",
+    "short_entity_return",
+    "long_physic_return",
+    "short_physic_return",
+    "long/short_entity_ratio_return",
+    "long/short_physic_ratio_return",
+    "price_vol_adj_return",
+    "price_vol_adj",
+    "bonds10y_ruonia_delta",
+    "inv_imoex_pe_bonds10y_delta",
+]
+
 
 def generate_price_chart():
-    df = pd.read_excel("data/mcftrr.xlsx", index_col="date")["price"]
+    df = pd.read_excel("data/endog_data/mcftrr.xlsx", index_col="date")["price"]
 
     fig = go.Figure(data=go.Scatter(x=df.index, y=df, mode="lines", name="Цена"))
 
@@ -18,23 +58,33 @@ def generate_price_chart():
     return fig.to_html(full_html=False)
 
 
-def generate_base_features():
-    dates = pd.date_range(start="2023-01-01", periods=100)
+# def generate_base_features():
+#     (
+#         df,
+#         _,
+#         _,
+#     ) = base_features_data_generator(path="mcftrr.xlsx")
 
+
+def generate_base_features():
     features = {
-        "Цена на нефть": pd.read_excel("data/brent.xlsx", index_col="date")["brent"],
-        "Цена на золото": pd.read_excel("data/gold.xlsx", index_col="date")["gold"],
-        "Курс USD/RUB": pd.read_excel("data/usd.xlsx", index_col="date")["usd"],
-        "Облигации 10ти летние": pd.read_excel("data/bonds10y.xlsx", index_col="date")[
-            "bonds10y"
+        "Цена на нефть": pd.read_excel("data/exog_data/brent.xlsx", index_col="date")[
+            "brent"
         ],
+        "Цена на золото": pd.read_excel("data/exog_data/gold.xlsx", index_col="date")[
+            "gold"
+        ],
+        "Курс USD/RUB": pd.read_excel("data/exog_data/usd.xlsx", index_col="date")[
+            "usd"
+        ],
+        "Облигации 10ти летние": pd.read_excel(
+            "data/exog_data/bonds10y.xlsx", index_col="date"
+        )["bonds10y"],
     }
 
     derivatives_data = {}
     for name, data in features.items():
         df = pd.DataFrame({"value": data}, index=data.index)
-        df["EMA_10"] = df["value"].ewm(span=10).mean()
-        df["SMA_20"] = df["value"].rolling(20).mean()
         derivatives_data[name] = df
 
     print(df)
@@ -58,48 +108,6 @@ def generate_feature_chart(feature_name):
             line=dict(color="#2196F3"),
             visible=True,
         )
-    )
-
-    indicators = {
-        "EMA_10": {"data": df["EMA_10"], "color": "#FF5722", "dash": "dot"},
-        "SMA_20": {"data": df["SMA_20"], "color": "#4CAF50", "dash": "dash"},
-    }
-
-    for name, params in indicators.items():
-        fig.add_trace(
-            go.Scatter(
-                x=df.index,
-                y=params["data"],
-                name=name,
-                line=dict(color=params["color"], dash=params["dash"]),
-                visible=False,
-            )
-        )
-
-    buttons = []
-    for idx, (name, _) in enumerate(indicators.items(), start=1):
-        buttons.append(
-            {
-                "method": "restyle",
-                "label": f"☑ {name}",
-                "args": [
-                    {
-                        "visible": [True]
-                        + [i == idx for i in range(1, len(indicators) + 1)]
-                    },
-                    {"title": f"{feature_name} - {name}"},
-                ],
-            }
-        )
-    buttons.append(
-        {
-            "method": "restyle",
-            "label": "☑ Все",
-            "args": [
-                {"visible": [True] + [True] * len(indicators)},
-                {"title": f"{feature_name} - Все индикаторы"},
-            ],
-        }
     )
 
     fig.update_layout(
