@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  portfolio-constructor-ui:
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile
+    container_name: portfolio-constructor-ui
+    volumes:
+      - ./data:/app/data
+      - ./jsons:/app/jsons
+      - ./logs:/app/logs
+      - ./plots:/app/plots
+      - ./results:/app/results
+    ports:
+      - "80:80"
+    environment:
+      - PYTHONUNBUFFERED=1
+    networks:
+      - portfolio-network
+    deploy:
+      resources:
+        limits:
+          cpus: 8
+          memory: 10G
+        reservations:
+          cpus: '0.5'
+          memory: 1G 
+
+networks:
+  portfolio-network:
+    driver: bridge

@@ -16,7 +16,7 @@ ENV TQDM_MININTERVAL=5
 ENV PATH="/root/.local/bin:${PATH}"
 
 RUN apt-get update && \
-    apt-get install -y make curl && \
+    apt-get install -y make curl libexpat1 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     pip install --upgrade --no-cache pip && \
@@ -35,4 +35,4 @@ RUN poetry config virtualenvs.create false &&  \
 
 COPY . .
 
-CMD ["/bin/sh"]
+CMD ["poetry", "run", "uvicorn", "constructor_app:app", "--host", "0.0.0.0", "--port", "80"]

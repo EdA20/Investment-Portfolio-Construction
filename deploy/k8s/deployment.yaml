@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: portfolio-constructor-ui
+  labels:
+    app: portfolio-constructor-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: portfolio-constructor-ui
+  template:
+    metadata:
+      labels:
+        app: portfolio-constructor-ui
+    spec:
+      containers:
+      - name: portfolio-constructor-ui
+        image: your-registry/portfolio-constructor-ui:latest  # Обновите путь к образу
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        env:
+        - name: PYTHONUNBUFFERED
+          value: "1"
+        resources:
+          limits:
+            cpu: "8"
+            memory: "10Gi"
+          requests:
+            cpu: "500m"
+            memory: "1Gi"
+        volumeMounts:
+        - name: data-volume
+          mountPath: /app/data
+        - name: jsons-volume
+          mountPath: /app/jsons
+        - name: logs-volume
+          mountPath: /app/logs
+        - name: plots-volume
+          mountPath: /app/plots
+        - name: results-volume
+          mountPath: /app/results
+      volumes:
+      - name: data-volume
+        persistentVolumeClaim:
+          claimName: data-pvc
+      - name: jsons-volume
+        persistentVolumeClaim:
+          claimName: jsons-pvc
+      - name: logs-volume
+        persistentVolumeClaim:
+          claimName: logs-pvc
+      - name: plots-volume
+        persistentVolumeClaim:
+          claimName: plots-pvc
+      - name: results-volume
+        persistentVolumeClaim:
+          claimName: results-pvc

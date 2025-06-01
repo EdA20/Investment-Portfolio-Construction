@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: portfolio-constructor-ui-service
+spec:
+  selector:
+    app: portfolio-constructor-ui
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer  # Используйте NodePort для локальных кластеров

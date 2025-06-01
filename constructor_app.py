@@ -11,8 +11,6 @@ from io import BytesIO
 import base64
 
 import uuid  # noqa
-import time  # noqa
-
 
 simplefilter("ignore")
 
@@ -25,7 +23,10 @@ from portfolio_constructor.charts import (  # noqa
 from portfolio_constructor.feature_generator import data_generator  # noqa
 from portfolio_constructor.model import Dataset, Model, Strategy  # noqa
 
-from portfolio_constructor import ALL_BASE_COLS_DESCRIPTIONS
+from portfolio_constructor import (
+    ALL_BASE_COLS_DESCRIPTIONS,
+    REVERTED_ALL_BASE_COLS_DESCRIPTIONS,
+)
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="data/static"), name="static")
@@ -42,9 +43,7 @@ tasks: t.Dict[str, t.Dict] = {}
 def fig_to_base64(img_path: str):
     with Image.open(img_path) as img:
         buffer = BytesIO()
-        img.save(
-            buffer, format="png"
-        )  # Ваши данные продолжают находиться в безопасности
+        img.save(buffer, format="png")
         byte_data = buffer.getvalue()
         return base64.b64encode(byte_data).decode("utf-8")
 
@@ -62,7 +61,12 @@ async def login(request: Request, username: str = Form(...), password: str = For
             "feature_selection.html",
             {
                 "request": request,
-                "features": list(ALL_BASE_COLS_DESCRIPTIONS.values()),
+                "features": list(
+                    filter(
+                        lambda x: x not in {"Индекс MCFTRR", "Значение ставки RUONIA"},
+                        ALL_BASE_COLS_DESCRIPTIONS.values(),
+                    )
+                ),
                 "price_chart": price_chart,
             },
         )
@@ -89,7 +93,11 @@ async def process_features(request: Request, selected: list = Form(...)):
 
 @app.post("/select-risk-profile/")
 async def process_risk_profile(request: Request, risk_profile: str = Form(...)):
-    print(request.session["selected_features"])
+    global selected_features
+    selected_features = [
+        REVERTED_ALL_BASE_COLS_DESCRIPTIONS[feature_desc]
+        for feature_desc in request.session["selected_features"]
+    ]
     request.session["risk_profile"] = risk_profile
     return templates.TemplateResponse("training.html", {"request": request})
 
@@ -163,10 +171,10 @@ def train_model(task_id: str):
     stat_gen_cols = [
         "price",
         "ruonia",
-        "imoex_pe",
-        "gold_return",
-        "long/short_physic_ratio",
     ]
+
+    stat_gen_cols += selected_features
+    stat_gen_cols = list(set(stat_gen_cols))
 
     stat_gen_kwargs = dict(
         columns=stat_gen_cols,
@@ -193,8 +201,6 @@ def train_model(task_id: str):
         markup_name="triple_barrier",
         markup_kwargs=dict(h=250, shift_days=63, vol_span=20, volatility_multiplier=2),
     )
-
-    position_rotator_kwargs_2 = dict(markup_name="min_max", markup_kwargs=dict(freq=63))
 
     sample_weight_kwargs = dict(
         weight_params=dict(
@@ -227,14 +233,14 @@ def train_model(task_id: str):
 
     strategy = Strategy(
         model,
-        prob_to_weight=True,  # не округляет вероятность
+        prob_to_weight=True,
     )
 
     strat_data = data.loc[:, ["price", "price_return", "ruonia", "ruonia_daily"]].copy()
     plot_kwargs = dict(
         perf_plot=True,
         sliding_plot=False,
-        save=True,  # сразу рисует динамику портфеля
+        save=True,
     )
 
     output = strategy.base_strategy_peformance(strat_data, preds, plot_kwargs)
@@ -243,10 +249,10 @@ def train_model(task_id: str):
         metric_name: float(metric_value)
         for metric_name, metric_value in output["metrics"].items()
     }
-
     strategy_perf_path = fig_to_base64(output["plots"]["strategy_perf"])
 
-    # Сохраняем результат
+    stat_gen_cols = list(filter(lambda x: x not in {"price", "ruonia"}, stat_gen_cols))
+
     result = {
         "status": "completed",
         "progress": 100,
@@ -259,6 +265,9 @@ def train_model(task_id: str):
         "var": output_metrics["var"],
         "cvar": output_metrics["cvar"],
         "strategy_performance": strategy_perf_path,
+        "base_feature_names": [
+            ALL_BASE_COLS_DESCRIPTIONS[feature_name] for feature_name in stat_gen_cols
+        ],
     }
     tasks[task_id] = result
 

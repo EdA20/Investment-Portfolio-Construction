@@ -64,6 +64,11 @@
         </div>
 
         <div class="feature-block">
+            <h3>📋 Базовые признаки модели</h3>
+            <div id="baseFeaturesList" class="features-list"></div>
+        </div>
+
+        <div class="feature-block">
             <div class="chart-container">
                 <h4>📈 Доходность стратегии</h4>
                 <img id="strategyChart" class="chart-img" alt="Доходность стратегии" 
@@ -137,10 +142,19 @@
             document.getElementById('strategyChart').src = 
                 `data:image/png;base64,${status.strategy_performance}`;
         }
-        
-        if (status.sliding_pnl) {
-            document.getElementById('pnlChart').src = 
-                `data:image/png;base64,${status.sliding_pnl}`;
+
+            // Добавляем обработку признаков
+        const baseFeaturesContainer = document.getElementById('baseFeaturesList');
+        if (status.base_feature_names && Array.isArray(status.base_feature_names)) {
+            baseFeaturesContainer.innerHTML = '';
+            status.base_feature_names.forEach(feature => {
+                const tag = document.createElement('div');
+                tag.className = 'feature-tag';
+                tag.textContent = feature;
+                baseFeaturesContainer.appendChild(tag);
+            });
+        } else {
+            baseFeaturesContainer.innerHTML = '<p>Нет данных о признаках</p>';
         }
 
         // Показываем результат с анимацией
